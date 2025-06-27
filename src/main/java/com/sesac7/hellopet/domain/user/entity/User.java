@@ -11,6 +11,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
@@ -31,6 +32,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    @Setter
     @OneToOne(mappedBy = "user")
     private UserDetail userDetail;
 }

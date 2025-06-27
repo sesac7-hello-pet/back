@@ -1,7 +1,11 @@
 package com.sesac7.hellopet.domain.user.dto.request;
 
+import com.sesac7.hellopet.domain.user.entity.User;
+import com.sesac7.hellopet.domain.user.entity.UserDetail;
 import com.sesac7.hellopet.domain.user.entity.UserRole;
 import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
 
 public class UserRegisterRequest {
 
@@ -9,6 +13,8 @@ public class UserRegisterRequest {
     @Email(message = "유효한 이메일 형식이어야 합니다")
     private String email;
 
+    @Setter
+    @Getter
     @NotBlank(message = "비밀번호는 필수입니다")
     @Size(min = 6, message = "비밀번호는 최소 6자 이상이어야 합니다")
     @Pattern(
@@ -34,6 +40,13 @@ public class UserRegisterRequest {
             regexp = "^\\d{11}$",
             message = "휴대폰 번호는 숫자 11자리여야 합니다."
     )
-    private Integer userPhoneNumber;
+    private Integer phoneNumber;
     private String userProfileUrl;
+
+    public User toDomain() {
+        User user = new User(null, email, password, role, null);
+        UserDetail userDetail = new UserDetail(null, nickname, username, userProfileUrl, address, phoneNumber, user);
+        user.setUserDetail(userDetail);
+        return user;
+    }
 }
