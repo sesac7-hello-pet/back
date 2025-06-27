@@ -1,4 +1,4 @@
-package com.sesac7.hellopet.domain.auth.AuthService;
+package com.sesac7.hellopet.domain.auth.authService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
