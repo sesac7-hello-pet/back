@@ -26,16 +26,15 @@ public class UserService {
      */
     public UserRegisterResponse userRegister(UserRegisterRequest request) {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
-        User user = userRepository.save(request.toDomain());
 
-        if (!StringUtils.hasText(request.getNickname())) {
-            user.getUserDetail().setNickname(user.getUserDetail().getUsername());
-        }
+        String nickname = StringUtils.hasText(request.getNickname())
+                ? request.getNickname()
+                : request.getUsername();
+        String profileUrl = StringUtils.hasText(request.getUserProfileUrl())
+                ? request.getUserProfileUrl()
+                : "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp";
 
-        if (!StringUtils.hasText(request.getUserProfileUrl())) {
-            user.getUserDetail().setUserProfileUrl(
-                    "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp");
-        }
+        User user = userRepository.save(request.toDomain(nickname, profileUrl));
 
         return UserRegisterResponse.from(user);
     }
