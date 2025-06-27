@@ -18,6 +18,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * 회원가입시 유저 정보를 가지고 User, UserDetail 엔티티를 저장하고 정보를 반환합니다.
+     *
+     * @param request 회원가입시 보내는 유저 정보
+     * @return 닉네임, 이메일 등
+     */
     public UserRegisterResponse userRegister(UserRegisterRequest request) {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         User user = userRepository.save(request.toDomain());
@@ -30,7 +36,7 @@ public class UserService {
             user.getUserDetail().setUserProfileUrl(
                     "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp");
         }
-        
+
         return UserRegisterResponse.from(user);
     }
 }
