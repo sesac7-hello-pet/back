@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.user.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -38,6 +39,7 @@ public class User {
 
     @Setter
     @Getter
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user",
+            cascade = CascadeType.PERSIST)
     private UserDetail userDetail;
 }
