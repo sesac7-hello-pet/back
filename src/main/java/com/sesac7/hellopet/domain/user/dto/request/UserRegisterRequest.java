@@ -7,6 +7,7 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
 public class UserRegisterRequest {
 
     @NotBlank(message = "사용자 이름은 필수입니다")
@@ -23,7 +24,7 @@ public class UserRegisterRequest {
     )
     private String password;
 
-    @NotBlank(message = "사용자 권한은 필수입니다")
+    @NotNull(message = "사용자 권한은 필수입니다")
     private UserRole role;
 
     private String nickname;
@@ -40,12 +41,13 @@ public class UserRegisterRequest {
             regexp = "^\\d{11}$",
             message = "휴대폰 번호는 숫자 11자리여야 합니다."
     )
-    private Integer phoneNumber;
+    private String phoneNumber;
     private String userProfileUrl;
 
     public User toDomain() {
         User user = new User(null, email, password, role, null);
-        UserDetail userDetail = new UserDetail(null, nickname, username, userProfileUrl, address, phoneNumber, user);
+        UserDetail userDetail = new UserDetail(null, nickname, username, userProfileUrl, address,
+                Integer.valueOf(phoneNumber), user);
         user.setUserDetail(userDetail);
         return user;
     }
