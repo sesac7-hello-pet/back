@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.user.Service;
 
+import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
@@ -37,5 +38,9 @@ public class UserService {
         User user = userRepository.save(request.toDomain(nickname, profileUrl));
 
         return UserRegisterResponse.from(user);
+    }
+
+    public LoginResponse userLogin(String username) {
+        return userRepository.findByEmailToLoginResponse(username);
     }
 }
