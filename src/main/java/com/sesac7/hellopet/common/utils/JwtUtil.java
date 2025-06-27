@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.time.Duration;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +30,7 @@ public class JwtUtil {
     }
 
     public ResponseCookie generateCookie(UserDetails userDetails) {
-        String token = doGenerateToken(userDetails);
+        String token = doGenerateToken(userDetails, expiration);
         return ResponseCookie.from("accessToken", token)
                 .httpOnly(true)
                 .secure(true)
@@ -40,7 +41,7 @@ public class JwtUtil {
     }
 
     public ResponseCookie generateRefreshCookie(UserDetails userDetails) {
-        String token = doGenerateToken(userDetails);
+        String token = doGenerateToken(userDetails, refreshExpiration);
         return ResponseCookie.from("refreshToken", token)
                 .httpOnly(true)
                 .secure(true)
@@ -50,13 +51,14 @@ public class JwtUtil {
                 .build();
     }
 
-    private String doGenerateToken(UserDetails userDetails) {
+    private String doGenerateToken(UserDetails userDetails, Long expiration) {
         Claims claims = Jwts.claims();
         claims.setSubject(userDetails.getUsername());
         return Jwts.builder()
                 .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration * 60 * 1000))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
-
 }
