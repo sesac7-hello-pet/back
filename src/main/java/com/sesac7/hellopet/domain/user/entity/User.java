@@ -16,29 +16,26 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Getter
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Getter
     @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
-    @Getter
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
     @Setter
-    @Getter
     @OneToOne(mappedBy = "user",
             cascade = CascadeType.PERSIST)
     private UserDetail userDetail;
