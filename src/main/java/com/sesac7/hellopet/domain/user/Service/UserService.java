@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @Transactional
@@ -20,6 +21,16 @@ public class UserService {
     public UserRegisterResponse userRegister(UserRegisterRequest request) {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         User user = userRepository.save(request.toDomain());
+
+        if (!StringUtils.hasText(request.getNickname())) {
+            user.getUserDetail().setNickname(user.getUserDetail().getUsername());
+        }
+
+        if (!StringUtils.hasText(request.getUserProfileUrl())) {
+            user.getUserDetail().setUserProfileUrl(
+                    "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp");
+        }
+        
         return UserRegisterResponse.from(user);
     }
 }
