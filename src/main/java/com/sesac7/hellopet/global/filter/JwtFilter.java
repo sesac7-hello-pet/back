@@ -37,7 +37,12 @@ public class JwtFilter extends OncePerRequestFilter {
                 .map(Cookie::getValue)
                 .findFirst().orElse(null);
 
-        if (token == null || jwtUtil.isTokenExpired(token)) {
+        if (token == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (jwtUtil.isTokenExpired(token)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
