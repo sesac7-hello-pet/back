@@ -3,7 +3,9 @@ package com.sesac7.hellopet.domain.user.dto.response;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.entity.UserRole;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
 @AllArgsConstructor
 public class UserRegisterResponse {
     private Long userId;
