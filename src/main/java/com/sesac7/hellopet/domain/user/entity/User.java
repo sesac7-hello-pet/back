@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -18,21 +19,25 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Getter
     @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
+    @Getter
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
     @Setter
+    @Getter
     @OneToOne(mappedBy = "user")
     private UserDetail userDetail;
 }
