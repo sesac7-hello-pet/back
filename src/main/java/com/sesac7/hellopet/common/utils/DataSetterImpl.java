@@ -16,8 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -87,7 +85,6 @@ public class DataSetterImpl implements DataSetter {
         }
     }
 
-
     private int getRandomIndex(List<?> list) {
         if (list == null || list.isEmpty()) {
             throw new IllegalArgumentException("List must not be null or empty");
@@ -99,7 +96,6 @@ public class DataSetterImpl implements DataSetter {
         if (end < start) {
             throw new IllegalArgumentException("end must be >= start");
         }
-        // ThreadLocalRandom.current().nextInt(origin, bound) 은 bound 미포함이므로 end+1 사용
         return ThreadLocalRandom.current().nextInt(start, end + 1);
     }
 
