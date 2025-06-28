@@ -47,7 +47,7 @@ public class UserRegisterRequest {
     public User toDomain(String nickname, String userProfileUrl) {
         User user = new User(null, email, password, role, null);
         UserDetail userDetail = new UserDetail(null, nickname, username, userProfileUrl, address,
-                Integer.valueOf(phoneNumber), user);
+                phoneNumber, user);
         user.setUserDetail(userDetail);
         return user;
     }
