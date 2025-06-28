@@ -2,7 +2,11 @@ package com.sesac7.hellopet.domain.user.repository;
 
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
+
+import java.util.List;
 import java.util.Optional;
+
+import com.sesac7.hellopet.domain.user.entity.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +30,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
             """)
     LoginResponse findByEmailToLoginResponse(@Param("email") String email);
 
+    List<User> findByRole(UserRole role);
 }
