@@ -53,6 +53,14 @@ public class UserService {
 
     public ExistResponse checkExist(CheckField field, String value) {
 
+        boolean exists = doCheck(field, value);
+
+        String message = exists ? "이미 사용 중입니다." : "사용 가능합니다!";
+
+        return new ExistResponse(field, value, exists, message);
+    }
+
+    private boolean doCheck(CheckField field, String value) {
         boolean exists;
 
         switch (field) {
@@ -61,9 +69,6 @@ public class UserService {
             case NICKNAME -> exists = userDetailRepository.existsUserDetailByNickname(value);
             default       -> throw new IllegalArgumentException("Unknown field");
         }
-
-        String message = exists ? "이미 사용 중입니다." : "사용 가능합니다!";
-
-        return new ExistResponse(field, value, exists, message);
+        return exists;
     }
 }
