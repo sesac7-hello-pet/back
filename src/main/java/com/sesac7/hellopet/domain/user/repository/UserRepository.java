@@ -26,4 +26,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
             """)
     LoginResponse findByEmailToLoginResponse(@Param("email") String email);
 
+    boolean existsUserByEmail(String value);
 }

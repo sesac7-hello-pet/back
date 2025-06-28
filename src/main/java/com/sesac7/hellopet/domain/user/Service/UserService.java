@@ -1,10 +1,13 @@
 package com.sesac7.hellopet.domain.user.Service;
 
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
+import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
+import com.sesac7.hellopet.domain.user.repository.UserDetailRepository;
 import com.sesac7.hellopet.domain.user.repository.UserRepository;
+import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import org.springframework.util.StringUtils;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserDetailRepository userDetailRepository;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -42,5 +46,21 @@ public class UserService {
 
     public LoginResponse userLogin(String username) {
         return userRepository.findByEmailToLoginResponse(username);
+    }
+
+    public void checkExist(CheckField field, String value) {
+
+        boolean isExist = false;
+
+        switch (field) {
+            case EMAIL -> isExist = userRepository.existsUserByEmail(value);
+            case PHONE -> isExist = userDetailRepository.existsUserDetailByPhoneNumber(value);
+            case NICKNAME -> isExist = userDetailRepository.existsUserDetailByNickname(value);
+        }
+
+        if(isExist) {
+            throw new EntityExistsException("이미 존재하는 " + field + "입니다.");
+        }
+        
     }
 }
