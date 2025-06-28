@@ -1,4 +1,4 @@
-package com.sesac7.hellopet.domain.InformalBoard.entity;
+package com.sesac7.hellopet.domain.board.entity;
 
 import com.sesac7.hellopet.domain.user.entity.User;
 import jakarta.persistence.Column;
@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class BoardComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @Column(nullable = false)
     private String content;
