@@ -3,6 +3,7 @@ package com.sesac7.hellopet.domain.user.controller;
 import com.sesac7.hellopet.domain.user.Service.UserService;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
+import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,6 @@ public class UserController {
     @GetMapping("/exist")
     public ResponseEntity<ExistResponse> check(@RequestParam CheckField field,
                                                @RequestParam String value) {
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(userService.checkExist(field, value));
     }
 }
