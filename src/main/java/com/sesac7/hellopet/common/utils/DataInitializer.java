@@ -8,4 +8,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DataInitializer {
     private final DataSetter dataSetter;
+
+    @PostConstruct
+    public void userGenerator() {
+        dataSetter.userGenerator(10);
+    }
 }
