@@ -5,4 +5,5 @@ import org.springframework.stereotype.Component;
 @Component
 public interface DataSetter {
     void userGenerator(int num);
+    void announcementGenerator(int num);
 }

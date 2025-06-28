@@ -13,4 +13,9 @@ public class DataInitializer {
     public void userGenerator() {
         dataSetter.userGenerator(10);
     }
+
+    @PostConstruct
+    public void announcementGenerator() {
+        dataSetter.announcementGenerator(10);
+    }
 }

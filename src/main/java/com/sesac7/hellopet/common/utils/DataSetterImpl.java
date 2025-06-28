@@ -29,6 +29,8 @@ public class DataSetterImpl implements DataSetter {
     DataStore data = new DataStore();
 
     private final UserRepository userRepository;
+    private final PetRepository petRepository;
+    private final AnnouncementRepository announcementRepository;
     private final PasswordEncoder passwordEncoder;
 
     private void saveUser(int number) {
@@ -56,6 +58,36 @@ public class DataSetterImpl implements DataSetter {
         }
     }
 
+    private void saveAnnouncement(int number) {
+
+        List<User> shelters = userRepository.findByRole(UserRole.SHELTER);
+        String gender;
+        for (int i = 0; i < number; i++) {
+
+            if(i % 2 ==0) {
+                gender = "수컷";
+            } else {
+                gender = "암컷";
+            }
+
+            Pet pet = new Pet(null, gender,
+                    data.getHealthStatuses().get(getRandomIndex(data.getHealthStatuses())),
+                    data.getPersonalities().get(getRandomIndex(data.getPersonalities())),
+                    i % 10,
+                    data.getAddresses().get(getRandomIndex(data.getAddresses()))
+                    );
+
+            petRepository.save(pet);
+
+            Announcement announcement = new Announcement(null,
+                    shelters.get(getRandomIndex(shelters)), AnnouncementStatus.IN_PROGRESS,
+                    pet, data.getDogPhotos().get(getRandomIndex(data.getDogPhotos())), LocalDateTime.now(), null);
+
+            announcementRepository.save(announcement);
+        }
+    }
+
+
     private int getRandomIndex(List<?> list) {
         if (list == null || list.isEmpty()) {
             throw new IllegalArgumentException("List must not be null or empty");
@@ -69,5 +101,18 @@ public class DataSetterImpl implements DataSetter {
         }
         // ThreadLocalRandom.current().nextInt(origin, bound) 은 bound 미포함이므로 end+1 사용
         return ThreadLocalRandom.current().nextInt(start, end + 1);
+    }
+
+
+    @Override
+    public void userGenerator(int num) {
+        int howMany = userRepository.findAll().size();
+        saveUser(num - howMany);
+    }
+
+    @Override
+    public void announcementGenerator(int num) {
+        int howMany = announcementRepository.findAll().size();
+        saveAnnouncement(num - howMany);
     }
 }
