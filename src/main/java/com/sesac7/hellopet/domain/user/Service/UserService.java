@@ -3,16 +3,19 @@ package com.sesac7.hellopet.domain.user.Service;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
+import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.repository.UserDetailRepository;
 import com.sesac7.hellopet.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @Transactional
@@ -48,19 +51,19 @@ public class UserService {
         return userRepository.findByEmailToLoginResponse(username);
     }
 
-    public void checkExist(CheckField field, String value) {
+    public ExistResponse checkExist(CheckField field, String value) {
 
-        boolean isExist = false;
+        boolean exists;
 
         switch (field) {
-            case EMAIL -> isExist = userRepository.existsUserByEmail(value);
-            case PHONE -> isExist = userDetailRepository.existsUserDetailByPhoneNumber(value);
-            case NICKNAME -> isExist = userDetailRepository.existsUserDetailByNickname(value);
+            case EMAIL    -> exists = userRepository.existsUserByEmail(value);
+            case PHONE    -> exists = userDetailRepository.existsUserDetailByPhoneNumber(value);
+            case NICKNAME -> exists = userDetailRepository.existsUserDetailByNickname(value);
+            default       -> throw new IllegalArgumentException("Unknown field");
         }
 
-        if(isExist) {
-            throw new EntityExistsException("이미 존재하는 " + field + "입니다.");
-        }
-        
+        String message = exists ? "이미 사용 중입니다." : "사용 가능합니다!";
+
+        return new ExistResponse(field, value, exists, message);
     }
 }
