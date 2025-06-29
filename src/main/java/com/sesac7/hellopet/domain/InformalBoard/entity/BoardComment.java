@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class BoardComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @Column(nullable = false)
     private String content;
