@@ -27,6 +27,11 @@ public class UserRegisterRequest {
     @NotNull(message = "사용자 권한은 필수입니다")
     private UserRole role;
 
+    @NotBlank(message = "닉네임은 필수입니다")
+    @Pattern(
+            regexp = "^[가-힣]{2,}$|^[A-Za-z]{5,}$",
+            message = "닉네임은 한글 2자 이상 또는 영문 5자 이상이어야 합니다."
+    )
     private String nickname;
 
     @NotBlank(message = "사용자 이름은 필수입니다")
