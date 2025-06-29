@@ -18,4 +18,7 @@ public class DataInitializer {
     public void announcementGenerator() {
         dataSetter.announcementGenerator(10);
     }
+
+    @PostConstruct
+    public void boardGenerator() {dataSetter.boardGenerator(10);}
 }

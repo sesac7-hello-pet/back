@@ -6,6 +6,10 @@ import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
+import com.sesac7.hellopet.domain.board.entity.BoardCategory;
+import com.sesac7.hellopet.domain.board.entity.InformalBoard;
+import com.sesac7.hellopet.domain.board.entity.PetType;
+import com.sesac7.hellopet.domain.board.repository.BoardRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.entity.UserDetail;
 import com.sesac7.hellopet.domain.user.entity.UserRole;
@@ -16,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -29,6 +34,8 @@ public class DataSetterImpl implements DataSetter {
     private final UserRepository userRepository;
     private final PetRepository petRepository;
     private final AnnouncementRepository announcementRepository;
+    private final BoardRepository boardRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     private void saveUser(int number) {
@@ -41,7 +48,7 @@ public class DataSetterImpl implements DataSetter {
             } else {
                 role = UserRole.SHELTER;
             }
-            Integer phone = Integer.valueOf(new StringBuilder().append("010").append(getRandomIntInRange(1000, 9999)).append(getRandomIntInRange(1000, 9999)).toString());
+            String phone = new StringBuilder().append("010").append(getRandomIntInRange(1000, 9999)).append(getRandomIntInRange(1000, 9999)).toString();
 
             User user = new User(null, "test" + i +"@test.com", passwordEncoder.encode("!test1234"), role, null);
 
@@ -85,6 +92,29 @@ public class DataSetterImpl implements DataSetter {
         }
     }
 
+    private void saveBoard(int num) {
+
+        List<User> users = userRepository.findAll();
+
+        BoardCategory[] boardCategory = new BoardCategory[]{BoardCategory.FREE, BoardCategory.QNA, BoardCategory.TOTAL};
+        PetType[] petType = new PetType[]{PetType.DOG, PetType.CAT, PetType.ETC};
+
+        for (int i = 0; i < num; i++) {
+            InformalBoard board = new InformalBoard(null,
+                    data.getBoardTitles().get(getRandomIndex(data.getBoardTitles())),
+                    data.getBoardContents().get(getRandomIndex(data.getBoardContents())),
+                    data.getDogPhotos().get(getRandomIndex(data.getDogPhotos())),
+                    0, 0, 0, LocalDateTime.now(), null,
+                    boardCategory[ThreadLocalRandom.current().nextInt(boardCategory.length)],
+                    petType[ThreadLocalRandom.current().nextInt(petType.length)],
+                    users.get(getRandomIndex(users))
+            );
+
+            boardRepository.save(board);
+        }
+
+    }
+
     private int getRandomIndex(List<?> list) {
         if (list == null || list.isEmpty()) {
             throw new IllegalArgumentException("List must not be null or empty");
@@ -110,5 +140,11 @@ public class DataSetterImpl implements DataSetter {
     public void announcementGenerator(int num) {
         int howMany = announcementRepository.findAll().size();
         saveAnnouncement(num - howMany);
+    }
+
+    @Override
+    public void boardGenerator(int num) {
+        int howMany = boardRepository.findAll().size();
+        saveBoard(num - howMany);
     }
 }

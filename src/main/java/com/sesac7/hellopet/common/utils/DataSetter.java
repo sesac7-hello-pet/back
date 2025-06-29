@@ -6,4 +6,5 @@ import org.springframework.stereotype.Component;
 public interface DataSetter {
     void userGenerator(int num);
     void announcementGenerator(int num);
+    void boardGenerator(int num);
 }
