@@ -17,10 +17,21 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.regex.Pattern;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
+
+    private static final Pattern EMAIL_REGEX =
+            Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,}$");
+    private static final Pattern PHONE_REGEX =
+            Pattern.compile("^010-\\d{4}-\\d{4}$");
+    private static final Pattern KOREAN_REGEX =
+            Pattern.compile("^[가-힣]+$");
+    private static final Pattern ENGLISH_REGEX =
+            Pattern.compile("^[A-Za-z]+$");
 
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
@@ -68,11 +79,59 @@ public class UserService {
         boolean exists;
 
         switch (field) {
-            case EMAIL    -> exists = userRepository.existsUserByEmail(value);
-            case PHONE    -> exists = userDetailRepository.existsUserDetailByPhoneNumber(value);
-            case NICKNAME -> exists = userDetailRepository.existsUserDetailByNickname(value);
-            default       -> throw new IllegalArgumentException("Unknown field");
+            case EMAIL -> {
+                // 1) 형식 검증
+                if (!EMAIL_REGEX.matcher(value).matches()) {
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "유효하지 않은 이메일 형식입니다."
+                    );
+                }
+                // 2) 중복 검사
+                exists = userRepository.existsUserByEmail(value);
+            }
+            case PHONE -> {
+                if (!PHONE_REGEX.matcher(value).matches()) {
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "휴대폰 번호는 010-0000-0000 형식이어야 합니다."
+                    );
+                }
+                exists = userDetailRepository.existsUserDetailByPhoneNumber(value);
+            }
+            case NICKNAME -> {
+                if (!KOREAN_REGEX.matcher(value).matches() &&
+                        !ENGLISH_REGEX.matcher(value).matches()) {
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "닉네임은 한글 또는 영문자만 사용할 수 있습니다."
+                    );
+                }
+                if (KOREAN_REGEX.matcher(value).matches() && value.length() < 2) {
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "한글 닉네임은 최소 2자 이상이어야 합니다."
+                    );
+                }
+                if (ENGLISH_REGEX.matcher(value).matches() && value.length() < 5) {
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "영문 닉네임은 최소 5자 이상이어야 합니다."
+                    );
+                }
+                exists = userDetailRepository.existsUserDetailByNickname(value);
+            }
+            default -> throw new IllegalArgumentException("Unknown field: " + field);
         }
-        return exists;
+
+        // 3) 중복된 값이 있으면 409로 응답
+        if (exists) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "이미 존재하는 " + field + "입니다."
+            );
+        }
+
+        return false;
     }
 }
