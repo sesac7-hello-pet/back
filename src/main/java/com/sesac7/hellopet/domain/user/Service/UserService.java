@@ -46,9 +46,6 @@ public class UserService {
     public UserRegisterResponse userRegister(UserRegisterRequest request) {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        String nickname = StringUtils.hasText(request.getNickname())
-                ? request.getNickname()
-                : request.getUsername() + Math.floor(Math.random() * (99999 - 1000 + 1)) + 1000; // 닉네임이 안겹치도록
         String profileUrl = StringUtils.hasText(request.getUserProfileUrl())
                 ? request.getUserProfileUrl()
                 : "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp";
@@ -57,7 +54,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 사용중입니다");
         }
 
-        User user = userRepository.save(request.toDomain(nickname, profileUrl));
+        User user = userRepository.save(request.toDomain(profileUrl));
 
         return UserRegisterResponse.from(user);
     }
