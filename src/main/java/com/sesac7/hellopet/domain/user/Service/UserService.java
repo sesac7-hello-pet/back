@@ -27,7 +27,7 @@ public class UserService {
     private static final Pattern EMAIL_REGEX =
             Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,}$");
     private static final Pattern PHONE_REGEX =
-            Pattern.compile("^010-\\d{4}-\\d{4}$");
+            Pattern.compile("^010-?\\d{4}-?\\d{4}$");
     private static final Pattern KOREAN_REGEX =
             Pattern.compile("^[가-힣]+$");
     private static final Pattern ENGLISH_REGEX =
