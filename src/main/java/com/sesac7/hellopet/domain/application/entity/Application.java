@@ -1,7 +1,12 @@
 package com.sesac7.hellopet.domain.application.entity;
 
 import com.sesac7.hellopet.domain.announcement.entity.Announcement;
-import com.sesac7.hellopet.domain.application.entity.environment.Environment;
+import com.sesac7.hellopet.domain.application.entity.info.care.CareInfo;
+import com.sesac7.hellopet.domain.application.entity.info.experience.PetExperienceInfo;
+import com.sesac7.hellopet.domain.application.entity.info.family.FamilyInfo;
+import com.sesac7.hellopet.domain.application.entity.info.financial.FinancialInfo;
+import com.sesac7.hellopet.domain.application.entity.info.housing.HousingInfo;
+import com.sesac7.hellopet.domain.application.entity.info.plan.FuturePlanInfo;
 import com.sesac7.hellopet.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -20,20 +25,17 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-@Table(name = "application")
-@Getter
+@Table(name = "applications")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Application {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ApplicationType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -47,26 +49,53 @@ public class Application {
     private String reason;
 
     @Embedded
-    private Environment environment;
+    private HousingInfo housingInfo;
+
+    @Embedded
+    private FamilyInfo familyInfo;
+
+    @Embedded
+    private CareInfo careInfo;
+
+    @Embedded
+    private FinancialInfo financialInfo;
+
+    @Embedded
+    private PetExperienceInfo petExperienceInfo;
+
+    @Embedded
+    private FuturePlanInfo futurePlanInfo;
+
+    private boolean agreedToTerms;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ApplicationStatus status;
 
+    @CreationTimestamp
     private LocalDateTime submittedAt;
     private LocalDateTime processedAt;
 
     @Builder
-    public Application(ApplicationType type, User applicant, Announcement announcement, String reason,
-                       Environment environment, ApplicationStatus status, LocalDateTime submittedAt,
-                       LocalDateTime processedAt) {
-        this.type = type;
-        this.applicant = applicant;
+    public Application(User user, Announcement announcement, String reason, HousingInfo housingInfo,
+                       FamilyInfo familyInfo,
+                       CareInfo careInfo, FinancialInfo financialInfo, PetExperienceInfo petExperienceInfo,
+                       FuturePlanInfo futurePlanInfo, boolean agreedToTerms, ApplicationStatus status) {
+        this.applicant = user;
         this.announcement = announcement;
         this.reason = reason;
-        this.environment = environment;
-        this.status = status;
-        this.submittedAt = submittedAt;
-        this.processedAt = processedAt;
+        this.housingInfo = housingInfo;
+        this.familyInfo = familyInfo;
+        this.careInfo = careInfo;
+        this.financialInfo = financialInfo;
+        this.petExperienceInfo = petExperienceInfo;
+        this.futurePlanInfo = futurePlanInfo;
+        this.agreedToTerms = agreedToTerms;
+        this.status = status != null ? status : ApplicationStatus.PENDING;
+    }
+
+    public void completeProcessing(ApplicationStatus newStatus) {
+        this.status = newStatus;
+        this.processedAt = LocalDateTime.now();
     }
 }
