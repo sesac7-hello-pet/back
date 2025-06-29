@@ -9,16 +9,13 @@ import org.springframework.stereotype.Component;
 public class DataInitializer {
     private final DataSetter dataSetter;
 
-    @PostConstruct
-    public void userGenerator() {
-        dataSetter.userGenerator(10);
-    }
+    private static final int HOW_MANY_MAKE_DATA = 30;
 
     @PostConstruct
-    public void announcementGenerator() {
-        dataSetter.announcementGenerator(10);
+    public void initAllData() {
+        dataSetter.userGenerator(HOW_MANY_MAKE_DATA);
+        dataSetter.announcementGenerator(HOW_MANY_MAKE_DATA);
+        dataSetter.boardGenerator(HOW_MANY_MAKE_DATA);
+        dataSetter.commentGenerator(HOW_MANY_MAKE_DATA);
     }
-
-    @PostConstruct
-    public void boardGenerator() {dataSetter.boardGenerator(10);}
 }

@@ -7,8 +7,10 @@ import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
 import com.sesac7.hellopet.domain.board.entity.BoardCategory;
+import com.sesac7.hellopet.domain.board.entity.BoardComment;
 import com.sesac7.hellopet.domain.board.entity.InformalBoard;
 import com.sesac7.hellopet.domain.board.entity.PetType;
+import com.sesac7.hellopet.domain.board.repository.BoardCommentRepository;
 import com.sesac7.hellopet.domain.board.repository.BoardRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.entity.UserDetail;
@@ -35,6 +37,7 @@ public class DataSetterImpl implements DataSetter {
     private final PetRepository petRepository;
     private final AnnouncementRepository announcementRepository;
     private final BoardRepository boardRepository;
+    private final BoardCommentRepository boardCommentRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -85,8 +88,11 @@ public class DataSetterImpl implements DataSetter {
             petRepository.save(pet);
 
             Announcement announcement = new Announcement(null,
-                    shelters.get(getRandomIndex(shelters)), AnnouncementStatus.IN_PROGRESS,
-                    pet, data.getDogPhotos().get(getRandomIndex(data.getDogPhotos())), LocalDateTime.now(), null);
+                    shelters.get(getRandomIndex(shelters)),
+                    AnnouncementStatus.IN_PROGRESS,
+                    pet,
+                    data.getDogPhotos().get(getRandomIndex(data.getDogPhotos())),
+                    LocalDateTime.now(), null);
 
             announcementRepository.save(announcement);
         }
@@ -113,6 +119,35 @@ public class DataSetterImpl implements DataSetter {
             boardRepository.save(board);
         }
 
+    }
+
+    private void saveComment(int num) {
+        List<User> users = userRepository.findAll();
+        List<InformalBoard> boards = boardRepository.findAll();
+
+        for (int i = 0; i < num; i++) {
+            BoardComment parentComment = new BoardComment(null,
+                    data.getComments().get(getRandomIndex(data.getComments())),
+                    LocalDateTime.now(), null,
+                    users.get(getRandomIndex(users)),
+                    boards.get(getRandomIndex(boards)),
+                    null
+                    );
+            boardCommentRepository.save(parentComment);
+        }
+
+        List<BoardComment> parents = boardCommentRepository.findAll();
+
+        for (int i = 0; i < num; i++) {
+            BoardComment children = new BoardComment(null,
+                    data.getComments().get(getRandomIndex(data.getComments())),
+                    LocalDateTime.now(), null,
+                    users.get(getRandomIndex(users)),
+                    boards.get(getRandomIndex(boards)),
+                    parents.get(getRandomIndex(parents))
+            );
+            boardCommentRepository.save(children);
+        }
     }
 
     private int getRandomIndex(List<?> list) {
@@ -146,5 +181,11 @@ public class DataSetterImpl implements DataSetter {
     public void boardGenerator(int num) {
         int howMany = boardRepository.findAll().size();
         saveBoard(num - howMany);
+    }
+
+    @Override
+    public void commentGenerator(int num) {
+        int howMany = boardCommentRepository.findAll().size();
+        saveComment(num - howMany);
     }
 }

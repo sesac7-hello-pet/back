@@ -7,4 +7,5 @@ public interface DataSetter {
     void userGenerator(int num);
     void announcementGenerator(int num);
     void boardGenerator(int num);
+    void commentGenerator(int num);
 }
