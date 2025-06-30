@@ -2,7 +2,7 @@ package com.sesac7.hellopet.domain.announcement.controller;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementCreateRequest;
-import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementList;
+import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.service.AnnouncementService;
 import java.util.List;
@@ -38,8 +38,8 @@ public class AnnouncementController {
      * 전체 입양 게시글 리스트 조회
      */
     @GetMapping
-    public ResponseEntity<List<AnnouncementList>> getAllAnnouncements() {
-        List<AnnouncementList> announcements = announcementService.getAllAnnouncements();
+    public ResponseEntity<List<AnnouncementListResponse>> getAllAnnouncements() {
+        List<AnnouncementListResponse> announcements = announcementService.getAllAnnouncements();
         return ResponseEntity.ok(announcements);
     }
 
