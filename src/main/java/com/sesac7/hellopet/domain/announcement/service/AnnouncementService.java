@@ -11,6 +11,8 @@ import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
 import com.sesac7.hellopet.domain.user.Service.UserFinder;
 import com.sesac7.hellopet.domain.user.entity.User;
+import com.sesac7.hellopet.domain.user.service.UserFinder;
+import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,8 +28,10 @@ public class AnnouncementService {
     private final AnnouncementRepository announcementRepository;
     private final UserFinder userFinder;
 
-    public AnnouncementCreateResponse createAnnouncement (AnnouncementCreateRequest announcementCreateRequest, CustomUserDetails customUserDetails) {
+
 // 게시글 등록 
+    public AnnouncementCreateResponse createAnnouncement(AnnouncementCreateRequest announcementCreateRequest,
+                                                         CustomUserDetails customUserDetails) {
         Pet pet = Pet.builder()
                 .breed(announcementCreateRequest.getBreed())
                 .gender(announcementCreateRequest.getGender())
@@ -40,8 +44,8 @@ public class AnnouncementService {
         petRepository.save(pet);
 
         // userRepository는 필드로 선언돼 있고, 스프링이 생성자 주입해줌
-        User shelter = userFinder.findUserByUsername(customUserDetails.getUsername());
-
+        User shelter = userFinder.findLoggedInUserByUsername(customUserDetails.getUsername());
+      
         Announcement announcement = Announcement.builder()
                 .shelter(shelter)
                 .pet(pet)
@@ -73,6 +77,9 @@ public class AnnouncementService {
                 .collect(Collectors.toList());
     }
 
-
-
+    public Announcement findById(Long announcementId) {
+        return announcementRepository.findById(announcementId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "해당 공지사항을 찾을 수 없습니다. id=" + announcementId));
+    }
 }

@@ -1,0 +1,36 @@
+package com.sesac7.hellopet.domain.board.controller;
+
+import com.sesac7.hellopet.common.utils.CustomUserDetails;
+import com.sesac7.hellopet.domain.board.dto.request.BoardCreateRequest;
+import com.sesac7.hellopet.domain.board.dto.request.BoardSearchRequest;
+import com.sesac7.hellopet.domain.board.dto.response.BoardPageResponse;
+import com.sesac7.hellopet.domain.board.dto.response.BoardResponse;
+import com.sesac7.hellopet.domain.board.service.BoardService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/board")
+@RequiredArgsConstructor
+public class BoardController {
+    private final BoardService boardService;
+
+    @GetMapping
+    public ResponseEntity<BoardPageResponse> getSearchList(BoardSearchRequest request) {
+        return ResponseEntity.ok(boardService.getSearchList(request));
+    }
+
+    @PostMapping
+    public ResponseEntity<BoardResponse> createBoard(@RequestBody @Valid BoardCreateRequest request,
+                                                     @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(boardService.createBoard(request, customUserDetails));
+    }
+}
