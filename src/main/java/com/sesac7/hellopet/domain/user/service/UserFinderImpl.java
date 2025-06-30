@@ -1,4 +1,4 @@
-package com.sesac7.hellopet.domain.user.Service;
+package com.sesac7.hellopet.domain.user.service;
 
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.repository.UserRepository;

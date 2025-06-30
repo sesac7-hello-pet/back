@@ -5,7 +5,7 @@ import com.sesac7.hellopet.common.utils.JwtUtil;
 import com.sesac7.hellopet.domain.auth.dto.request.LoginRequest;
 import com.sesac7.hellopet.domain.auth.dto.response.AuthResult;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
-import com.sesac7.hellopet.domain.user.Service.UserService;
+import com.sesac7.hellopet.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;

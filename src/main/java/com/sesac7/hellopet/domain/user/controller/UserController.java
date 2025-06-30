@@ -1,6 +1,6 @@
 package com.sesac7.hellopet.domain.user.controller;
 
-import com.sesac7.hellopet.domain.user.Service.UserService;
+import com.sesac7.hellopet.domain.user.service.UserService;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
 import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;

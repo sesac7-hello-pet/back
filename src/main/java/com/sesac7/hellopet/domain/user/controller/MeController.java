@@ -1,7 +1,7 @@
 package com.sesac7.hellopet.domain.user.controller;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
-import com.sesac7.hellopet.domain.user.Service.UserService;
+import com.sesac7.hellopet.domain.user.service.UserService;
 import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
