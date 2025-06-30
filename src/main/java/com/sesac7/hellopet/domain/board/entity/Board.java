@@ -48,5 +48,5 @@ public class Board {
 
     @ManyToOne
     private User user;
-
+    
 }
