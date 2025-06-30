@@ -8,7 +8,7 @@ import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.repository.UserDetailRepository;
 import com.sesac7.hellopet.domain.user.repository.UserRepository;
-import jakarta.persistence.EntityExistsException;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.regex.Pattern;
 
 @Service
 @Transactional
@@ -47,10 +45,11 @@ public class UserService {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
 
         String profileUrl = StringUtils.hasText(request.getUserProfileUrl())
-                ? request.getUserProfileUrl()
-                : "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp";
+                            ? request.getUserProfileUrl()
+                            : "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp";
 
-        if(doCheck(CheckField.EMAIL, request.getEmail()) && doCheck(CheckField.NICKNAME, request.getNickname()) && doCheck(CheckField.PHONE, request.getPhoneNumber())) {
+        if (doCheck(CheckField.EMAIL, request.getEmail()) && doCheck(CheckField.NICKNAME, request.getNickname())
+                && doCheck(CheckField.PHONE, request.getPhoneNumber())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 사용중입니다");
         }
 
@@ -78,7 +77,8 @@ public class UserService {
         switch (field) {
             case EMAIL -> {
                 // 1) 형식 검증
-                if (!EMAIL_REGEX.matcher(value).matches()) {
+                if (!EMAIL_REGEX.matcher(value)
+                                .matches()) {
                     throw new ResponseStatusException(
                             HttpStatus.BAD_REQUEST,
                             "유효하지 않은 이메일 형식입니다."
@@ -88,7 +88,8 @@ public class UserService {
                 exists = userRepository.existsUserByEmail(value);
             }
             case PHONE -> {
-                if (!PHONE_REGEX.matcher(value).matches()) {
+                if (!PHONE_REGEX.matcher(value)
+                                .matches()) {
                     throw new ResponseStatusException(
                             HttpStatus.BAD_REQUEST,
                             "휴대폰 번호는 010-0000-0000 형식이어야 합니다."
@@ -97,20 +98,24 @@ public class UserService {
                 exists = userDetailRepository.existsUserDetailByPhoneNumber(value);
             }
             case NICKNAME -> {
-                if (!KOREAN_REGEX.matcher(value).matches() &&
-                        !ENGLISH_REGEX.matcher(value).matches()) {
+                if (!KOREAN_REGEX.matcher(value)
+                                 .matches() &&
+                        !ENGLISH_REGEX.matcher(value)
+                                      .matches()) {
                     throw new ResponseStatusException(
                             HttpStatus.BAD_REQUEST,
                             "닉네임은 한글 또는 영문자만 사용할 수 있습니다."
                     );
                 }
-                if (KOREAN_REGEX.matcher(value).matches() && value.length() < 2) {
+                if (KOREAN_REGEX.matcher(value)
+                                .matches() && value.length() < 2) {
                     throw new ResponseStatusException(
                             HttpStatus.BAD_REQUEST,
                             "한글 닉네임은 최소 2자 이상이어야 합니다."
                     );
                 }
-                if (ENGLISH_REGEX.matcher(value).matches() && value.length() < 5) {
+                if (ENGLISH_REGEX.matcher(value)
+                                 .matches() && value.length() < 5) {
                     throw new ResponseStatusException(
                             HttpStatus.BAD_REQUEST,
                             "영문 닉네임은 최소 5자 이상이어야 합니다."
@@ -130,5 +135,10 @@ public class UserService {
         }
 
         return false;
+    }
+
+    public User findUser(String username) {
+        return userRepository.findByEmail(username)
+                             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, username));
     }
 }

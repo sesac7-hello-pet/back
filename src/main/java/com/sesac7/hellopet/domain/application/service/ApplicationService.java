@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.application.service;
 
+import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.application.dto.request.ApplicationCreateRequest;
 import com.sesac7.hellopet.domain.application.dto.request.CareInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.request.FamilyInfoRequest;
@@ -16,6 +17,8 @@ import com.sesac7.hellopet.domain.application.entity.info.financial.FinancialInf
 import com.sesac7.hellopet.domain.application.entity.info.housing.HousingInfo;
 import com.sesac7.hellopet.domain.application.entity.info.plan.FuturePlanInfo;
 import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
+import com.sesac7.hellopet.domain.user.Service.UserService;
+import com.sesac7.hellopet.domain.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,18 +29,17 @@ import org.springframework.stereotype.Service;
 public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
-    // private final UserService userService;
+    private final UserService userService;
     // private final AnnouncementService announcementService;
 
-    public ApplicationResponse createApplication(ApplicationCreateRequest request) {
-        // 현재 로그인 사용자(경우님 담당)
-        // User user = 관련 메서드
+    public ApplicationResponse createApplication(ApplicationCreateRequest request, CustomUserDetails userDetails) {
+        User user = userService.findUser(userDetails.getUsername());
 
         // 공고 가져오기(우정님 담당)
         // Announcement announcement = announcementService.findById(request.getAnnouncementId());
 
         Application application = Application.builder()
-                                             // .user(user)
+                                             .user(user)
                                              // .announcement(announcement)
                                              .reason(request.getReason())
                                              .housingInfo(getHousingInfo(request))
