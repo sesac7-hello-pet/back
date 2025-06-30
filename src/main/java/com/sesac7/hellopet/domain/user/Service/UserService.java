@@ -77,8 +77,7 @@ public class UserService {
         switch (field) {
             case EMAIL -> {
                 // 1) 형식 검증
-                if (!EMAIL_REGEX.matcher(value)
-                                .matches()) {
+                if (!EMAIL_REGEX.matcher(value).matches()) {
                     throw new ResponseStatusException(
                             HttpStatus.BAD_REQUEST,
                             "유효하지 않은 이메일 형식입니다."
@@ -88,8 +87,7 @@ public class UserService {
                 exists = userRepository.existsUserByEmail(value);
             }
             case PHONE -> {
-                if (!PHONE_REGEX.matcher(value)
-                                .matches()) {
+                if (!PHONE_REGEX.matcher(value).matches()) {
                     throw new ResponseStatusException(
                             HttpStatus.BAD_REQUEST,
                             "휴대폰 번호는 010-0000-0000 형식이어야 합니다."
@@ -98,24 +96,20 @@ public class UserService {
                 exists = userDetailRepository.existsUserDetailByPhoneNumber(value);
             }
             case NICKNAME -> {
-                if (!KOREAN_REGEX.matcher(value)
-                                 .matches() &&
-                        !ENGLISH_REGEX.matcher(value)
-                                      .matches()) {
+                if (!KOREAN_REGEX.matcher(value).matches() &&
+                        !ENGLISH_REGEX.matcher(value).matches()) {
                     throw new ResponseStatusException(
                             HttpStatus.BAD_REQUEST,
                             "닉네임은 한글 또는 영문자만 사용할 수 있습니다."
                     );
                 }
-                if (KOREAN_REGEX.matcher(value)
-                                .matches() && value.length() < 2) {
+                if (KOREAN_REGEX.matcher(value).matches() && value.length() < 2) {
                     throw new ResponseStatusException(
                             HttpStatus.BAD_REQUEST,
                             "한글 닉네임은 최소 2자 이상이어야 합니다."
                     );
                 }
-                if (ENGLISH_REGEX.matcher(value)
-                                 .matches() && value.length() < 5) {
+                if (ENGLISH_REGEX.matcher(value).matches() && value.length() < 5) {
                     throw new ResponseStatusException(
                             HttpStatus.BAD_REQUEST,
                             "영문 닉네임은 최소 5자 이상이어야 합니다."
