@@ -8,8 +8,9 @@ import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
-import com.sesac7.hellopet.domain.user.service.UserService;
 import com.sesac7.hellopet.domain.user.entity.User;
+import com.sesac7.hellopet.domain.user.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,13 +28,13 @@ public class AnnouncementService {
                                                          CustomUserDetails customUserDetails) {
 
         Pet pet = Pet.builder()
-                .breed(announcementCreateRequest.getBreed())
-                .gender(announcementCreateRequest.getGender())
-                .age(announcementCreateRequest.getAge())
-                .health(announcementCreateRequest.getHealth())
-                .personality(announcementCreateRequest.getPersonality())
-                .foundPlace("발견 장소")
-                .build();
+                     .breed(announcementCreateRequest.getBreed())
+                     .gender(announcementCreateRequest.getGender())
+                     .age(announcementCreateRequest.getAge())
+                     .health(announcementCreateRequest.getHealth())
+                     .personality(announcementCreateRequest.getPersonality())
+                     .foundPlace("발견 장소")
+                     .build();
 
         petRepository.save(pet);
 
@@ -41,16 +42,22 @@ public class AnnouncementService {
         User shelter = userService.findUser(customUserDetails.getUsername());
 
         Announcement announcement = Announcement.builder()
-                .shelter(shelter)
-                .pet(pet)
-                .imageUrl(announcementCreateRequest.getImage())
-                .status(AnnouncementStatus.IN_PROGRESS)
-                .createAt(LocalDateTime.now())
-                .updateAt(LocalDateTime.now())
-                .build();
+                                                .shelter(shelter)
+                                                .pet(pet)
+                                                .imageUrl(announcementCreateRequest.getImage())
+                                                .status(AnnouncementStatus.IN_PROGRESS)
+                                                .createAt(LocalDateTime.now())
+                                                .updateAt(LocalDateTime.now())
+                                                .build();
 
         announcementRepository.save(announcement);
 
         return AnnouncementCreateResponse.from(announcement);
+    }
+
+    public Announcement findById(Long announcementId) {
+        return announcementRepository.findById(announcementId)
+                                     .orElseThrow(() -> new EntityNotFoundException(
+                                             "해당 공지사항을 찾을 수 없습니다. id=" + announcementId));
     }
 }

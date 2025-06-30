@@ -1,4 +1,4 @@
-package com.sesac7.hellopet.domain.user.Service;
+package com.sesac7.hellopet.domain.user.service;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
@@ -143,11 +143,11 @@ public class UserService {
 
     public User getUserByUsername(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "not found user"));
+                             .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "not found user"));
     }
 
     public User findUser(String username) {
         return userRepository.findByEmail(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "등록된 유저가 없습니다."));
+                             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "등록된 유저가 없습니다."));
     }
 }
