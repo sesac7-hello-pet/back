@@ -1,5 +1,7 @@
 package com.sesac7.hellopet.domain.user.dto.request;
 
+import com.sesac7.hellopet.domain.user.entity.User;
+import com.sesac7.hellopet.domain.user.entity.UserDetail;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -30,4 +32,11 @@ public class UserUpdateRequest {
     private String address;
 
     private String userProfileUrl;
+
+    public void updateUser(User user, UserDetail userDetail) {
+        user.setPassword(password);
+        userDetail.setNickname(nickname);
+        userDetail.setAddress(address);
+        userDetail.setUserProfileUrl(userProfileUrl);
+    }
 }

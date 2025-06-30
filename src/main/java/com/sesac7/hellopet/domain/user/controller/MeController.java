@@ -30,6 +30,7 @@ public class MeController {
     @PutMapping
     public ResponseEntity<Void> updateDetail(@Valid @RequestBody UserUpdateRequest request,
                                              @AuthenticationPrincipal CustomUserDetails userDetails) {
+        userService.updateUserDetail(request, userDetails);
         return null;
     }
 }

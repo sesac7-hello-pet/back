@@ -148,5 +148,10 @@ public class UserService {
     public void updateUserDetail(@Valid UserUpdateRequest request, CustomUserDetails userDetails) {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         doCheck(CheckField.NICKNAME, request.getNickname());
+
+        User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+        UserDetail userDetail = userDetailRepository.findByUser(user);
+
+        request.updateUser(user, userDetail);
     }
 }

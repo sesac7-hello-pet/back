@@ -32,6 +32,7 @@ public class UserDetail {
     @Setter
     private String userProfileUrl;
 
+    @Setter
     @Column(nullable = false)
     private String address;
 
