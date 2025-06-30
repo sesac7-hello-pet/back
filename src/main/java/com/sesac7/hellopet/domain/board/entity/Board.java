@@ -1,4 +1,4 @@
-package com.sesac7.hellopet.domain.informalBoard.entity;
+package com.sesac7.hellopet.domain.board.entity;
 
 import com.sesac7.hellopet.domain.user.entity.User;
 import jakarta.persistence.Column;

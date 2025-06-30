@@ -1,10 +1,9 @@
-package com.sesac7.hellopet.domain.informalBoard.controller;
+package com.sesac7.hellopet.domain.board.controller;
 
-import com.sesac7.hellopet.domain.informalBoard.dto.board.request.BoardSearchRequest;
-import com.sesac7.hellopet.domain.informalBoard.dto.board.response.BoardPageResponse;
-import com.sesac7.hellopet.domain.informalBoard.service.BoardService;
+import com.sesac7.hellopet.domain.board.dto.request.BoardSearchRequest;
+import com.sesac7.hellopet.domain.board.dto.response.BoardPageResponse;
+import com.sesac7.hellopet.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +17,7 @@ public class BoardController {
 
     @GetMapping
     public ResponseEntity<BoardPageResponse> getSearchList(BoardSearchRequest request) {
-        ResponseEntity.ok(boardService.getSearchList(request));
+        return ResponseEntity.ok(boardService.getSearchList(request));
     }
 
 }

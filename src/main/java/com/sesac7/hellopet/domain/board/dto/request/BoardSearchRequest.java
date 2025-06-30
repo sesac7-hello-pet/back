@@ -1,6 +1,6 @@
-package com.sesac7.hellopet.domain.Board.dto.board.request;
+package com.sesac7.hellopet.domain.board.dto.request;
 
-import com.sesac7.hellopet.domain.Board.entity.BoardCategory;
+import com.sesac7.hellopet.domain.board.entity.BoardCategory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,6 @@
-package com.sesac7.hellopet.domain.Board.dto.board.response;
+package com.sesac7.hellopet.domain.board.dto.response;
 
-import com.sesac7.hellopet.domain.Board.dto.board.request.BoardSearchRequest;
+import com.sesac7.hellopet.domain.board.dto.request.BoardSearchRequest;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

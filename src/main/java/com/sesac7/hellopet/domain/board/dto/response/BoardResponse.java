@@ -1,7 +1,7 @@
-package com.sesac7.hellopet.domain.Board.dto.board.response;
+package com.sesac7.hellopet.domain.board.dto.response;
 
-import com.sesac7.hellopet.domain.Board.entity.BoardCategory;
-import com.sesac7.hellopet.domain.Board.entity.PetType;
+import com.sesac7.hellopet.domain.board.entity.BoardCategory;
+import com.sesac7.hellopet.domain.board.entity.PetType;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
