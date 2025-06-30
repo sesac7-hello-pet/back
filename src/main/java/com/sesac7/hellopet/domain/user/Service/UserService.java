@@ -131,4 +131,8 @@ public class UserService {
 
         return false;
     }
+
+    public User findUser(String username) {
+        return userRepository.findByEmail(username).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "등록된 유저가 없습니다."));
+    }
 }

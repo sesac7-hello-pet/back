@@ -7,16 +7,20 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
+@Builder
 @Table(name = "pets")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // 강아지 공고번호 id
 
     @Column(nullable = false)
     private String gender;
@@ -32,4 +36,7 @@ public class Pet {
 
     @Column(nullable = false)
     private String foundPlace;
+
+    @Column(nullable = false)
+    private String breed;
 }
