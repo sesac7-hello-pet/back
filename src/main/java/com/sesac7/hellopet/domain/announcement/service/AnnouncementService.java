@@ -9,7 +9,7 @@ import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
-import com.sesac7.hellopet.domain.user.service.UserService;
+import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -22,33 +22,33 @@ import org.springframework.transaction.annotation.Transactional;
 public class AnnouncementService {
     private final PetRepository petRepository;
     private final AnnouncementRepository announcementRepository;
-    private final UserService userService;
+    private final UserFinder userFinder;
 
     public AnnouncementCreateResponse createAnnouncement(AnnouncementCreateRequest announcementCreateRequest,
                                                          CustomUserDetails customUserDetails) {
 
         Pet pet = Pet.builder()
-                     .breed(announcementCreateRequest.getBreed())
-                     .gender(announcementCreateRequest.getGender())
-                     .age(announcementCreateRequest.getAge())
-                     .health(announcementCreateRequest.getHealth())
-                     .personality(announcementCreateRequest.getPersonality())
-                     .foundPlace("발견 장소")
-                     .build();
+                .breed(announcementCreateRequest.getBreed())
+                .gender(announcementCreateRequest.getGender())
+                .age(announcementCreateRequest.getAge())
+                .health(announcementCreateRequest.getHealth())
+                .personality(announcementCreateRequest.getPersonality())
+                .foundPlace("발견 장소")
+                .build();
 
         petRepository.save(pet);
 
         // userRepository는 필드로 선언돼 있고, 스프링이 생성자 주입해줌
-        User shelter = userService.findUser(customUserDetails.getUsername());
+        User shelter = userFinder.findLoggedInUserByUsername(customUserDetails.getUsername());
 
         Announcement announcement = Announcement.builder()
-                                                .shelter(shelter)
-                                                .pet(pet)
-                                                .imageUrl(announcementCreateRequest.getImage())
-                                                .status(AnnouncementStatus.IN_PROGRESS)
-                                                .createAt(LocalDateTime.now())
-                                                .updateAt(LocalDateTime.now())
-                                                .build();
+                .shelter(shelter)
+                .pet(pet)
+                .imageUrl(announcementCreateRequest.getImage())
+                .status(AnnouncementStatus.IN_PROGRESS)
+                .createAt(LocalDateTime.now())
+                .updateAt(LocalDateTime.now())
+                .build();
 
         announcementRepository.save(announcement);
 
@@ -57,7 +57,7 @@ public class AnnouncementService {
 
     public Announcement findById(Long announcementId) {
         return announcementRepository.findById(announcementId)
-                                     .orElseThrow(() -> new EntityNotFoundException(
-                                             "해당 공지사항을 찾을 수 없습니다. id=" + announcementId));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "해당 공지사항을 찾을 수 없습니다. id=" + announcementId));
     }
 }
