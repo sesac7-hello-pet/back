@@ -1,0 +1,55 @@
+package com.sesac7.hellopet.domain.announcement.service;
+
+import com.sesac7.hellopet.common.utils.CustomUserDetails;
+import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementCreateRequest;
+import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
+import com.sesac7.hellopet.domain.announcement.entity.Announcement;
+import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
+import com.sesac7.hellopet.domain.announcement.entity.Pet;
+import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
+import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
+import com.sesac7.hellopet.domain.user.Service.UserService;
+import com.sesac7.hellopet.domain.user.entity.User;
+import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class AnnouncementService {
+    private final PetRepository petRepository;
+    private final AnnouncementRepository announcementRepository;
+    private final UserService userService;
+
+    public AnnouncementCreateResponse createAnnouncement (AnnouncementCreateRequest announcementCreateRequest, CustomUserDetails customUserDetails) {
+
+        Pet pet = Pet.builder()
+                .breed(announcementCreateRequest.getBreed())
+                .gender(announcementCreateRequest.getGender())
+                .age(announcementCreateRequest.getAge())
+                .health(announcementCreateRequest.getHealth())
+                .personality(announcementCreateRequest.getPersonality())
+                .foundPlace("발견 장소")
+                .build();
+
+        petRepository.save(pet);
+
+        // userRepository는 필드로 선언돼 있고, 스프링이 생성자 주입해줌
+        User shelter = userService.findUser(customUserDetails.getUsername());
+
+        Announcement announcement = Announcement.builder()
+                .shelter(shelter)
+                .pet(pet)
+                .imageUrl(announcementCreateRequest.getImage())
+                .status(AnnouncementStatus.IN_PROGRESS)
+                .createAt(LocalDateTime.now())
+                .updateAt(LocalDateTime.now())
+                .build();
+
+        announcementRepository.save(announcement);
+
+        return AnnouncementCreateResponse.from(announcement);
+    }
+}

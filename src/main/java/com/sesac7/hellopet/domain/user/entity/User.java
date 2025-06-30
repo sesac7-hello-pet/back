@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.user.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,9 +11,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,6 +35,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @OneToOne(mappedBy = "user")
+    @Setter
+    @OneToOne(mappedBy = "user",
+            cascade = CascadeType.PERSIST)
     private UserDetail userDetail;
 }

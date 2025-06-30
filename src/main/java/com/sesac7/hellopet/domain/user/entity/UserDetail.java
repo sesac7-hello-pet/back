@@ -9,7 +9,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "user_details")
@@ -20,18 +22,23 @@ public class UserDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Getter
+    @Setter
     private String nickname;
 
+    @Getter
     @Column(nullable = false)
     private String username;
 
+    @Getter
+    @Setter
     private String userProfileUrl;
 
     @Column(nullable = false)
     private String address;
 
     @Column(nullable = false)
-    private Integer phoneNumber;
+    private String phoneNumber;
 
     @OneToOne
     @JoinColumn(name = "user_id")
