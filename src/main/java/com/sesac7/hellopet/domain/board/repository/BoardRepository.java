@@ -20,5 +20,4 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             + ")")
     Page<Board> search(@Param("category") String category, @Param("search") String searchType,
                        @Param("sort") String sort, @Param("keyword") String keyword, Pageable pageable);
-
 }
