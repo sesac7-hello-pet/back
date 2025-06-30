@@ -1,6 +1,8 @@
 package com.sesac7.hellopet.domain.application.service;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
+import com.sesac7.hellopet.domain.announcement.entity.Announcement;
+import com.sesac7.hellopet.domain.announcement.service.AnnouncementService;
 import com.sesac7.hellopet.domain.application.dto.request.AgreementInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.request.ApplicationCreateRequest;
 import com.sesac7.hellopet.domain.application.dto.request.CareInfoRequest;
@@ -32,33 +34,32 @@ public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
     private final UserFinder userFinder;
-    // private final AnnouncementService announcementService;
+    private final AnnouncementService announcementService;
 
     public ApplicationResponse createApplication(ApplicationCreateRequest request, CustomUserDetails userDetails) {
-        User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
 
-        // 공고 가져오기(우정님 담당)
-        // Announcement announcement = announcementService.findById(request.getAnnouncementId());
+        User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+        Announcement announcement = announcementService.findById(request.getAnnouncementId());
 
         Application application = Application.builder()
-                .user(user)
-                // .announcement(announcement)
-                .reason(request.getReason())
-                .housingInfo(getHousingInfo(request))
-                .familyInfo(getFamilyInfo(request))
-                .careInfo(getCareInfo(request))
-                .financialInfo(getFinancialInfo(request))
-                .petExperienceInfo(getPetExperienceInfo(request))
-                .futurePlanInfo(getFuturePlanInfo(request))
-                .agreementInfo(getAgreementInfo(request))
-                .build();
+                                             .user(user)
+                                             .announcement(announcement)
+                                             .reason(request.getReason())
+                                             .housingInfo(getHousingInfo(request))
+                                             .familyInfo(getFamilyInfo(request))
+                                             .careInfo(getCareInfo(request))
+                                             .financialInfo(getFinancialInfo(request))
+                                             .petExperienceInfo(getPetExperienceInfo(request))
+                                             .futurePlanInfo(getFuturePlanInfo(request))
+                                             .agreementInfo(getAgreementInfo(request))
+                                             .build();
 
         applicationRepository.save(application);
 
         return ApplicationResponse.builder()
-                .applicationId(application.getId())
-                .message("신청이 완료되었습니다.")
-                .build();
+                                  .applicationId(application.getId())
+                                  .message("신청이 완료되었습니다.")
+                                  .build();
 
     }
 
