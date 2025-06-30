@@ -18,6 +18,7 @@ public class MeController {
 
     @GetMapping
     public ResponseEntity<Void> getDetail(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        userService.getUserDetail(userDetails);
         return null;
     }
 }
