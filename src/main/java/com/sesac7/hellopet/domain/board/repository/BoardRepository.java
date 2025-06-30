@@ -19,6 +19,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             + "or (:search = 'CONTENT' and (b.content like %:keyword%))"
             + ")")
     Page<Board> search(@Param("category") String category, @Param("search") String searchType,
-                       @Param("keyword") String keyword, Pageable pageable);
+                       @Param("sort") String sort, @Param("keyword") String keyword, Pageable pageable);
 
 }

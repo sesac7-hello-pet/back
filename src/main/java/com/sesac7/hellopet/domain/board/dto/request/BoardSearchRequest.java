@@ -17,8 +17,10 @@ public class BoardSearchRequest {
     @Enumerated(EnumType.STRING)
     private SearchType searchType = SearchType.TOTAL;
 
+    @Enumerated(EnumType.STRING)
+    private SortType sortType = SortType.CURRENT;
+
     private String keyword = "";
-    private String sort; // 정렬
     private Integer page = 0; // 현재 페이지
     private Integer size = 10; // 게시글 목록 수
 
