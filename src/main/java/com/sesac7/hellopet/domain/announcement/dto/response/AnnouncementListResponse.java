@@ -10,14 +10,14 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
-public class AnnouncementList {
+public class AnnouncementListResponse {
     private String breed;
     private String image;
     private boolean status;
     private Long id;
 
-    public static AnnouncementList from(Announcement announcement) {
-        return new AnnouncementList(
+    public static AnnouncementListResponse from(Announcement announcement) {
+        return new AnnouncementListResponse(
                 announcement.getPet().getBreed(),        // pet에서 breed 가져오기
                 announcement.getImageUrl(),               // announcement의 imageUrl 사용
                 announcement.getStatus() == AnnouncementStatus.ACTIVE, // enum 상태 변환 (예시)
