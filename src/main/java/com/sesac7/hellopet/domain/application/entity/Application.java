@@ -1,6 +1,7 @@
 package com.sesac7.hellopet.domain.application.entity;
 
 import com.sesac7.hellopet.domain.announcement.entity.Announcement;
+import com.sesac7.hellopet.domain.application.entity.info.agreement.AgreementInfo;
 import com.sesac7.hellopet.domain.application.entity.info.care.CareInfo;
 import com.sesac7.hellopet.domain.application.entity.info.experience.PetExperienceInfo;
 import com.sesac7.hellopet.domain.application.entity.info.family.FamilyInfo;
@@ -66,7 +67,8 @@ public class Application {
     @Embedded
     private FuturePlanInfo futurePlanInfo;
 
-    private boolean agreedToTerms;
+    @Embedded
+    private AgreementInfo agreementInfo;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -80,7 +82,7 @@ public class Application {
     public Application(User user, Announcement announcement, String reason, HousingInfo housingInfo,
                        FamilyInfo familyInfo,
                        CareInfo careInfo, FinancialInfo financialInfo, PetExperienceInfo petExperienceInfo,
-                       FuturePlanInfo futurePlanInfo, boolean agreedToTerms, ApplicationStatus status) {
+                       FuturePlanInfo futurePlanInfo, AgreementInfo agreementInfo, ApplicationStatus status) {
         this.applicant = user;
         this.announcement = announcement;
         this.reason = reason;
@@ -90,7 +92,7 @@ public class Application {
         this.financialInfo = financialInfo;
         this.petExperienceInfo = petExperienceInfo;
         this.futurePlanInfo = futurePlanInfo;
-        this.agreedToTerms = agreedToTerms;
+        this.agreementInfo = agreementInfo;
         this.status = status != null ? status : ApplicationStatus.PENDING;
     }
 

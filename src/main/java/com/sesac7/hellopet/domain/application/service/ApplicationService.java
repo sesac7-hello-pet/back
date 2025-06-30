@@ -1,6 +1,7 @@
 package com.sesac7.hellopet.domain.application.service;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
+import com.sesac7.hellopet.domain.application.dto.request.AgreementInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.request.ApplicationCreateRequest;
 import com.sesac7.hellopet.domain.application.dto.request.CareInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.request.FamilyInfoRequest;
@@ -9,6 +10,7 @@ import com.sesac7.hellopet.domain.application.dto.request.FuturePlanInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.request.HousingInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.request.PetExperienceInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.response.ApplicationResponse;
+import com.sesac7.hellopet.domain.application.entity.info.agreement.AgreementInfo;
 import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.info.care.CareInfo;
 import com.sesac7.hellopet.domain.application.entity.info.experience.PetExperienceInfo;
@@ -48,7 +50,7 @@ public class ApplicationService {
                                              .financialInfo(getFinancialInfo(request))
                                              .petExperienceInfo(getPetExperienceInfo(request))
                                              .futurePlanInfo(getFuturePlanInfo(request))
-                                             .agreedToTerms(request.isAgreedToTerms())
+                                             .agreementInfo(getAgreementInfo(request))
                                              .build();
 
         applicationRepository.save(application);
@@ -110,6 +112,15 @@ public class ApplicationService {
         return new FuturePlanInfo(
                 req.isHasFuturePlan(),
                 req.getPlanDetails()
+        );
+    }
+
+    private AgreementInfo getAgreementInfo(ApplicationCreateRequest request) {
+        AgreementInfoRequest req = request.getAgreement();
+        return new AgreementInfo(
+                req.getAgreedToAccuracy(),
+                req.getAgreedToCare(),
+                req.getAgreedToPrivacy()
         );
     }
 }
