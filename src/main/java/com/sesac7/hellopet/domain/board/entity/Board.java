@@ -12,13 +12,15 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "informal_boards")
+@Table(name = "boards")
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InformalBoard {
+public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,6 +31,7 @@ public class InformalBoard {
     @Column(nullable = false)
     private String content;
     private String image_url;
+
     private int likesCount;
     private int viewsCount;
     private int commentsCount;
@@ -45,4 +48,5 @@ public class InformalBoard {
 
     @ManyToOne
     private User user;
+
 }
