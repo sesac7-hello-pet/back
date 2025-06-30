@@ -8,7 +8,7 @@ import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
-import com.sesac7.hellopet.domain.user.Service.UserService;
+import com.sesac7.hellopet.domain.user.service.UserService;
 import com.sesac7.hellopet.domain.user.entity.User;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,8 @@ public class AnnouncementService {
     private final AnnouncementRepository announcementRepository;
     private final UserService userService;
 
-    public AnnouncementCreateResponse createAnnouncement (AnnouncementCreateRequest announcementCreateRequest, CustomUserDetails customUserDetails) {
+    public AnnouncementCreateResponse createAnnouncement(AnnouncementCreateRequest announcementCreateRequest,
+                                                         CustomUserDetails customUserDetails) {
 
         Pet pet = Pet.builder()
                 .breed(announcementCreateRequest.getBreed())

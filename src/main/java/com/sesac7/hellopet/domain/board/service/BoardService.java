@@ -8,8 +8,8 @@ import com.sesac7.hellopet.domain.board.dto.response.BoardPageResponse;
 import com.sesac7.hellopet.domain.board.dto.response.BoardResponse;
 import com.sesac7.hellopet.domain.board.entity.Board;
 import com.sesac7.hellopet.domain.board.repository.BoardRepository;
-import com.sesac7.hellopet.domain.user.Service.UserFinder;
 import com.sesac7.hellopet.domain.user.entity.User;
+import com.sesac7.hellopet.domain.user.service.UserFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,7 +51,7 @@ public class BoardService {
     }
 
     public BoardResponse createBoard(BoardCreateRequest request, CustomUserDetails customUserDetails) {
-        User user = userFinder.findLoginedUserByUsername(customUserDetails.getUsername());
+        User user = userFinder.findLoggedInUserByUsername(customUserDetails.getUsername());
         Board board = BoardCreateRequest.from(request, user);
         Board saved = repository.save(board);
         return BoardResponse.from(saved);
