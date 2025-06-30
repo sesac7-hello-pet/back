@@ -33,4 +33,5 @@ public class BoardController {
                                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.status(HttpStatus.CREATED).body(boardService.createBoard(request, customUserDetails));
     }
+
 }
