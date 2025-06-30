@@ -14,8 +14,12 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
+@Builder
 @Entity
 @Table(name = "announcements")
 @NoArgsConstructor
@@ -40,4 +44,6 @@ public class Announcement {
 
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+
+
 }
