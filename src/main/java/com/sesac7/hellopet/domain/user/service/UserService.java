@@ -1,6 +1,10 @@
 package com.sesac7.hellopet.domain.user.service;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
+import com.sesac7.hellopet.domain.announcement.entity.Announcement;
+import com.sesac7.hellopet.domain.application.dto.response.UserApplicationResponse;
+import com.sesac7.hellopet.domain.application.entity.Application;
+import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
@@ -16,6 +20,8 @@ import com.sesac7.hellopet.domain.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,6 +47,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationRepository applicationRepository;
 
     /**
      * 회원가입시 유저 정보를 가지고 User, UserDetail 엔티티를 저장하고 정보를 반환합니다.
@@ -52,8 +59,8 @@ public class UserService {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
 
         String profileUrl = StringUtils.hasText(request.getUserProfileUrl())
-                ? request.getUserProfileUrl()
-                : "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp";
+                            ? request.getUserProfileUrl()
+                            : "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp";
 
         if (doCheck(CheckField.EMAIL, request.getEmail()) && doCheck(CheckField.NICKNAME, request.getNickname())
                 && doCheck(CheckField.PHONE, request.getPhoneNumber())) {
@@ -156,5 +163,26 @@ public class UserService {
         request.updateUser(user, userDetail);
 
         return UserUpdateResponse.from(userDetail);
+    }
+
+    public Page<UserApplicationResponse> getApplications(CustomUserDetails userDetails, Pageable pageable) {
+        User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+        Page<Application> applications = applicationRepository.findByApplicantIdOrderBySubmittedAtDesc(
+                user.getId(),
+                pageable
+        );
+
+        return applications.map(application ->
+        {
+            Announcement announcement = application.getAnnouncement();
+
+            return UserApplicationResponse.builder()
+                                          .applicationId(application.getId())
+                                          .announcementId(announcement.getId())
+                                          .applicationStatusLabel(application.getStatus().name())
+                                          .submittedAt(application.getSubmittedAt())
+                                          .petImageUrl(announcement.getImageUrl())
+                                          .build();
+        });
     }
 }
