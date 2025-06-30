@@ -1,11 +1,14 @@
 package com.sesac7.hellopet.domain.user.Service;
 
+import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
 import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;
+import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
+import com.sesac7.hellopet.domain.user.entity.UserDetail;
 import com.sesac7.hellopet.domain.user.repository.UserDetailRepository;
 import com.sesac7.hellopet.domain.user.repository.UserRepository;
 import java.util.regex.Pattern;
@@ -131,8 +134,20 @@ public class UserService {
         return false;
     }
 
+    public UserDetailResponse getUserDetail(CustomUserDetails userDetails) {
+        User user = getUserByUsername(userDetails.getUsername());
+        UserDetail userDetail = user.getUserDetail();
+
+        return UserDetailResponse.from(userDetail);
+    }
+
+    public User getUserByUsername(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "not found user"));
+    }
+
     public User findUser(String username) {
         return userRepository.findByEmail(username)
-                             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, username));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "등록된 유저가 없습니다."));
     }
 }

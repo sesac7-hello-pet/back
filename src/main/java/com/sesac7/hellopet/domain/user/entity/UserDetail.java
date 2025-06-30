@@ -15,6 +15,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "user_details")
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDetail {
@@ -22,15 +23,12 @@ public class UserDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Getter
     @Setter
     private String nickname;
 
-    @Getter
     @Column(nullable = false)
     private String username;
 
-    @Getter
     @Setter
     private String userProfileUrl;
 

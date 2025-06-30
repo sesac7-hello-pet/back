@@ -31,7 +31,7 @@ public class BoardComment {
     private User user;
 
     @ManyToOne
-    private InformalBoard informalBoard;
+    private Board informalBoard;
 
     @ManyToOne
     private BoardComment parentComment;
