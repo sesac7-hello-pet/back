@@ -1,14 +1,17 @@
 package com.sesac7.hellopet.domain.user.Service;
 
+import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
 import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;
+import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
+import com.sesac7.hellopet.domain.user.entity.UserDetail;
 import com.sesac7.hellopet.domain.user.repository.UserDetailRepository;
 import com.sesac7.hellopet.domain.user.repository.UserRepository;
-import jakarta.persistence.EntityExistsException;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.regex.Pattern;
 
 @Service
 @Transactional
@@ -50,7 +51,8 @@ public class UserService {
                 ? request.getUserProfileUrl()
                 : "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp";
 
-        if(doCheck(CheckField.EMAIL, request.getEmail()) && doCheck(CheckField.NICKNAME, request.getNickname()) && doCheck(CheckField.PHONE, request.getPhoneNumber())) {
+        if (doCheck(CheckField.EMAIL, request.getEmail()) && doCheck(CheckField.NICKNAME, request.getNickname())
+                && doCheck(CheckField.PHONE, request.getPhoneNumber())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 사용중입니다");
         }
 
@@ -130,5 +132,22 @@ public class UserService {
         }
 
         return false;
+    }
+
+    public UserDetailResponse getUserDetail(CustomUserDetails userDetails) {
+        User user = getUserByUsername(userDetails.getUsername());
+        UserDetail userDetail = user.getUserDetail();
+
+        return UserDetailResponse.from(userDetail);
+    }
+
+    public User getUserByUsername(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "not found user"));
+    }
+
+    public User findUser(String username) {
+        return userRepository.findByEmail(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "등록된 유저가 없습니다."));
     }
 }
