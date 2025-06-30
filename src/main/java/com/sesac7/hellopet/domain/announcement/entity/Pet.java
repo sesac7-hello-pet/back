@@ -32,4 +32,10 @@ public class Pet {
 
     @Column(nullable = false)
     private String foundPlace;
+
+    @Column(nullable = false)
+    private String breed;
+
+    @Column(nullable = false)
+    private String date;
 }
