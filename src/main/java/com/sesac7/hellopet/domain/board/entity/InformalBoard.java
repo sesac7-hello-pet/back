@@ -1,4 +1,4 @@
-package com.sesac7.hellopet.domain.InformalBoard.entity;
+package com.sesac7.hellopet.domain.board.entity;
 
 import com.sesac7.hellopet.domain.user.entity.User;
 import jakarta.persistence.Column;
@@ -23,7 +23,7 @@ public class InformalBoard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 70)
     private String title;
 
     @Column(nullable = false)

@@ -38,7 +38,7 @@ public class UserDetail {
     private String address;
 
     @Column(nullable = false)
-    private Integer phoneNumber;
+    private String phoneNumber;
 
     @OneToOne
     @JoinColumn(name = "user_id")
