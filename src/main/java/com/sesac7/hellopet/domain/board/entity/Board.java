@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.board.entity;
 
+import com.sesac7.hellopet.domain.board.dto.response.BoardResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,7 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "informal_boards")
+@Table(name = "boards")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Board {
@@ -29,6 +30,7 @@ public class Board {
     @Column(nullable = false)
     private String content;
     private String image_url;
+
     private int likesCount;
     private int viewsCount;
     private int commentsCount;
@@ -45,4 +47,22 @@ public class Board {
 
     @ManyToOne
     private User user;
+
+    public BoardResponse toResponse() {
+        BoardResponse boardResponse = new BoardResponse();
+        boardResponse.setId(id);
+        boardResponse.setNickname(user.getUserDetail().getNickname());
+        boardResponse.setTitle(title);
+        boardResponse.setContent(content);
+        boardResponse.setImage_url(image_url);
+        boardResponse.setLikesCount(likesCount);
+        boardResponse.setViewsCount(viewsCount);
+        boardResponse.setCommentsCount(commentsCount);
+        boardResponse.setCreateAt(createdAt);
+        boardResponse.setUpdateAt(updatedAt);
+        boardResponse.setCategory(boardCategory);
+        boardResponse.setPetType(petType);
+        return boardResponse;
+    }
+
 }
