@@ -14,7 +14,7 @@ public class UserFinderImpl implements UserFinder {
     private final UserRepository userRepository;
 
     @Override
-    public User findUserByUsername(String email) {
+    public User findLoginedUserByUsername(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "등록된 유저가 없습니다."));
     }
