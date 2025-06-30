@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    
+
     @Query("select  b from Board b where (:category = 'TOTAL' or b.boardCategory = :category ) "
             + "and (:search = 'TOTAL' and (b.title like %:keyword% or b.content like %:keyword% or b.user.userDetail.nickname like %:keyword%))"
             + "or (:search = 'USERNAME' and (b.user.userDetail.nickname like %:keyword% ) "
