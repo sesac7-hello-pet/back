@@ -4,7 +4,6 @@ import com.sesac7.hellopet.domain.board.dto.request.BoardSearchRequest;
 import com.sesac7.hellopet.domain.board.dto.request.SortType;
 import com.sesac7.hellopet.domain.board.dto.response.BoardPageResponse;
 import com.sesac7.hellopet.domain.board.dto.response.BoardResponse;
-import com.sesac7.hellopet.domain.board.entity.Board;
 import com.sesac7.hellopet.domain.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,7 +23,7 @@ public class BoardService {
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), sort);
 
         Page<BoardResponse> responses = repository.search(request.getCategory().name(), request.getSearchType().name(),
-                request.getSortType().name(), request.getKeyword(), pageable).map(Board::toResponse);
+                request.getSortType().name(), request.getKeyword(), pageable).map(BoardResponse::from);
 
         return BoardPageResponse.from(responses, request);
     }
