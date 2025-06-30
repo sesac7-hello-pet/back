@@ -3,6 +3,7 @@ package com.sesac7.hellopet.domain.user.controller;
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.user.dto.request.UserUpdateRequest;
 import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
+import com.sesac7.hellopet.domain.user.dto.response.UserUpdateResponse;
 import com.sesac7.hellopet.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +29,8 @@ public class MeController {
     }
 
     @PutMapping
-    public ResponseEntity<Void> updateDetail(@Valid @RequestBody UserUpdateRequest request,
-                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        userService.updateUserDetail(request, userDetails);
-        return null;
+    public ResponseEntity<UserUpdateResponse> updateDetail(@Valid @RequestBody UserUpdateRequest request,
+                                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserDetail(request, userDetails));
     }
 }

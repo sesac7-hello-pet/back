@@ -8,6 +8,7 @@ import com.sesac7.hellopet.domain.user.dto.request.UserUpdateRequest;
 import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
+import com.sesac7.hellopet.domain.user.dto.response.UserUpdateResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.entity.UserDetail;
 import com.sesac7.hellopet.domain.user.repository.UserDetailRepository;
@@ -145,7 +146,7 @@ public class UserService {
         return UserDetailResponse.from(user, userDetail);
     }
 
-    public void updateUserDetail(@Valid UserUpdateRequest request, CustomUserDetails userDetails) {
+    public UserUpdateResponse updateUserDetail(@Valid UserUpdateRequest request, CustomUserDetails userDetails) {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         doCheck(CheckField.NICKNAME, request.getNickname());
 
@@ -153,5 +154,7 @@ public class UserService {
         UserDetail userDetail = userDetailRepository.findByUser(user);
 
         request.updateUser(user, userDetail);
+
+        return UserUpdateResponse.from(userDetail);
     }
 }
