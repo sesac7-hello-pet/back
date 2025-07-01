@@ -37,6 +37,9 @@ public class User {
     private UserRole role;
 
     @Setter
+    private Boolean activation;
+
+    @Setter
     @OneToOne(mappedBy = "user",
             cascade = CascadeType.PERSIST)
     private UserDetail userDetail;

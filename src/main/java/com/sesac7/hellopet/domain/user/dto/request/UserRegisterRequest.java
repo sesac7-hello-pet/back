@@ -50,7 +50,7 @@ public class UserRegisterRequest {
     private String userProfileUrl;
 
     public User toDomain(String userProfileUrl) {
-        User user = new User(null, email, password, role, null);
+        User user = new User(null, email, password, role, true, null);
         UserDetail userDetail = new UserDetail(null, nickname, username, userProfileUrl, address,
                 phoneNumber, user);
         user.setUserDetail(userDetail);

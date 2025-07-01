@@ -1,6 +1,7 @@
 package com.sesac7.hellopet.domain.user.service;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
+import com.sesac7.hellopet.domain.auth.dto.request.CheckPasswordRequest;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
@@ -52,8 +53,8 @@ public class UserService {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
 
         String profileUrl = StringUtils.hasText(request.getUserProfileUrl())
-                            ? request.getUserProfileUrl()
-                            : "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp";
+                ? request.getUserProfileUrl()
+                : "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp";
 
         if (doCheck(CheckField.EMAIL, request.getEmail()) && doCheck(CheckField.NICKNAME, request.getNickname())
                 && doCheck(CheckField.PHONE, request.getPhoneNumber())) {
@@ -69,6 +70,7 @@ public class UserService {
         return userRepository.findByEmailToLoginResponse(username);
     }
 
+    @Transactional(readOnly = true)
     public ExistResponse checkExist(CheckField field, String value) {
 
         boolean exists = doCheck(field, value);
@@ -156,5 +158,14 @@ public class UserService {
         request.updateUser(user, userDetail);
 
         return UserUpdateResponse.from(userDetail);
+    }
+
+    public boolean verifyLoggedInUserPassword(User loggedInUser, @Valid CheckPasswordRequest request) {
+        return passwordEncoder.matches(request.getPassword(), loggedInUser.getPassword());
+    }
+
+    public void disableUser(CustomUserDetails userDetails) {
+        User foundUser = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+        foundUser.setActivation(false);
     }
 }

@@ -51,12 +51,12 @@ public class ApplicationService {
             Announcement announcement = application.getAnnouncement();
 
             return UserApplicationResponse.builder()
-                                          .applicationId(application.getId())
-                                          .announcementId(announcement.getId())
-                                          .applicationStatusLabel(application.getStatus().name())
-                                          .submittedAt(application.getSubmittedAt())
-                                          .petImageUrl(announcement.getImageUrl())
-                                          .build();
+                    .applicationId(application.getId())
+                    .announcementId(announcement.getId())
+                    .applicationStatusLabel(application.getStatus().name())
+                    .submittedAt(application.getSubmittedAt())
+                    .petImageUrl(announcement.getImageUrl())
+                    .build();
         });
     }
 
@@ -66,24 +66,24 @@ public class ApplicationService {
         Announcement announcement = announcementService.findById(request.getAnnouncementId());
 
         Application application = Application.builder()
-                                             .user(user)
-                                             .announcement(announcement)
-                                             .reason(request.getReason())
-                                             .housingInfo(getHousingInfo(request))
-                                             .familyInfo(getFamilyInfo(request))
-                                             .careInfo(getCareInfo(request))
-                                             .financialInfo(getFinancialInfo(request))
-                                             .petExperienceInfo(getPetExperienceInfo(request))
-                                             .futurePlanInfo(getFuturePlanInfo(request))
-                                             .agreementInfo(getAgreementInfo(request))
-                                             .build();
+                .user(user)
+                .announcement(announcement)
+                .reason(request.getReason())
+                .housingInfo(getHousingInfo(request))
+                .familyInfo(getFamilyInfo(request))
+                .careInfo(getCareInfo(request))
+                .financialInfo(getFinancialInfo(request))
+                .petExperienceInfo(getPetExperienceInfo(request))
+                .futurePlanInfo(getFuturePlanInfo(request))
+                .agreementInfo(getAgreementInfo(request))
+                .build();
 
         applicationRepository.save(application);
 
         return ApplicationResponse.builder()
-                                  .applicationId(application.getId())
-                                  .message("신청이 완료되었습니다.")
-                                  .build();
+                .applicationId(application.getId())
+                .message("신청이 완료되었습니다.")
+                .build();
 
     }
 
