@@ -25,8 +25,8 @@ public class BoardResponse {
     private int viewsCount;
     private int commentsCount;
 
-    private LocalDateTime createAt;
-    private LocalDateTime updateAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @NotNull(message = "카테고리 선택은 필수입니다.")
     private BoardCategory category;

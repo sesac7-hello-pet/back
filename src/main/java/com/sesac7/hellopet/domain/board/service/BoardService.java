@@ -12,13 +12,14 @@ import com.sesac7.hellopet.domain.board.repository.BoardRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
-import java.nio.file.AccessDeniedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -53,18 +54,17 @@ public class BoardService {
 
     }
 
-    public BoardResponse createBoard(BoardCreateRequest request, CustomUserDetails customUserDetails) {
-        User user = userFinder.findLoggedInUserByUsername(customUserDetails.getUsername());
+    public BoardResponse createBoard(BoardCreateRequest request, CustomUserDetails details) {
+        User user = userFinder.findLoggedInUserByUsername(details.getUsername());
         Board board = BoardCreateRequest.from(request, user);
         Board saved = repository.save(board);
         return BoardResponse.from(saved);
     }
 
-    public BoardResponse updateBoard(Long boardId, BoardUpdateRequest request, CustomUserDetails customUserDetails)
-            throws AccessDeniedException {
+    public BoardResponse updateBoard(Long boardId, BoardUpdateRequest request, CustomUserDetails details) {
         Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
         String writer = board.getUser().getEmail();
-        String userEmail = customUserDetails.getUsername();
+        String userEmail = details.getUsername();
         if (writer.equals(userEmail)) {
             board.setTitle(request.getTitle());
             board.setContent(request.getContent());
@@ -74,7 +74,18 @@ public class BoardService {
             Board saved = repository.save(board);
             return BoardResponse.from(saved);
         } else {
-            throw new AccessDeniedException("해당 게시글을 수정할 권한이 없습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 게시글을 수정할 권한이 없습니다.");
+        }
+    }
+
+    public void deleteBoard(Long boardId, CustomUserDetails details) {
+        Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+        String writer = board.getUser().getEmail();
+        String userEmail = details.getUsername();
+        if (writer.equals(userEmail)) {
+            repository.delete(board);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 게시글을 삭제할 권한이 없습니다.");
         }
     }
 }
