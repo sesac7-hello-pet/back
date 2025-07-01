@@ -5,6 +5,7 @@ import com.sesac7.hellopet.domain.board.dto.request.BoardCreateRequest;
 import com.sesac7.hellopet.domain.board.dto.request.BoardSearchRequest;
 import com.sesac7.hellopet.domain.board.dto.request.BoardUpdateRequest;
 import com.sesac7.hellopet.domain.board.dto.request.SortType;
+import com.sesac7.hellopet.domain.board.dto.response.BoardDetailResponse;
 import com.sesac7.hellopet.domain.board.dto.response.BoardPageResponse;
 import com.sesac7.hellopet.domain.board.dto.response.BoardResponse;
 import com.sesac7.hellopet.domain.board.entity.Board;
@@ -92,5 +93,9 @@ public class BoardService {
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 게시글을 삭제할 권한이 없습니다.");
         }
+    }
+
+    public BoardDetailResponse getBoardDetail(Long boardId) {
+        
     }
 }
