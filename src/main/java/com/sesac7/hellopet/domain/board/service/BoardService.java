@@ -67,7 +67,7 @@ public class BoardService {
     }
 
     public BoardResponse updateBoard(Long boardId, BoardUpdateRequest request, CustomUserDetails details) {
-        Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+        Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
         String writer = board.getUser().getEmail();
         String userEmail = details.getUsername();
         if (writer.equals(userEmail)) {
@@ -85,7 +85,7 @@ public class BoardService {
     }
 
     public void deleteBoard(Long boardId, CustomUserDetails details) {
-        Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+        Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
         String writer = board.getUser().getEmail();
         String userEmail = details.getUsername();
         if (writer.equals(userEmail)) {
@@ -95,7 +95,9 @@ public class BoardService {
         }
     }
 
+    @Transactional(readOnly = true)
     public BoardDetailResponse getBoardDetail(Long boardId) {
-        
+        Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
+        return BoardDetailResponse.from(board);
     }
 }

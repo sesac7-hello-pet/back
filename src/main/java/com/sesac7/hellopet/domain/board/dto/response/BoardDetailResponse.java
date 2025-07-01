@@ -1,23 +1,23 @@
 package com.sesac7.hellopet.domain.board.dto.response;
 
-import com.sesac7.hellopet.domain.board.entity.BoardCategory;
-import com.sesac7.hellopet.domain.board.entity.PetType;
-import com.sesac7.hellopet.domain.comment.entity.Comment;
-import java.time.LocalDateTime;
+import com.sesac7.hellopet.domain.board.entity.Board;
+import com.sesac7.hellopet.domain.comment.dto.response.CommentResponse;
+import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public class BoardDetailResponse {
-    private Long id;
-    private String nickname;
-    private String title;
-    private String content;
-    private String img_url;
-    private BoardCategory boardCategory;
-    private PetType petType;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private int likesCount;
-    private int viewsCount;
-    private int commentsCount;
-    private List<Comment> commentList;
+    private BoardResponse boardResponse;
+    private List<CommentResponse> commentList = new ArrayList<>();
+
+    public static BoardDetailResponse from(Board board) {
+        return new BoardDetailResponse(
+                BoardResponse.from(board),
+                board.getComment().stream().map(CommentResponse::from).toList()
+        );
+
+    }
 }
