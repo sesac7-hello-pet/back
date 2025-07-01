@@ -34,12 +34,7 @@ public class CommentService {
         // 유저 정보
         User user = userFinder.findLoggedInUserByUsername(details.getUsername());
 
-        Comment comment = Comment.builder()
-                .content(request.getContent())
-                .createdAt(LocalDateTime.now())
-                .board(board)
-                .user(user)
-                .build();
+        Comment comment = request.toDomain(board, user);
 
         Comment saved = commentRepository.save(comment);
         return CommentResponse.from(saved);
@@ -50,6 +45,10 @@ public class CommentService {
         Page<Comment> comments = commentRepository.findByBoardId(boardId, PageRequest.of(page, size));
         Page<CommentResponse> pageResponse = comments.map(CommentResponse::from);
         return CommentPageResponse.from(pageResponse, page, size);
+
+    }
+
+    public CommentResponse updateComment(Long boardId, Long commentId) {
 
     }
 }
