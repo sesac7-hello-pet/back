@@ -15,6 +15,7 @@ import com.sesac7.hellopet.domain.user.entity.UserDetail;
 import com.sesac7.hellopet.domain.user.repository.UserDetailRepository;
 import com.sesac7.hellopet.domain.user.repository.UserRepository;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -167,5 +168,9 @@ public class UserService {
     public void disableUser(CustomUserDetails userDetails) {
         User foundUser = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
         foundUser.setActivation(false);
+    }
+
+    public void getUsers() {
+        List<User> users = userRepository.findAll();
     }
 }
