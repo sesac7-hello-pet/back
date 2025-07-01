@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,15 +34,22 @@ public class BoardController {
 
     @PostMapping
     public ResponseEntity<BoardResponse> createBoard(@RequestBody @Valid BoardCreateRequest request,
-                                                     @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(boardService.createBoard(request, customUserDetails));
+                                                     @AuthenticationPrincipal CustomUserDetails details) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(boardService.createBoard(request, details));
     }
 
     @PutMapping("/{boardId}")
     public ResponseEntity<BoardResponse> updateBoard(@PathVariable Long boardId,
                                                      @RequestBody @Valid BoardUpdateRequest request,
-                                                     @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        return ResponseEntity.ok(boardService.updateBoard(boardId, request, customUserDetails));
+                                                     @AuthenticationPrincipal CustomUserDetails details) {
+        return ResponseEntity.ok(boardService.updateBoard(boardId, request, details));
+    }
+
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<Void> deleteBoard(@PathVariable Long boardId,
+                                            @AuthenticationPrincipal CustomUserDetails details) {
+        boardService.deleteBoard(boardId, details);
+        return ResponseEntity.noContent().build();
     }
 
 }
