@@ -2,9 +2,11 @@ package com.sesac7.hellopet.domain.announcement.controller;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementCreateRequest;
+import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.service.AnnouncementService;
+import jakarta.persistence.Id;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,16 +34,21 @@ public class AnnouncementController {
         
     }
     /**
-     * 전체 게시글 조회
-     */
-    /**
      * 전체 입양 게시글 리스트 조회
      */
+
     @GetMapping
     public ResponseEntity<List<AnnouncementListResponse>> getAllAnnouncements() {
         List<AnnouncementListResponse> announcements = announcementService.getAllAnnouncements();
         return ResponseEntity.ok(announcements);
     }
 
-
+    /***
+     * 입양 리스트 상세 조회
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<AnnouncementDetailResponse> getAnnouncementDetail(@PathVariable Long id) {
+        AnnouncementDetailResponse detail = announcementService.getAnnouncementDetail(id);
+        return ResponseEntity.ok(detail);
+    }
 }
