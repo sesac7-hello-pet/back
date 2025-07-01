@@ -40,6 +40,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +52,21 @@ public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final UserFinder userFinder;
     private final AnnouncementService announcementService;
+
+    public void deleteApplication(Long id, CustomUserDetails userDetails) {
+        Application application = applicationRepository.findById(id)
+                                                       .orElseThrow(() -> new EntityNotFoundException(
+                                                               "해당 입양 신청서를 찾을 수 없습니다. id=" + id)
+                                                       );
+
+        User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+
+        if (!application.getApplicant().getId().equals(user.getId())) {
+            throw new AccessDeniedException("입양 신청서를 삭제할 권한이 없습니다.");
+        }
+
+        applicationRepository.delete(application);
+    }
 
     @Transactional(readOnly = true)
     public ApplicationDetailResponse getApplication(Long id) {
