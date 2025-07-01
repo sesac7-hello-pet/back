@@ -114,7 +114,7 @@ public class DataSetterImpl implements DataSetter {
                     0, 0, 0, LocalDateTime.now(), null,
                     boardCategory[ThreadLocalRandom.current().nextInt(boardCategory.length)],
                     petType[ThreadLocalRandom.current().nextInt(petType.length)],
-                    users.get(getRandomIndex(users))
+                    users.get(getRandomIndex(users)), null
             );
 
             boardRepository.save(board);
