@@ -9,8 +9,11 @@ import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserUpdateResponse;
 import com.sesac7.hellopet.domain.user.service.UserService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,8 +45,11 @@ public class MeController {
 
     @DeleteMapping
     public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        userService.disableUser(userDetails);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        List<ResponseCookie> responseCookies = userService.disableUser(userDetails);
+        return ResponseEntity.noContent()
+                             .header(HttpHeaders.SET_COOKIE, responseCookies.get(0).toString())
+                             .header(HttpHeaders.SET_COOKIE, responseCookies.get(1).toString())
+                             .build();
     }
 
     @GetMapping("/applications")
