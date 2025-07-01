@@ -12,3 +12,4 @@ public class BoardUpdateRequest {
     private BoardCategory boardCategory;
     private PetType petType;
 }
+
