@@ -26,8 +26,10 @@ import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.entity.UserDetail;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,42 +46,58 @@ public class ApplicationService {
     @Transactional(readOnly = true)
     public Page<ShelterApplicationResponse> getShelterApplications(Long id, Pageable pageable) {
         Announcement announcement = announcementService.findById(id);
-        Page<Application> applications = applicationRepository.findByAnnouncementIdOrderBySubmittedAtDesc(id, pageable);
 
-        return applications.map(application ->
-        {
-            UserDetail userdetail = application.getApplicant().getUserDetail();
+        List<Application> applications = applicationRepository.findApplicationsWithUserDetailByAnnouncementId(id);
 
-            return ShelterApplicationResponse.builder()
-                                             .announcementId(announcement.getId())
-                                             .announcementCreatedAt(announcement.getCreateAt())
-                                             .userName(userdetail.getUsername())
-                                             .userPhoneNumber(userdetail.getPhoneNumber())
-                                             .userEmail(application.getApplicant().getEmail())
-                                             .build();
-        });
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), applications.size());
+        List<Application> paged = applications.subList(start, end);
+
+        List<ShelterApplicationResponse> content = paged
+                .stream()
+                .map(application -> {
+                    UserDetail userDetail = application.getApplicant().getUserDetail();
+
+                    return ShelterApplicationResponse.builder()
+                                                     .announcementId(announcement.getId())
+                                                     .announcementCreatedAt(announcement.getCreateAt())
+                                                     .userName(userDetail.getUsername())
+                                                     .userPhoneNumber(userDetail.getPhoneNumber())
+                                                     .userEmail(application.getApplicant().getEmail())
+                                                     .build();
+                })
+                .toList();
+
+        return new PageImpl<>(content, pageable, applications.size());
     }
 
     @Transactional(readOnly = true)
     public Page<UserApplicationResponse> getUserApplications(CustomUserDetails userDetails, Pageable pageable) {
         User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
-        Page<Application> applications = applicationRepository.findByApplicantIdOrderBySubmittedAtDesc(
-                user.getId(),
-                pageable
-        );
 
-        return applications.map(application ->
-        {
-            Announcement announcement = application.getAnnouncement();
+        List<Application> applications = applicationRepository.findApplicationsWithAnnouncementByApplicantId(
+                user.getId());
 
-            return UserApplicationResponse.builder()
-                                          .applicationId(application.getId())
-                                          .announcementId(announcement.getId())
-                                          .applicationStatusLabel(application.getStatus().name())
-                                          .submittedAt(application.getSubmittedAt())
-                                          .petImageUrl(announcement.getImageUrl())
-                                          .build();
-        });
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), applications.size());
+        List<Application> paged = applications.subList(start, end);
+
+        List<UserApplicationResponse> content = paged
+                .stream()
+                .map(application -> {
+                    Announcement announcement = application.getAnnouncement();
+
+                    return UserApplicationResponse.builder()
+                                                  .applicationId(application.getId())
+                                                  .announcementId(announcement.getId())
+                                                  .applicationStatusLabel(application.getStatus().name())
+                                                  .submittedAt(application.getSubmittedAt())
+                                                  .petImageUrl(announcement.getImageUrl())
+                                                  .build();
+                })
+                .toList();
+
+        return new PageImpl<>(content, pageable, applications.size());
     }
 
     public ApplicationResponse createApplication(ApplicationCreateRequest request, CustomUserDetails userDetails) {
