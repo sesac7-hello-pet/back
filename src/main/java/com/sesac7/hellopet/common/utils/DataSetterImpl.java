@@ -49,10 +49,10 @@ public class DataSetterImpl implements DataSetter {
             } else {
                 role = UserRole.SHELTER;
             }
-            String phone = new StringBuilder().append("010").append(getRandomIntInRange(1000, 9999))
-                    .append(getRandomIntInRange(1000, 9999)).toString();
+            String phone = "010" + getRandomIntInRange(1000, 9999)
+                    + getRandomIntInRange(1000, 9999);
 
-            User user = new User(null, "test" + i + "@test.com", passwordEncoder.encode("!test1234"), role, null);
+            User user = new User(null, "test" + i + "@test.com", passwordEncoder.encode("!test1234"), role, true, null);
 
             UserDetail userDetail = new UserDetail(null,
                     data.getNicknames().get(getRandomIndex(data.getNicknames())) + i,
@@ -82,10 +82,12 @@ public class DataSetterImpl implements DataSetter {
                     data.getPersonalities().get(getRandomIndex(data.getPersonalities())),
                     i % 10,
 
-
                     data.getAddresses().get(getRandomIndex(data.getAddresses())),
-                    "견종"
+                    "견종",
+                    data.getDogPhotos().get(getRandomIndex(data.getDogPhotos()))
+
                     );
+
 
             petRepository.save(pet);
 
@@ -93,7 +95,6 @@ public class DataSetterImpl implements DataSetter {
                     shelters.get(getRandomIndex(shelters)),
                     AnnouncementStatus.IN_PROGRESS,
                     pet,
-                    data.getDogPhotos().get(getRandomIndex(data.getDogPhotos())),
                     LocalDateTime.now(), null);
 
             announcementRepository.save(announcement);
@@ -115,7 +116,7 @@ public class DataSetterImpl implements DataSetter {
                     0, 0, 0, LocalDateTime.now(), null,
                     boardCategory[ThreadLocalRandom.current().nextInt(boardCategory.length)],
                     petType[ThreadLocalRandom.current().nextInt(petType.length)],
-                    users.get(getRandomIndex(users))
+                    users.get(getRandomIndex(users)), null
             );
 
             boardRepository.save(board);

@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.global.exception;
 
+import com.sesac7.hellopet.global.exception.custom.WithdrawUserException;
 import com.sesac7.hellopet.global.exception.dto.response.ErrorMessage;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +17,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorMessage> responseStatusExceptionHandler(ResponseStatusException e) {
         return ResponseEntity.status(e.getStatusCode())
-                             .body(new ErrorMessage(String.valueOf(e.getStatusCode().value()), e.getReason()));
+                .body(new ErrorMessage(String.valueOf(e.getStatusCode().value()), e.getReason()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -32,5 +33,11 @@ public class GlobalExceptionHandler {
         });
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(WithdrawUserException.class)
+    public ResponseEntity<ErrorMessage> responseInactivationUserExceptionHandler(WithdrawUserException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorMessage(HttpStatus.FORBIDDEN.toString(),
+                e.getMessage()));
     }
 }

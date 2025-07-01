@@ -39,4 +39,9 @@ public class Pet {
 
     @Column(nullable = false)
     private String breed;
+
+    @Column
+    private String imageUrl;
+
+
 }
