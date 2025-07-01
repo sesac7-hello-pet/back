@@ -14,10 +14,12 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "boards")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Board {
@@ -48,5 +50,5 @@ public class Board {
 
     @ManyToOne
     private User user;
-    
+
 }
