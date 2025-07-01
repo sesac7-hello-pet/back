@@ -21,4 +21,3 @@ public class ApplicationDetailResponse {
     private AgreementInfoResponse agreement;
     private LocalDateTime submittedAt;
 }
-

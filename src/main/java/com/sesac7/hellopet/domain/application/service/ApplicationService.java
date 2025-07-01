@@ -52,6 +52,7 @@ public class ApplicationService {
     private final UserFinder userFinder;
     private final AnnouncementService announcementService;
 
+    @Transactional(readOnly = true)
     public ApplicationDetailResponse getApplication(Long id) {
         Application application = applicationRepository.findById(id)
                                                        .orElseThrow(() -> new EntityNotFoundException(
