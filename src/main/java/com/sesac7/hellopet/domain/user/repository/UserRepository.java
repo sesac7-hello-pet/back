@@ -1,6 +1,7 @@
 package com.sesac7.hellopet.domain.user.repository;
 
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
+import com.sesac7.hellopet.domain.user.dto.response.AdminUserListResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
 
 import java.util.List;
@@ -33,4 +34,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsUserByEmail(String value);
 
     List<User> findByRole(UserRole userRole);
+
+    @Query("""
+            select new com.sesac7.hellopet.domain.user.dto.response.AdminUserListResponse(
+                u.id,
+                u.email,
+                u.role,
+                ud.nickname,
+                ud.username,
+                ud.phoneNumber
+            )
+            from User u
+            join u.userDetail ud
+            """)
+    List<AdminUserListResponse> findAdminUserList();
 }

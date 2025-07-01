@@ -6,6 +6,7 @@ import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
 import com.sesac7.hellopet.domain.user.dto.request.UserUpdateRequest;
+import com.sesac7.hellopet.domain.user.dto.response.AdminUserListResponse;
 import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
@@ -170,7 +171,7 @@ public class UserService {
         foundUser.setActivation(false);
     }
 
-    public void getUsers() {
-        List<User> users = userRepository.findAll();
+    public List<AdminUserListResponse> getUsers() {
+        return userRepository.findAdminUserList();
     }
 }

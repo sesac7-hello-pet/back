@@ -1,11 +1,13 @@
 package com.sesac7.hellopet.domain.user.controller;
 
+import com.sesac7.hellopet.domain.user.dto.response.AdminUserListResponse;
 import com.sesac7.hellopet.domain.user.service.UserService;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
 import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +34,8 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public void getUsers() {
-        userService.getUsers();
+    public List<AdminUserListResponse> getUsers() {
+        return userService.getUsers();
     }
 
 }
