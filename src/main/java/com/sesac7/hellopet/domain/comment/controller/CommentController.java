@@ -1,9 +1,11 @@
 package com.sesac7.hellopet.domain.comment.controller;
 
-import com.sesac7.hellopet.domain.comment.dto.request.BoardCommentCreateRequest;
-import com.sesac7.hellopet.domain.comment.dto.response.BoardCommentResponse;
+import com.sesac7.hellopet.common.utils.CustomUserDetails;
+import com.sesac7.hellopet.domain.comment.dto.request.CommentCreateRequest;
+import com.sesac7.hellopet.domain.comment.dto.response.CommentResponse;
 import com.sesac7.hellopet.domain.comment.service.CommentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +17,9 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<BoardCommentResponse> createComment(BoardCommentCreateRequest request,
-                                                              @PathVariable Long boardId) {
-        return ResponseEntity.ok(commentService.createComment(request, boardId));
+    public ResponseEntity<CommentResponse> createComment(CommentCreateRequest request,
+                                                         @PathVariable Long boardId,
+                                                         @AuthenticationPrincipal CustomUserDetails details) {
+        return ResponseEntity.ok(commentService.createComment(request, boardId, details));
     }
 }

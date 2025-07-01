@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.comment.entity;
 
+import com.sesac7.hellopet.domain.board.entity.Board;
 import com.sesac7.hellopet.domain.user.entity.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +24,9 @@ public class Comment {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @ManyToOne
+    private Board board;
 
     @ManyToOne
     private User user;

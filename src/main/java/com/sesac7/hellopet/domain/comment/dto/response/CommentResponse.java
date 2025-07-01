@@ -2,10 +2,11 @@ package com.sesac7.hellopet.domain.comment.dto.response;
 
 import java.time.LocalDateTime;
 
-public class BoardCommentResponse {
+public class CommentResponse {
     private Long id;
     private String nickname;
-    private String comment;
+    private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long boardId;
 }
