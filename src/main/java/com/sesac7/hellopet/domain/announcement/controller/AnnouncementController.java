@@ -2,11 +2,15 @@ package com.sesac7.hellopet.domain.announcement.controller;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementCreateRequest;
-import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
+import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.service.AnnouncementService;
+import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationResponse;
+import com.sesac7.hellopet.domain.application.service.ApplicationService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,18 +22,22 @@ import org.springframework.web.bind.annotation.*;
 public class AnnouncementController {
 
     private final AnnouncementService announcementService;
+    private final ApplicationService applicationService;
 
     /**
      * 게시글 등록
+     *
      * @param announcementCreateRequest
      * @param customUserDetails
      * @return
      */
     @PostMapping
-    public ResponseEntity<AnnouncementCreateResponse> createAnnouncement(@RequestBody AnnouncementCreateRequest announcementCreateRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ResponseEntity<AnnouncementCreateResponse> createAnnouncement(
+            @RequestBody AnnouncementCreateRequest announcementCreateRequest,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.status(HttpStatus.CREATED).body(announcementService.createAnnouncement(
                 announcementCreateRequest, customUserDetails));
-        
+
     }
     /**
      * 전체 게시글 조회
@@ -43,5 +51,12 @@ public class AnnouncementController {
         return ResponseEntity.ok(announcements);
     }
 
+    @GetMapping("/{id}/applications")
+    public ResponseEntity<Page<ShelterApplicationResponse>> getApplications(
+            @PathVariable Long id,
+            @ModelAttribute Pageable pageable) {
 
+        Page<ShelterApplicationResponse> responses = applicationService.getShelterApplications(id, pageable);
+        return ResponseEntity.ok(responses);
+    }
 }

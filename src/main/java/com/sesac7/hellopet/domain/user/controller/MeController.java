@@ -45,7 +45,7 @@ public class MeController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @ModelAttribute Pageable pageable) { // 프론트에서 ?page=0&size=10와 같이 호출하면 Pageable로 매핑됨
 
-        Page<UserApplicationResponse> response = applicationService.getApplications(userDetails, pageable);
+        Page<UserApplicationResponse> response = applicationService.getUserApplications(userDetails, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
