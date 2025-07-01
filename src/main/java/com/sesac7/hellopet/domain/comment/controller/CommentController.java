@@ -2,6 +2,7 @@ package com.sesac7.hellopet.domain.comment.controller;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.comment.dto.request.CommentCreateRequest;
+import com.sesac7.hellopet.domain.comment.dto.request.CommentUpdateRequest;
 import com.sesac7.hellopet.domain.comment.dto.response.CommentPageResponse;
 import com.sesac7.hellopet.domain.comment.dto.response.CommentResponse;
 import com.sesac7.hellopet.domain.comment.service.CommentService;
@@ -41,8 +42,9 @@ public class CommentController {
     }
 
     @PutMapping("{commentId}")
-    public ResponseEntity<CommentResponse> updateComment(@PathVariable Long boardId, @PathVariable Long commentId) {
-        return ResponseEntity.ok(commentService.updateComment(boardId, commentId));
+    public ResponseEntity<CommentResponse> updateComment(@PathVariable Long commentId, @RequestBody
+    CommentUpdateRequest request) {
+        return ResponseEntity.ok(commentService.updateComment(commentId, request));
     }
 
 }

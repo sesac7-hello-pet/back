@@ -4,6 +4,7 @@ import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.board.entity.Board;
 import com.sesac7.hellopet.domain.board.repository.BoardRepository;
 import com.sesac7.hellopet.domain.comment.dto.request.CommentCreateRequest;
+import com.sesac7.hellopet.domain.comment.dto.request.CommentUpdateRequest;
 import com.sesac7.hellopet.domain.comment.dto.response.CommentPageResponse;
 import com.sesac7.hellopet.domain.comment.dto.response.CommentResponse;
 import com.sesac7.hellopet.domain.comment.entity.Comment;
@@ -41,6 +42,7 @@ public class CommentService {
 
     }
 
+    @Transactional(readOnly = true)
     public CommentPageResponse getComments(Long boardId, int page, int size) {
         Page<Comment> comments = commentRepository.findByBoardId(boardId, PageRequest.of(page, size));
         Page<CommentResponse> pageResponse = comments.map(CommentResponse::from);
@@ -48,7 +50,11 @@ public class CommentService {
 
     }
 
-    public CommentResponse updateComment(Long boardId, Long commentId) {
-
+    public CommentResponse updateComment(Long commentId, CommentUpdateRequest request) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 게시글이 없습니다."));
+        comment.setContent(request.getContent());
+        comment.setUpdatedAt(LocalDateTime.now());
+        return CommentResponse.from(comment);
     }
 }
