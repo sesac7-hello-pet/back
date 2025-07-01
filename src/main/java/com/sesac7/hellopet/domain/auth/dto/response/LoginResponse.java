@@ -12,4 +12,5 @@ public class LoginResponse {
     private UserRole role;
     private String nickname;
     private String profileUrl;
+    private Boolean activation;
 }

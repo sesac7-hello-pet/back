@@ -28,9 +28,6 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthResult result = authService.userLogin(request);
 
-        System.out.println(result.getLoginResponse().getEmail());
-        System.out.println();
-
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, result.getAccessCookie().toString())
                 .header(HttpHeaders.SET_COOKIE, result.getRefreshCookie().toString())
