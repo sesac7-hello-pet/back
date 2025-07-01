@@ -33,6 +33,6 @@ public class BoardCreateRequest {
                 0, 0, 0, LocalDateTime.now(), null,
                 request.getBoardCategory(),
                 request.getPetType(),
-                user);
+                user, null);
     }
 }
