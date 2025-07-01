@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
     Page<Application> findByApplicantIdOrderBySubmittedAtDesc(Long applicantId, Pageable pageable);
+
+    Page<Application> findByAnnouncementIdOrderBySubmittedAtDesc(Long announcementId, Pageable pageable);
 }
