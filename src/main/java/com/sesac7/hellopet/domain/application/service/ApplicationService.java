@@ -5,6 +5,7 @@ import com.sesac7.hellopet.domain.announcement.entity.Announcement;
 import com.sesac7.hellopet.domain.announcement.service.AnnouncementService;
 import com.sesac7.hellopet.domain.application.dto.request.AgreementInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.request.ApplicationCreateRequest;
+import com.sesac7.hellopet.domain.application.dto.request.ApplicationPageRequest;
 import com.sesac7.hellopet.domain.application.dto.request.CareInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.request.FamilyInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.request.FinancialInfoRequest;
@@ -13,6 +14,7 @@ import com.sesac7.hellopet.domain.application.dto.request.HousingInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.request.PetExperienceInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.response.ApplicationResponse;
 import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationResponse;
+import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationsPageResponse;
 import com.sesac7.hellopet.domain.application.dto.response.UserApplicationResponse;
 import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.info.agreement.AgreementInfo;
@@ -24,7 +26,6 @@ import com.sesac7.hellopet.domain.application.entity.info.housing.HousingInfo;
 import com.sesac7.hellopet.domain.application.entity.info.plan.FuturePlanInfo;
 import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
-import com.sesac7.hellopet.domain.user.entity.UserDetail;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -44,31 +45,22 @@ public class ApplicationService {
     private final AnnouncementService announcementService;
 
     @Transactional(readOnly = true)
-    public Page<ShelterApplicationResponse> getShelterApplications(Long id, Pageable pageable) {
+    public ShelterApplicationsPageResponse getShelterApplications(Long id, ApplicationPageRequest request) {
         Announcement announcement = announcementService.findById(id);
 
         List<Application> applications = applicationRepository.findApplicationsWithUserDetailByAnnouncementId(id);
 
+        Pageable pageable = request.toPageable();
         int start = (int) pageable.getOffset();
         int end = Math.min(start + pageable.getPageSize(), applications.size());
-        List<Application> paged = applications.subList(start, end);
 
-        List<ShelterApplicationResponse> content = paged
+        List<ShelterApplicationResponse> content = applications
+                .subList(start, end)
                 .stream()
-                .map(application -> {
-                    UserDetail userDetail = application.getApplicant().getUserDetail();
-
-                    return ShelterApplicationResponse.builder()
-                                                     .announcementId(announcement.getId())
-                                                     .announcementCreatedAt(announcement.getCreateAt())
-                                                     .userName(userDetail.getUsername())
-                                                     .userPhoneNumber(userDetail.getPhoneNumber())
-                                                     .userEmail(application.getApplicant().getEmail())
-                                                     .build();
-                })
+                .map(application -> ShelterApplicationResponse.from(announcement, application))
                 .toList();
 
-        return new PageImpl<>(content, pageable, applications.size());
+        return ShelterApplicationsPageResponse.of(pageable, content, applications.size());
     }
 
     @Transactional(readOnly = true)

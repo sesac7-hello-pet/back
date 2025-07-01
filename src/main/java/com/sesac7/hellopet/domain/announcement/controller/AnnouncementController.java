@@ -5,16 +5,22 @@ import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementCreateReq
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.service.AnnouncementService;
-import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationResponse;
+import com.sesac7.hellopet.domain.application.dto.request.ApplicationPageRequest;
+import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationsPageResponse;
 import com.sesac7.hellopet.domain.application.service.ApplicationService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/announcements")
@@ -52,11 +58,11 @@ public class AnnouncementController {
     }
 
     @GetMapping("/{id}/applications")
-    public ResponseEntity<Page<ShelterApplicationResponse>> getApplications(
+    public ResponseEntity<ShelterApplicationsPageResponse> getApplications(
             @PathVariable Long id,
-            @ModelAttribute Pageable pageable) {
+            @ModelAttribute @Valid ApplicationPageRequest request) {
 
-        Page<ShelterApplicationResponse> responses = applicationService.getShelterApplications(id, pageable);
-        return ResponseEntity.ok(responses);
+        ShelterApplicationsPageResponse response = applicationService.getShelterApplications(id, request);
+        return ResponseEntity.ok(response);
     }
 }
