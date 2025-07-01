@@ -77,6 +77,6 @@ public class AnnouncementService {
     public Announcement findById(Long announcementId) {
         return announcementRepository.findById(announcementId)
                                      .orElseThrow(() -> new EntityNotFoundException(
-                                             "해당 공지사항을 찾을 수 없습니다. id=" + announcementId));
+                                             "해당 입양 공고를 찾을 수 없습니다. id=" + announcementId));
     }
 }
