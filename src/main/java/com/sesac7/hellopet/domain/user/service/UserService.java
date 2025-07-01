@@ -1,16 +1,20 @@
 package com.sesac7.hellopet.domain.user.service;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
+import com.sesac7.hellopet.domain.auth.dto.request.CheckPasswordRequest;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
+import com.sesac7.hellopet.domain.user.dto.request.UserUpdateRequest;
 import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
+import com.sesac7.hellopet.domain.user.dto.response.UserUpdateResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.entity.UserDetail;
 import com.sesac7.hellopet.domain.user.repository.UserDetailRepository;
 import com.sesac7.hellopet.domain.user.repository.UserRepository;
+import jakarta.validation.Valid;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,6 +38,7 @@ public class UserService {
     private static final Pattern ENGLISH_REGEX =
             Pattern.compile("^[A-Za-z]+$");
 
+    private final UserFinder userFinder;
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
     private final PasswordEncoder passwordEncoder;
@@ -48,8 +53,8 @@ public class UserService {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
 
         String profileUrl = StringUtils.hasText(request.getUserProfileUrl())
-                            ? request.getUserProfileUrl()
-                            : "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp";
+                ? request.getUserProfileUrl()
+                : "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp";
 
         if (doCheck(CheckField.EMAIL, request.getEmail()) && doCheck(CheckField.NICKNAME, request.getNickname())
                 && doCheck(CheckField.PHONE, request.getPhoneNumber())) {
@@ -65,6 +70,7 @@ public class UserService {
         return userRepository.findByEmailToLoginResponse(username);
     }
 
+    @Transactional(readOnly = true)
     public ExistResponse checkExist(CheckField field, String value) {
 
         boolean exists = doCheck(field, value);
@@ -134,20 +140,32 @@ public class UserService {
         return false;
     }
 
+    @Transactional(readOnly = true)
     public UserDetailResponse getUserDetail(CustomUserDetails userDetails) {
-        User user = getUserByUsername(userDetails.getUsername());
+        User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
         UserDetail userDetail = user.getUserDetail();
 
-        return UserDetailResponse.from(userDetail);
+        return UserDetailResponse.from(user, userDetail);
     }
 
-    public User getUserByUsername(String email) {
-        return userRepository.findByEmail(email)
-                             .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "not found user"));
+    public UserUpdateResponse updateUserDetail(@Valid UserUpdateRequest request, CustomUserDetails userDetails) {
+        request.setPassword(passwordEncoder.encode(request.getPassword()));
+        doCheck(CheckField.NICKNAME, request.getNickname());
+
+        User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+        UserDetail userDetail = userDetailRepository.findByUser(user);
+
+        request.updateUser(user, userDetail);
+
+        return UserUpdateResponse.from(userDetail);
     }
 
-    public User findUser(String username) {
-        return userRepository.findByEmail(username)
-                             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "등록된 유저가 없습니다."));
+    public boolean verifyLoggedInUserPassword(User loggedInUser, @Valid CheckPasswordRequest request) {
+        return passwordEncoder.matches(request.getPassword(), loggedInUser.getPassword());
+    }
+
+    public void disableUser(CustomUserDetails userDetails) {
+        User foundUser = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+        foundUser.setActivation(false);
     }
 }

@@ -12,6 +12,7 @@ import com.sesac7.hellopet.domain.application.dto.request.FuturePlanInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.request.HousingInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.request.PetExperienceInfoRequest;
 import com.sesac7.hellopet.domain.application.dto.response.ApplicationResponse;
+import com.sesac7.hellopet.domain.application.dto.response.UserApplicationResponse;
 import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.info.agreement.AgreementInfo;
 import com.sesac7.hellopet.domain.application.entity.info.care.CareInfo;
@@ -25,6 +26,8 @@ import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,6 +38,27 @@ public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final UserFinder userFinder;
     private final AnnouncementService announcementService;
+
+    public Page<UserApplicationResponse> getApplications(CustomUserDetails userDetails, Pageable pageable) {
+        User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+        Page<Application> applications = applicationRepository.findByApplicantIdOrderBySubmittedAtDesc(
+                user.getId(),
+                pageable
+        );
+
+        return applications.map(application ->
+        {
+            Announcement announcement = application.getAnnouncement();
+
+            return UserApplicationResponse.builder()
+                    .applicationId(application.getId())
+                    .announcementId(announcement.getId())
+                    .applicationStatusLabel(application.getStatus().name())
+                    .submittedAt(application.getSubmittedAt())
+                    .petImageUrl(announcement.getImageUrl())
+                    .build();
+        });
+    }
 
     public ApplicationResponse createApplication(ApplicationCreateRequest request, CustomUserDetails userDetails) {
 

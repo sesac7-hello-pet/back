@@ -28,12 +28,16 @@ public class User {
     @Column(nullable = false)
     private String email;
 
+    @Setter
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @Setter
+    private Boolean activation;
 
     @Setter
     @OneToOne(mappedBy = "user",

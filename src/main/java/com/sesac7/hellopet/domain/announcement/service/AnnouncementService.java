@@ -4,6 +4,7 @@ import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementCreateRequest;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
+
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.entity.Announcement;
 import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
@@ -70,6 +71,7 @@ public class AnnouncementService {
      * 게시글 전체리스트 조회
      * @return AnnouncementListResponse 리스트
      */
+
     public List<AnnouncementListResponse> getAllAnnouncements() {
         List<Announcement> announcements = announcementRepository.findAll();
 
@@ -77,6 +79,7 @@ public class AnnouncementService {
                 .map(a -> new AnnouncementListResponse(
                         a.getPet().getBreed(),            // Pet 품종
                         a.getPet().getImageUrl(),         // Pet 이미지 URL로 변경
+
                         a.getStatus() == AnnouncementStatus.ACTIVE,
                         a.getId()
                 ))
