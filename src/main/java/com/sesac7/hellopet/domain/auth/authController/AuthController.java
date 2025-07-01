@@ -39,6 +39,7 @@ public class AuthController {
     @PostMapping("/check-password")
     public ResponseEntity<CheckPasswordResponse> check(@Valid @RequestBody CheckPasswordRequest request,
                                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        authService.checkPassword(request, userDetails);
         return null;
     }
 }

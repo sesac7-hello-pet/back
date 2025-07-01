@@ -1,6 +1,7 @@
 package com.sesac7.hellopet.domain.user.service;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
+import com.sesac7.hellopet.domain.auth.dto.request.CheckPasswordRequest;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
@@ -156,5 +157,9 @@ public class UserService {
         request.updateUser(user, userDetail);
 
         return UserUpdateResponse.from(userDetail);
+    }
+
+    public boolean verifyLoggedInUserPassword(User loggedInUser, @Valid CheckPasswordRequest request) {
+        return passwordEncoder.matches(request.getPassword(), loggedInUser.getPassword());
     }
 }
