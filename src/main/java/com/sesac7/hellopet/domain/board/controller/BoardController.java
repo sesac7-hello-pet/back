@@ -3,6 +3,7 @@ package com.sesac7.hellopet.domain.board.controller;
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.board.dto.request.BoardCreateRequest;
 import com.sesac7.hellopet.domain.board.dto.request.BoardSearchRequest;
+import com.sesac7.hellopet.domain.board.dto.request.BoardUpdateRequest;
 import com.sesac7.hellopet.domain.board.dto.response.BoardPageResponse;
 import com.sesac7.hellopet.domain.board.dto.response.BoardResponse;
 import com.sesac7.hellopet.domain.board.service.BoardService;
@@ -12,13 +13,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/board")
+@RequestMapping("/boards")
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardService boardService;
@@ -32,6 +35,13 @@ public class BoardController {
     public ResponseEntity<BoardResponse> createBoard(@RequestBody @Valid BoardCreateRequest request,
                                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.status(HttpStatus.CREATED).body(boardService.createBoard(request, customUserDetails));
+    }
+
+    @PutMapping("/{boardId}")
+    public ResponseEntity<BoardResponse> updateBoard(@PathVariable Long boardId,
+                                                     @RequestBody @Valid BoardUpdateRequest request,
+                                                     @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return ResponseEntity.ok(boardService.updateBoard(boardId, request, customUserDetails));
     }
 
 }
