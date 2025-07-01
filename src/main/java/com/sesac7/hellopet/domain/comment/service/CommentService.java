@@ -16,8 +16,10 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -50,11 +52,18 @@ public class CommentService {
 
     }
 
-    public CommentResponse updateComment(Long commentId, CommentUpdateRequest request) {
+    public CommentResponse updateComment(Long commentId, CommentUpdateRequest request, CustomUserDetails details) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 게시글이 없습니다."));
-        comment.setContent(request.getContent());
-        comment.setUpdatedAt(LocalDateTime.now());
-        return CommentResponse.from(comment);
+
+        String writer = comment.getUser().getEmail();
+        if (writer.equals(details.getUsername())) {
+            comment.setContent(request.getContent());
+            comment.setUpdatedAt(LocalDateTime.now());
+            return CommentResponse.from(comment);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 댓글을 삭제할 권한이 없습니다.");
+        }
+
     }
 }

@@ -43,8 +43,8 @@ public class CommentController {
 
     @PutMapping("{commentId}")
     public ResponseEntity<CommentResponse> updateComment(@PathVariable Long commentId, @RequestBody
-    CommentUpdateRequest request) {
-        return ResponseEntity.ok(commentService.updateComment(commentId, request));
+    CommentUpdateRequest request, @AuthenticationPrincipal CustomUserDetails details) {
+        return ResponseEntity.ok(commentService.updateComment(commentId, request, details));
     }
 
 }
