@@ -44,7 +44,7 @@ public class MeController {
     @DeleteMapping
     public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
         userService.disableUser(userDetails);
-        return null;
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/applications")
