@@ -9,9 +9,7 @@ import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
-import com.sesac7.hellopet.domain.user.Service.UserFinder;
 import com.sesac7.hellopet.domain.user.entity.User;
-import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,34 +24,33 @@ import org.springframework.transaction.annotation.Transactional;
 public class AnnouncementService {
     private final PetRepository petRepository;
     private final AnnouncementRepository announcementRepository;
-    private final UserFinder userFinder;
+    private final com.sesac7.hellopet.domain.user.service.UserFinder userFinder;
 
-
-// 게시글 등록 
+    // 게시글 등록
     public AnnouncementCreateResponse createAnnouncement(AnnouncementCreateRequest announcementCreateRequest,
                                                          CustomUserDetails customUserDetails) {
         Pet pet = Pet.builder()
-                .breed(announcementCreateRequest.getBreed())
-                .gender(announcementCreateRequest.getGender())
-                .age(announcementCreateRequest.getAge())
-                .health(announcementCreateRequest.getHealth())
-                .personality(announcementCreateRequest.getPersonality())
-                .foundPlace("발견 장소")
-                .build();
+                     .breed(announcementCreateRequest.getBreed())
+                     .gender(announcementCreateRequest.getGender())
+                     .age(announcementCreateRequest.getAge())
+                     .health(announcementCreateRequest.getHealth())
+                     .personality(announcementCreateRequest.getPersonality())
+                     .foundPlace("발견 장소")
+                     .build();
 
         petRepository.save(pet);
 
         // userRepository는 필드로 선언돼 있고, 스프링이 생성자 주입해줌
         User shelter = userFinder.findLoggedInUserByUsername(customUserDetails.getUsername());
-      
+
         Announcement announcement = Announcement.builder()
-                .shelter(shelter)
-                .pet(pet)
-                .imageUrl(announcementCreateRequest.getImage())
-                .status(AnnouncementStatus.IN_PROGRESS)
-                .createAt(LocalDateTime.now())
-                .updateAt(LocalDateTime.now())
-                .build();
+                                                .shelter(shelter)
+                                                .pet(pet)
+                                                .imageUrl(announcementCreateRequest.getImage())
+                                                .status(AnnouncementStatus.IN_PROGRESS)
+                                                .createAt(LocalDateTime.now())
+                                                .updateAt(LocalDateTime.now())
+                                                .build();
 
         announcementRepository.save(announcement);
 
@@ -68,18 +65,18 @@ public class AnnouncementService {
     public List<AnnouncementListResponse> getAllAnnouncements() {
         List<Announcement> announcements = announcementRepository.findAll();
         return announcements.stream()
-                .map(a -> new AnnouncementListResponse(
-                        a.getPet().getBreed(),
-                        a.getImageUrl(),
-                        a.getStatus() == AnnouncementStatus.ACTIVE,
-                        a.getId()
-                ))
-                .collect(Collectors.toList());
+                            .map(a -> new AnnouncementListResponse(
+                                    a.getPet().getBreed(),
+                                    a.getImageUrl(),
+                                    a.getStatus() == AnnouncementStatus.ACTIVE,
+                                    a.getId()
+                            ))
+                            .collect(Collectors.toList());
     }
 
     public Announcement findById(Long announcementId) {
         return announcementRepository.findById(announcementId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "해당 공지사항을 찾을 수 없습니다. id=" + announcementId));
+                                     .orElseThrow(() -> new EntityNotFoundException(
+                                             "해당 공지사항을 찾을 수 없습니다. id=" + announcementId));
     }
 }

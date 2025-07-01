@@ -2,6 +2,7 @@ package com.sesac7.hellopet.domain.user.controller;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.application.dto.response.UserApplicationResponse;
+import com.sesac7.hellopet.domain.application.service.ApplicationService;
 import com.sesac7.hellopet.domain.user.dto.request.UserUpdateRequest;
 import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserUpdateResponse;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MeController {
 
     private final UserService userService;
+    private final ApplicationService applicationService;
 
     @GetMapping
     public ResponseEntity<UserDetailResponse> getDetail(@AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -38,12 +40,12 @@ public class MeController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserDetail(request, userDetails));
     }
 
-    @GetMapping("/me/applications")
+    @GetMapping("/applications")
     public ResponseEntity<Page<UserApplicationResponse>> getApplications(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @ModelAttribute Pageable pageable) { // 프론트에서 ?page=0&size=10와 같이 호출하면 Pageable로 매핑됨
 
-        Page<UserApplicationResponse> response = userService.getApplications(userDetails, pageable);
+        Page<UserApplicationResponse> response = applicationService.getApplications(userDetails, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
