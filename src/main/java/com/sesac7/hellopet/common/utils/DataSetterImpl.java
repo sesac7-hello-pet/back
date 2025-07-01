@@ -49,8 +49,8 @@ public class DataSetterImpl implements DataSetter {
             } else {
                 role = UserRole.SHELTER;
             }
-            String phone = new StringBuilder().append("010").append(getRandomIntInRange(1000, 9999))
-                    .append(getRandomIntInRange(1000, 9999)).toString();
+            String phone = "010" + getRandomIntInRange(1000, 9999)
+                    + getRandomIntInRange(1000, 9999);
 
             User user = new User(null, "test" + i + "@test.com", passwordEncoder.encode("!test1234"), role, null);
 
@@ -84,7 +84,9 @@ public class DataSetterImpl implements DataSetter {
 
 
                     data.getAddresses().get(getRandomIndex(data.getAddresses())),
-                    "견종"
+                    "견종",
+                    data.getDogPhotos().get(getRandomIndex(data.getDogPhotos())),
+                    "hi"
                     );
 
             petRepository.save(pet);
@@ -93,7 +95,6 @@ public class DataSetterImpl implements DataSetter {
                     shelters.get(getRandomIndex(shelters)),
                     AnnouncementStatus.IN_PROGRESS,
                     pet,
-                    data.getDogPhotos().get(getRandomIndex(data.getDogPhotos())),
                     LocalDateTime.now(), null);
 
             announcementRepository.save(announcement);

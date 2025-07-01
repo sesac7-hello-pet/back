@@ -40,8 +40,7 @@ public class Announcement {
     @OneToOne
     private Pet pet;
 
-    private String imageUrl;
-
+    
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 
