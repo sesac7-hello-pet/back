@@ -42,6 +42,7 @@ public class Board {
     private int likesCount;
     private int viewsCount;
     private int commentsCount;
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

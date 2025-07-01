@@ -12,6 +12,7 @@ import com.sesac7.hellopet.domain.board.repository.BoardRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,14 +20,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BoardService {
     private final BoardRepository repository;
     private final UserFinder userFinder;
 
+    @Transactional(readOnly = true)
     public BoardPageResponse getSearchList(BoardSearchRequest request) {
         Sort sort = getSortBySortType(request.getSortType());
 
@@ -71,6 +75,7 @@ public class BoardService {
             board.setImage_url(request.getImg_url());
             board.setBoardCategory(request.getBoardCategory());
             board.setPetType(request.getPetType());
+            board.setUpdatedAt(LocalDateTime.now());
             Board saved = repository.save(board);
             return BoardResponse.from(saved);
         } else {

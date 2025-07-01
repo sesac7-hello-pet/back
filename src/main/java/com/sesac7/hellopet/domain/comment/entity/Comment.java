@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Builder
@@ -28,9 +29,13 @@ public class Comment {
     private Long id;
 
     @Column(nullable = false)
+    @Setter
     private String content;
+    
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @Setter
     private LocalDateTime updatedAt;
 
     @ManyToOne
