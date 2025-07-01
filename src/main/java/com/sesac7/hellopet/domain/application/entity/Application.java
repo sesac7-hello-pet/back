@@ -40,6 +40,7 @@ public class Application {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @Getter
     private User applicant;
 
     @ManyToOne(fetch = FetchType.LAZY)

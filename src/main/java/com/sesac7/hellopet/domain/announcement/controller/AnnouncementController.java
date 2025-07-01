@@ -5,14 +5,25 @@ import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementCreateReq
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
+import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.service.AnnouncementService;
+import com.sesac7.hellopet.domain.application.dto.request.ApplicationPageRequest;
+import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationsPageResponse;
+import com.sesac7.hellopet.domain.application.service.ApplicationService;
+import jakarta.validation.Valid;
 import jakarta.persistence.Id;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/announcements")
@@ -20,18 +31,22 @@ import org.springframework.web.bind.annotation.*;
 public class AnnouncementController {
 
     private final AnnouncementService announcementService;
+    private final ApplicationService applicationService;
 
     /**
      * 게시글 등록
+     *
      * @param announcementCreateRequest
      * @param customUserDetails
      * @return
      */
     @PostMapping
-    public ResponseEntity<AnnouncementCreateResponse> createAnnouncement(@RequestBody AnnouncementCreateRequest announcementCreateRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ResponseEntity<AnnouncementCreateResponse> createAnnouncement(
+            @RequestBody AnnouncementCreateRequest announcementCreateRequest,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.status(HttpStatus.CREATED).body(announcementService.createAnnouncement(
                 announcementCreateRequest, customUserDetails));
-        
+
     }
     /**
      * 전체 입양 게시글 리스트 조회
@@ -41,6 +56,15 @@ public class AnnouncementController {
     public ResponseEntity<List<AnnouncementListResponse>> getAllAnnouncements() {
         List<AnnouncementListResponse> announcements = announcementService.getAllAnnouncements();
         return ResponseEntity.ok(announcements);
+    }
+
+    @GetMapping("/{id}/applications")
+    public ResponseEntity<ShelterApplicationsPageResponse> getApplications(
+            @PathVariable Long id,
+            @ModelAttribute @Valid ApplicationPageRequest request) {
+
+        ShelterApplicationsPageResponse response = applicationService.getShelterApplications(id, request);
+        return ResponseEntity.ok(response);
     }
 
     /***

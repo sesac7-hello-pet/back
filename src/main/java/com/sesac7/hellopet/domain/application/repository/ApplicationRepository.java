@@ -1,12 +1,28 @@
 package com.sesac7.hellopet.domain.application.repository;
 
 import com.sesac7.hellopet.domain.application.entity.Application;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
-    Page<Application> findByApplicantIdOrderBySubmittedAtDesc(Long applicantId, Pageable pageable);
+    @Query("""
+            SELECT app FROM Application app
+            JOIN FETCH app.announcement
+            WHERE app.applicant.id = :applicantId
+            ORDER BY app.submittedAt DESC
+            """)
+    List<Application> findApplicationsWithAnnouncementByApplicantId(@Param("applicantId") Long applicantId);
+
+    @Query("""
+                SELECT app FROM Application app
+                JOIN FETCH app.applicant user
+                JOIN FETCH user.userDetail
+                WHERE app.announcement.id = :announcementId
+                ORDER BY app.submittedAt DESC
+            """)
+    List<Application> findApplicationsWithUserDetailByAnnouncementId(@Param("announcementId") Long announcementId);
 }
