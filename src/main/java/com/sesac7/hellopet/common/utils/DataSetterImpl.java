@@ -85,8 +85,8 @@ public class DataSetterImpl implements DataSetter {
 
                     data.getAddresses().get(getRandomIndex(data.getAddresses())),
                     "견종",
-                    data.getDogPhotos().get(getRandomIndex(data.getDogPhotos())),
-                    "hi"
+                    data.getDogPhotos().get(getRandomIndex(data.getDogPhotos()))
+
                     );
 
             petRepository.save(pet);

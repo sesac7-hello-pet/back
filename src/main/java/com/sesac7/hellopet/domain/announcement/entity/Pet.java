@@ -43,8 +43,5 @@ public class Pet {
     @Column
     private String imageUrl;
 
-    @Column(nullable = false)
-    private String shelterName;
-
 
 }

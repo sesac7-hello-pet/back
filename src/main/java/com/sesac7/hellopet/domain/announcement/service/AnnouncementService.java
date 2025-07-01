@@ -118,8 +118,7 @@ public class AnnouncementService {
                 .gender(pet.getGender())                   // 펫의 성별 정보 설정
                 .health(pet.getHealth())                   // 펫의 건강 상태 정보 설정
                 .personality(pet.getPersonality())         // 펫의 성격 정보 설정
-                .age(pet.getAge())                         // 펫의 나이 정보 설정
-                .shelterName(pet.getShelterName())         // 보호소 정보
+                .shelterName(announcement.getShelter().getUserDetail().getNickname())
                 .imageUrl(pet.getImageUrl())               // 펫의 이미지 URL 설정
                 .build();                                  // DTO 객체 생성 및 반환
     }
