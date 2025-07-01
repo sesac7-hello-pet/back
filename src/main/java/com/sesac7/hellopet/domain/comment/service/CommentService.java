@@ -11,13 +11,17 @@ import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class CommentService {
-    private CommentRepository commentRepository;
-    private BoardRepository boardRepository;
-    private UserFinder userFinder;
+    private final CommentRepository commentRepository;
+    private final BoardRepository boardRepository;
+    private final UserFinder userFinder;
 
     public CommentResponse createComment(CommentCreateRequest request, Long boardId,
                                          CustomUserDetails details) {
@@ -26,7 +30,7 @@ public class CommentService {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("해당 게시글이 없습니다."));
         // 유저 정보
         User user = userFinder.findLoggedInUserByUsername(details.getUsername());
-        
+
         Comment comment = Comment.builder()
                 .content(request.getContent())
                 .createdAt(LocalDateTime.now())
