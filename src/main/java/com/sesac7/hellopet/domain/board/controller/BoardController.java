@@ -4,6 +4,7 @@ import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.board.dto.request.BoardCreateRequest;
 import com.sesac7.hellopet.domain.board.dto.request.BoardSearchRequest;
 import com.sesac7.hellopet.domain.board.dto.request.BoardUpdateRequest;
+import com.sesac7.hellopet.domain.board.dto.response.BoardDetailResponse;
 import com.sesac7.hellopet.domain.board.dto.response.BoardPageResponse;
 import com.sesac7.hellopet.domain.board.dto.response.BoardResponse;
 import com.sesac7.hellopet.domain.board.service.BoardService;
@@ -50,6 +51,12 @@ public class BoardController {
                                             @AuthenticationPrincipal CustomUserDetails details) {
         boardService.deleteBoard(boardId, details);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{boardId}")
+    public ResponseEntity<BoardDetailResponse> getBoardDetail(@PathVariable Long boardId) {
+        return ResponseEntity.ok(boardService.getBoardDetail(boardId));
+
     }
 
 }

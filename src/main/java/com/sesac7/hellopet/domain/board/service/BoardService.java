@@ -5,6 +5,7 @@ import com.sesac7.hellopet.domain.board.dto.request.BoardCreateRequest;
 import com.sesac7.hellopet.domain.board.dto.request.BoardSearchRequest;
 import com.sesac7.hellopet.domain.board.dto.request.BoardUpdateRequest;
 import com.sesac7.hellopet.domain.board.dto.request.SortType;
+import com.sesac7.hellopet.domain.board.dto.response.BoardDetailResponse;
 import com.sesac7.hellopet.domain.board.dto.response.BoardPageResponse;
 import com.sesac7.hellopet.domain.board.dto.response.BoardResponse;
 import com.sesac7.hellopet.domain.board.entity.Board;
@@ -66,7 +67,7 @@ public class BoardService {
     }
 
     public BoardResponse updateBoard(Long boardId, BoardUpdateRequest request, CustomUserDetails details) {
-        Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+        Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
         String writer = board.getUser().getEmail();
         String userEmail = details.getUsername();
         if (writer.equals(userEmail)) {
@@ -84,7 +85,7 @@ public class BoardService {
     }
 
     public void deleteBoard(Long boardId, CustomUserDetails details) {
-        Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+        Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
         String writer = board.getUser().getEmail();
         String userEmail = details.getUsername();
         if (writer.equals(userEmail)) {
@@ -92,5 +93,11 @@ public class BoardService {
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 게시글을 삭제할 권한이 없습니다.");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public BoardDetailResponse getBoardDetail(Long boardId) {
+        Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
+        return BoardDetailResponse.from(board);
     }
 }
