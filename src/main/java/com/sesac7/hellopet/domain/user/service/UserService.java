@@ -52,8 +52,8 @@ public class UserService {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
 
         String profileUrl = StringUtils.hasText(request.getUserProfileUrl())
-                ? request.getUserProfileUrl()
-                : "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp";
+                            ? request.getUserProfileUrl()
+                            : "https://i.namu.wiki/i/M0j6sykCciGaZJ8yW0CMumUigNAFS8Z-dJA9h_GKYSmqqYSQyqJq8D8xSg3qAz2htlsPQfyHZZMmAbPV-Ml9UA.webp";
 
         if (doCheck(CheckField.EMAIL, request.getEmail()) && doCheck(CheckField.NICKNAME, request.getNickname())
                 && doCheck(CheckField.PHONE, request.getPhoneNumber())) {

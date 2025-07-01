@@ -44,6 +44,7 @@ public class Application {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "announcement_id", nullable = false)
+    @Getter
     private Announcement announcement;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -72,9 +73,11 @@ public class Application {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Getter
     private ApplicationStatus status;
 
     @CreationTimestamp
+    @Getter
     private LocalDateTime submittedAt;
     private LocalDateTime processedAt;
 
