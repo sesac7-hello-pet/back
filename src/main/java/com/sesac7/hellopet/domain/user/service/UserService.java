@@ -70,6 +70,7 @@ public class UserService {
         return userRepository.findByEmailToLoginResponse(username);
     }
 
+    @Transactional(readOnly = true)
     public ExistResponse checkExist(CheckField field, String value) {
 
         boolean exists = doCheck(field, value);
@@ -161,5 +162,10 @@ public class UserService {
 
     public boolean verifyLoggedInUserPassword(User loggedInUser, @Valid CheckPasswordRequest request) {
         return passwordEncoder.matches(request.getPassword(), loggedInUser.getPassword());
+    }
+
+    public void disableUser(CustomUserDetails userDetails) {
+        User foundUser = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+        foundUser.setActivation(false);
     }
 }
