@@ -15,6 +15,7 @@ import com.sesac7.hellopet.domain.application.dto.request.PetExperienceInfoReque
 import com.sesac7.hellopet.domain.application.dto.response.ApplicationResponse;
 import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationResponse;
 import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationsPageResponse;
+import com.sesac7.hellopet.domain.application.dto.response.UserApplicationPageResponse;
 import com.sesac7.hellopet.domain.application.dto.response.UserApplicationResponse;
 import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.info.agreement.AgreementInfo;
@@ -29,8 +30,6 @@ import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,39 +56,31 @@ public class ApplicationService {
         List<ShelterApplicationResponse> content = applications
                 .subList(start, end)
                 .stream()
-                .map(application -> ShelterApplicationResponse.from(announcement, application))
+                .map(application -> ShelterApplicationResponse.of(announcement, application))
                 .toList();
 
         return ShelterApplicationsPageResponse.of(pageable, content, applications.size());
     }
 
     @Transactional(readOnly = true)
-    public Page<UserApplicationResponse> getUserApplications(CustomUserDetails userDetails, Pageable pageable) {
+    public UserApplicationPageResponse getUserApplications(CustomUserDetails userDetails,
+                                                           ApplicationPageRequest request) {
         User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
 
         List<Application> applications = applicationRepository.findApplicationsWithAnnouncementByApplicantId(
                 user.getId());
 
+        Pageable pageable = request.toPageable();
         int start = (int) pageable.getOffset();
         int end = Math.min(start + pageable.getPageSize(), applications.size());
-        List<Application> paged = applications.subList(start, end);
 
-        List<UserApplicationResponse> content = paged
+        List<UserApplicationResponse> content = applications
+                .subList(start, end)
                 .stream()
-                .map(application -> {
-                    Announcement announcement = application.getAnnouncement();
-
-                    return UserApplicationResponse.builder()
-                                                  .applicationId(application.getId())
-                                                  .announcementId(announcement.getId())
-                                                  .applicationStatusLabel(application.getStatus().name())
-                                                  .submittedAt(application.getSubmittedAt())
-                                                  .petImageUrl(announcement.getImageUrl())
-                                                  .build();
-                })
+                .map(application -> UserApplicationResponse.of(application, application.getAnnouncement()))
                 .toList();
 
-        return new PageImpl<>(content, pageable, applications.size());
+        return UserApplicationPageResponse.of(pageable, content, applications.size());
     }
 
     public ApplicationResponse createApplication(ApplicationCreateRequest request, CustomUserDetails userDetails) {
