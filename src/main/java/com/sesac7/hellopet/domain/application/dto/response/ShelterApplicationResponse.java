@@ -16,7 +16,7 @@ public class ShelterApplicationResponse {
     private String userPhoneNumber;
     private String userEmail;
 
-    public static ShelterApplicationResponse from(Announcement announcement, Application application) {
+    public static ShelterApplicationResponse of(Announcement announcement, Application application) {
         UserDetail userDetail = application.getApplicant().getUserDetail();
         return ShelterApplicationResponse.builder()
                                          .announcementId(announcement.getId())
