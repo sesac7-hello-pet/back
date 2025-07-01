@@ -56,7 +56,6 @@ public class AnnouncementService {
         Announcement announcement = Announcement.builder()
                 .shelter(shelter)
                 .pet(pet)
-                // .imageurl(announcementCreateRequest.getImage())  // 제거: Announcement에 더 이상 없음
                 .status(AnnouncementStatus.IN_PROGRESS)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
