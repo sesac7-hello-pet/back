@@ -22,8 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     u.email,
                     u.role,
                     ud.nickname,
-                    ud.userProfileUrl,
-                                u.activation
+                    ud.userProfileUrl
                 )
                 from User u
                 join u.userDetail ud
