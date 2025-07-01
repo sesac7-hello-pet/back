@@ -5,6 +5,7 @@ import com.sesac7.hellopet.domain.auth.authService.AuthService;
 import com.sesac7.hellopet.domain.auth.dto.request.CheckPasswordRequest;
 import com.sesac7.hellopet.domain.auth.dto.request.LoginRequest;
 import com.sesac7.hellopet.domain.auth.dto.response.AuthResult;
+import com.sesac7.hellopet.domain.auth.dto.response.CheckPasswordResponse;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,6 @@ public class AuthController {
     @PostMapping("/check-password")
     public ResponseEntity<CheckPasswordResponse> check(@Valid @RequestBody CheckPasswordRequest request,
                                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
-        authService.checkPassword(request, userDetails);
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(authService.checkPassword(request, userDetails));
     }
 }

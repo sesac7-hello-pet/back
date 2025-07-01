@@ -5,6 +5,7 @@ import com.sesac7.hellopet.common.utils.JwtUtil;
 import com.sesac7.hellopet.domain.auth.dto.request.CheckPasswordRequest;
 import com.sesac7.hellopet.domain.auth.dto.request.LoginRequest;
 import com.sesac7.hellopet.domain.auth.dto.response.AuthResult;
+import com.sesac7.hellopet.domain.auth.dto.response.CheckPasswordResponse;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
@@ -49,10 +50,11 @@ public class AuthService {
         return new AuthResult(accessCookie, refreshCookie, loginResponse);
     }
 
-    public void checkPassword(@Valid CheckPasswordRequest request, CustomUserDetails userDetails) {
+    public CheckPasswordResponse checkPassword(@Valid CheckPasswordRequest request, CustomUserDetails userDetails) {
         User loggedInUser = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
         if (!userService.verifyLoggedInUserPassword(loggedInUser, request)) {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
+        return new CheckPasswordResponse("확인 되었습니다.", true);
     }
 }
