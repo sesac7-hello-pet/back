@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.user.controller;
 
+import com.sesac7.hellopet.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AdminController {
 
+    private final UserService userService;
+
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deactivateUser(@PathVariable Long userId) {
-        
+        userService.deactivateUser(userId);
     }
 }
