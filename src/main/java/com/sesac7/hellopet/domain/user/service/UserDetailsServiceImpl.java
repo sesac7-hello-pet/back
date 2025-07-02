@@ -19,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail((email))
-                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 Email 입니다. "));
+                                  .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 Email 입니다. "));
 
         if (!user.getActivation()) {
             throw new WithdrawUserException();

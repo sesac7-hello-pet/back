@@ -6,7 +6,6 @@ import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
 import com.sesac7.hellopet.domain.user.dto.request.UserUpdateRequest;
-import com.sesac7.hellopet.domain.user.dto.response.AdminUserListResponse;
 import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
@@ -16,10 +15,13 @@ import com.sesac7.hellopet.domain.user.entity.UserDetail;
 import com.sesac7.hellopet.domain.user.repository.UserDetailRepository;
 import com.sesac7.hellopet.domain.user.repository.UserRepository;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -166,12 +168,28 @@ public class UserService {
         return passwordEncoder.matches(request.getPassword(), loggedInUser.getPassword());
     }
 
-    public void disableUser(CustomUserDetails userDetails) {
+    public List<ResponseCookie> disableUser(CustomUserDetails userDetails) {
         User foundUser = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
         foundUser.setActivation(false);
-    }
 
-    public List<AdminUserListResponse> getUsers() {
-        return userRepository.findAdminUserList();
+        SecurityContextHolder.clearContext();
+
+        ResponseCookie deleteAccess = ResponseCookie.from("accessToken", "")
+                                                    .path("/")
+                                                    .httpOnly(true)
+                                                    .secure(true)
+                                                    .sameSite("Strict")
+                                                    .maxAge(0)
+                                                    .build();
+
+        ResponseCookie deleteRefresh = ResponseCookie.from("refreshToken", "")
+                                                     .path("/")
+                                                     .httpOnly(true)
+                                                     .secure(true)
+                                                     .sameSite("Strict")
+                                                     .maxAge(0)
+                                                     .build();
+
+        return new ArrayList<>(List.of(deleteAccess, deleteRefresh));
     }
 }
