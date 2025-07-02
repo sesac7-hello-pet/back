@@ -48,6 +48,7 @@ public class AuthService {
 
     public AuthResult userLogout() {
         SecurityContextHolder.clearContext();
+        return new AuthResult(jwtUtil. deleteAccessCookie(), jwtUtil.deleteRefreshCookie(), null);
     }
 
     public CheckPasswordResponse checkPassword(@Valid CheckPasswordRequest request, CustomUserDetails userDetails) {
