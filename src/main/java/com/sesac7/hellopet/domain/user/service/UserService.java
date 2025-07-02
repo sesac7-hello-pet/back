@@ -209,6 +209,6 @@ public class UserService {
 
     public void deactivateUser(Long userId) {
         User foundUser = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("잘못된 USER ID 입니다."));
-        
+        if(!foundUser.getActivation()) 
     }
 }
