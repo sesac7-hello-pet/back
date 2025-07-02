@@ -43,11 +43,11 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        ResponseCookie accessCookie = jwtUtil.generateCookie(userDetails);
-        ResponseCookie refreshCookie = jwtUtil.generateRefreshCookie(userDetails);
-        LoginResponse loginResponse = userService.userLogin(userDetails.getUsername());
+        return new AuthResult(jwtUtil.generateAccessCookie(userDetails), jwtUtil.generateRefreshCookie(userDetails), userService.userLogin(userDetails.getUsername()));
+    }
 
-        return new AuthResult(accessCookie, refreshCookie, loginResponse);
+    public AuthResult userLogout() {
+        SecurityContextHolder.clearContext();
     }
 
     public CheckPasswordResponse checkPassword(@Valid CheckPasswordRequest request, CustomUserDetails userDetails) {
@@ -57,4 +57,5 @@ public class AuthService {
         }
         return new CheckPasswordResponse("확인 되었습니다.", true);
     }
+
 }
