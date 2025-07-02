@@ -117,10 +117,9 @@ public class ApplicationService {
     }
 
     private void approveAndRejectOtherApplications(Long announcementId, Long applicationId) {
-        Application application = applicationRepository.findById(applicationId)
+        Application application = applicationRepository.findByIdAndAnnouncementId(applicationId, announcementId)
                                                        .orElseThrow(() -> new EntityNotFoundException(
-                                                               "해당 입양 신청서를 찾을 수 없습니다. id=" + applicationId)
-                                                       );
+                                                               "해당 공고에 일치하는 신청서를 찾을 수 없습니다."));
 
         application.changeStatus(ApplicationStatus.APPROVED);
 

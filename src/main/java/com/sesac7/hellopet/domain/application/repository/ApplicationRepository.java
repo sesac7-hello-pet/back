@@ -2,6 +2,7 @@ package com.sesac7.hellopet.domain.application.repository;
 
 import com.sesac7.hellopet.domain.application.entity.Application;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,4 +34,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
             """)
     List<Application> findByAnnouncementIdAndExcludeApplicationId(@Param("announcementId") Long announcementId,
                                                                   @Param("applicationId") Long applicationId);
+
+    Optional<Application> findByIdAndAnnouncementId(Long applicationId, Long announcementId);
 }
