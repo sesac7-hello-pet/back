@@ -16,7 +16,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             + "(:search = 'TOTAL' and (b.title like %:keyword% or b.content like %:keyword% or b.user.userDetail.nickname like %:keyword%))"
             + "or (:search = 'USERNAME' and (b.user.userDetail.nickname like %:keyword% )) "
             + " or (:search = 'TITLE' and (b.title like %:keyword%))"
-            + "or (:search = 'CONTENT' and (b.content like %:keyword%))"
+            + "or (:search = 'CONTENT' and (b.content like %:keyword%)) "
+            + "or (:search = 'EMAIL' and (b.user.email = :keyword))"
             + ")")
     Page<Board> search(@Param("category") String category, @Param("search") String searchType,
                        @Param("sort") String sort, @Param("keyword") String keyword, Pageable pageable);

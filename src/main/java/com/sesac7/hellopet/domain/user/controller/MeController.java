@@ -74,7 +74,12 @@ public class MeController {
     public ResponseEntity<BoardPageResponse> getBoards(@AuthenticationPrincipal CustomUserDetails details,
                                                        @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         User user = userFinder.findLoggedInUserByUsername(details.getUsername());
-        BoardSearchRequest request = BoardSearchRequest.builder().searchType(SearchType.EMAIL).keyword(user.getEmail()).build();
+        BoardSearchRequest request = BoardSearchRequest.builder()
+                                                       .searchType(SearchType.EMAIL)
+                                                       .keyword(user.getEmail())
+                                                       .page(page)
+                                                       .size(size)
+                                                       .build();
     }
 
 
