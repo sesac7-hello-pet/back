@@ -37,9 +37,4 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.checkExist(field, value));
     }
 
-    @GetMapping
-    public ResponseEntity<UserPageResponse> getUsers(@ModelAttribute UserSearchRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getUsers(request));
-    }
-
 }
