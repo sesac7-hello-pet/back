@@ -3,12 +3,11 @@ package com.sesac7.hellopet.domain.user.controller;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
 import com.sesac7.hellopet.domain.user.dto.request.UserSearchRequest;
-import com.sesac7.hellopet.domain.user.dto.response.AdminUserListResponse;
 import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;
+import com.sesac7.hellopet.domain.user.dto.response.UserPageResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
 import com.sesac7.hellopet.domain.user.service.UserService;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +37,8 @@ public class UserController {
     }
 
     @GetMapping
-    public List<AdminUserListResponse> getUsers(@RequestBody UserSearchRequest request) {
-        return userService.getUsers(request);
+    public ResponseEntity<UserPageResponse> getUsers(@RequestBody UserSearchRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUsers(request));
     }
 
 }

@@ -7,9 +7,10 @@ import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
 import com.sesac7.hellopet.domain.user.dto.request.UserSearchRequest;
 import com.sesac7.hellopet.domain.user.dto.request.UserUpdateRequest;
-import com.sesac7.hellopet.domain.user.dto.response.AdminUserListResponse;
+import com.sesac7.hellopet.domain.user.dto.response.AdminUserResponse;
 import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
+import com.sesac7.hellopet.domain.user.dto.response.UserPageResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserUpdateResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
@@ -196,23 +197,12 @@ public class UserService {
         return new ArrayList<>(List.of(deleteAccess, deleteRefresh));
     }
 
-    public List<AdminUserListResponse> getUsers(UserSearchRequest request) {
+    public UserPageResponse getUsers(UserSearchRequest request) {
 
-        System.out.println(request.toString());
-
-        Page<User> userPages = userRepository.searchUsersByCondition(request.getUserSearchType().name(),
+        Page<AdminUserResponse> userPages = userRepository.searchUsersByCondition(request.getUserSearchType().name(),
                 request.getKeyword(),
                 request.toPageable());
 
-        System.out.println("총 페이지 수   : " + userPages.getTotalPages());
-        System.out.println("총 데이터 개수 : " + userPages.getTotalElements());
-        System.out.println("페이지 크기    : " + userPages.getSize());
-        System.out.println("현재 페이지 번호: " + userPages.getNumber());
-
-        for (int i = 0; i < userPages.getContent().size(); i++) {
-            System.out.println("컨텐츠[" + i + "]   : " + userPages.getContent().get(i).getEmail());
-        }
-
-        return null;
+        return UserPageResponse.from(userPages, request);
     }
 }
