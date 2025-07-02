@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -204,5 +205,13 @@ public class UserService {
                 request.toPageable());
 
         return UserPageResponse.from(userPages, request);
+    }
+
+    public void deactivateUser(Long userId) {
+        User foundUser = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("잘못된 USER ID 입니다."));
+        if(!foundUser.getActivation()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 비활성화 된 유저입니다.");
+        }
+        foundUser.setActivation(false);
     }
 }
