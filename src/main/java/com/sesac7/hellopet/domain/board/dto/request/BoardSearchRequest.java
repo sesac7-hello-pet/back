@@ -4,12 +4,14 @@ import com.sesac7.hellopet.domain.board.entity.BoardCategory;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class BoardSearchRequest {
     @Enumerated(EnumType.STRING)
     private BoardCategory category = BoardCategory.TOTAL;
