@@ -1,0 +1,23 @@
+package com.sesac7.hellopet.domain.user.dto.request;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+public enum UserAscDesc {
+    ASC, DESC;
+
+    /**
+     * 문자열을 UserAscDesc로 변환합니다.
+     * null 이거나 매칭되지 않으면 ASC를 기본 반환.
+     */
+    @JsonCreator
+    public static UserAscDesc toEnum(String str) {
+        if (str == null) {
+            return ASC;
+        }
+        try {
+            return UserAscDesc.valueOf(str.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return ASC;
+        }
+    }
+}

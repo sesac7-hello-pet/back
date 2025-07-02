@@ -5,9 +5,12 @@ import com.sesac7.hellopet.domain.auth.dto.request.CheckPasswordRequest;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
+import com.sesac7.hellopet.domain.user.dto.request.UserSearchRequest;
 import com.sesac7.hellopet.domain.user.dto.request.UserUpdateRequest;
+import com.sesac7.hellopet.domain.user.dto.response.AdminUserResponse;
 import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
+import com.sesac7.hellopet.domain.user.dto.response.UserPageResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserUpdateResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -191,5 +195,14 @@ public class UserService {
                                                      .build();
 
         return new ArrayList<>(List.of(deleteAccess, deleteRefresh));
+    }
+
+    public UserPageResponse getUsers(UserSearchRequest request) {
+
+        Page<AdminUserResponse> userPages = userRepository.searchUsersByCondition(request.getUserSearchType().name(),
+                request.getKeyword(),
+                request.toPageable());
+
+        return UserPageResponse.from(userPages, request);
     }
 }
