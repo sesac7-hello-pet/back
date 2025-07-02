@@ -17,6 +17,7 @@ import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationRes
 import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationsPageResponse;
 import com.sesac7.hellopet.domain.application.dto.response.UserApplicationPageResponse;
 import com.sesac7.hellopet.domain.application.dto.response.UserApplicationResponse;
+import com.sesac7.hellopet.domain.application.dto.response.detail.ApplicationDetailResponse;
 import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.info.agreement.AgreementInfo;
 import com.sesac7.hellopet.domain.application.entity.info.care.CareInfo;
@@ -28,6 +29,7 @@ import com.sesac7.hellopet.domain.application.entity.info.plan.FuturePlanInfo;
 import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +44,15 @@ public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final UserFinder userFinder;
     private final AnnouncementService announcementService;
+
+    @Transactional(readOnly = true)
+    public ApplicationDetailResponse getApplication(Long id) {
+        Application application = applicationRepository.findById(id)
+                                                       .orElseThrow(() -> new EntityNotFoundException(
+                                                               "해당 번호의 신청서를 찾을 수 없습니다. id=" + id));
+
+        return ApplicationDetailResponse.from(application);
+    }
 
     @Transactional(readOnly = true)
     public ShelterApplicationsPageResponse getShelterApplications(Long id, ApplicationPageRequest request) {

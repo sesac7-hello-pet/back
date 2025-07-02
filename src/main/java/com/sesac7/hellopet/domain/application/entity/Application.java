@@ -30,22 +30,20 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "applications")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Application {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @Getter
     private User applicant;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "announcement_id", nullable = false)
-    @Getter
     private Announcement announcement;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -74,11 +72,9 @@ public class Application {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Getter
     private ApplicationStatus status;
 
     @CreationTimestamp
-    @Getter
     private LocalDateTime submittedAt;
     private LocalDateTime processedAt;
 
