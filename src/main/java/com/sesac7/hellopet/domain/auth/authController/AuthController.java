@@ -33,6 +33,11 @@ public class AuthController {
 
     @DeleteMapping("/logout")
     public ResponseEntity<Void> logout() {
+        AuthResult result = authService.userLogout();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .header(HttpHeaders.SET_COOKIE, result.getAccessCookie().toString())
+                .header(HttpHeaders.SET_COOKIE, result.getRefreshCookie().toString())
+                .build();
     }
 
     @PostMapping("/check-password")
