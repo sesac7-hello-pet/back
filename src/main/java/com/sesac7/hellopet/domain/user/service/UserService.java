@@ -1,6 +1,7 @@
 package com.sesac7.hellopet.domain.user.service;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
+import com.sesac7.hellopet.common.utils.JwtUtil;
 import com.sesac7.hellopet.domain.auth.dto.request.CheckPasswordRequest;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
@@ -53,6 +54,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     /**
      * 회원가입시 유저 정보를 가지고 User, UserDetail 엔티티를 저장하고 정보를 반환합니다.
@@ -181,21 +183,9 @@ public class UserService {
 
         SecurityContextHolder.clearContext();
 
-        ResponseCookie deleteAccess = ResponseCookie.from("accessToken", "")
-                                                    .path("/")
-                                                    .httpOnly(true)
-                                                    .secure(true)
-                                                    .sameSite("Strict")
-                                                    .maxAge(0)
-                                                    .build();
+        ResponseCookie deleteAccess = jwtUtil.deleteAccessCookie();
 
-        ResponseCookie deleteRefresh = ResponseCookie.from("refreshToken", "")
-                                                     .path("/")
-                                                     .httpOnly(true)
-                                                     .secure(true)
-                                                     .sameSite("Strict")
-                                                     .maxAge(0)
-                                                     .build();
+        ResponseCookie deleteRefresh = jwtUtil.deleteRefreshCookie();
 
         return new ArrayList<>(List.of(deleteAccess, deleteRefresh));
     }
