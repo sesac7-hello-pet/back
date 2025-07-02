@@ -4,14 +4,11 @@ import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.application.dto.request.ApplicationPageRequest;
 import com.sesac7.hellopet.domain.application.dto.response.UserApplicationPageResponse;
 import com.sesac7.hellopet.domain.application.service.ApplicationService;
-import com.sesac7.hellopet.domain.board.dto.request.BoardSearchRequest;
-import com.sesac7.hellopet.domain.board.dto.request.SearchType;
 import com.sesac7.hellopet.domain.board.dto.response.BoardPageResponse;
 import com.sesac7.hellopet.domain.board.service.BoardService;
 import com.sesac7.hellopet.domain.user.dto.request.UserUpdateRequest;
 import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserUpdateResponse;
-import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import com.sesac7.hellopet.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -74,13 +71,6 @@ public class MeController {
     public ResponseEntity<BoardPageResponse> getBoards(@AuthenticationPrincipal CustomUserDetails details,
                                                        @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size) {
-        User user = userFinder.findLoggedInUserByUsername(details.getUsername());
-        BoardSearchRequest request = BoardSearchRequest.builder()
-                                                       .searchType(SearchType.EMAIL)
-                                                       .keyword(user.getEmail())
-                                                       .page(page)
-                                                       .size(size)
-                                                       .build();
-        return ResponseEntity.ok(boardService.getSearchList(request));
+        return ResponseEntity.ok(boardService.getMyBoard(details, page, size));
     }
 }

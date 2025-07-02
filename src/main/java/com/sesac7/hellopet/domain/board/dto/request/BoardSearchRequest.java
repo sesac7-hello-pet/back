@@ -29,4 +29,13 @@ public class BoardSearchRequest {
     private Integer page = 0; // 현재 페이지
     private Integer size = 10; // 게시글 목록 수
 
+    public static BoardSearchRequest toRequest(String email, int page, int size) {
+        return BoardSearchRequest.builder()
+                                 .searchType(SearchType.EMAIL)
+                                 .keyword(email)
+                                 .page(page)
+                                 .size(size)
+                                 .build();
+
+    }
 }
