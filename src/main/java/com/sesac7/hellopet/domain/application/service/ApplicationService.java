@@ -17,14 +17,7 @@ import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationRes
 import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationsPageResponse;
 import com.sesac7.hellopet.domain.application.dto.response.UserApplicationPageResponse;
 import com.sesac7.hellopet.domain.application.dto.response.UserApplicationResponse;
-import com.sesac7.hellopet.domain.application.dto.response.detail.AgreementInfoResponse;
 import com.sesac7.hellopet.domain.application.dto.response.detail.ApplicationDetailResponse;
-import com.sesac7.hellopet.domain.application.dto.response.detail.CareInfoResponse;
-import com.sesac7.hellopet.domain.application.dto.response.detail.FamilyInfoResponse;
-import com.sesac7.hellopet.domain.application.dto.response.detail.FinancialInfoResponse;
-import com.sesac7.hellopet.domain.application.dto.response.detail.FuturePlanInfoResponse;
-import com.sesac7.hellopet.domain.application.dto.response.detail.HousingInfoResponse;
-import com.sesac7.hellopet.domain.application.dto.response.detail.PetExperienceInfoResponse;
 import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.info.agreement.AgreementInfo;
 import com.sesac7.hellopet.domain.application.entity.info.care.CareInfo;
@@ -58,24 +51,7 @@ public class ApplicationService {
                                                        .orElseThrow(() -> new EntityNotFoundException(
                                                                "해당 번호의 신청서를 찾을 수 없습니다. id=" + id));
 
-        User user = application.getApplicant();
-        return ApplicationDetailResponse.builder()
-                                        .announcementId(application.getAnnouncement().getId())
-                                        .name(user.getUserDetail().getUsername())
-                                        .phoneNumber(user.getUserDetail().getPhoneNumber())
-                                        .email(user.getEmail())
-                                        .reason(application.getReason())
-                                        .housing(HousingInfoResponse.from(application.getHousingInfo()))
-                                        .family(FamilyInfoResponse.from(application.getFamilyInfo()))
-                                        .care(CareInfoResponse.from(application.getCareInfo()))
-                                        .financial(FinancialInfoResponse.from(application.getFinancialInfo()))
-                                        .petExperience(PetExperienceInfoResponse.from(
-                                                application.getPetExperienceInfo())
-                                        )
-                                        .futurePlan(FuturePlanInfoResponse.from(application.getFuturePlanInfo()))
-                                        .agreement(AgreementInfoResponse.from(application.getAgreementInfo()))
-                                        .submittedAt(application.getSubmittedAt())
-                                        .build();
+        return ApplicationDetailResponse.from(application);
     }
 
     @Transactional(readOnly = true)
