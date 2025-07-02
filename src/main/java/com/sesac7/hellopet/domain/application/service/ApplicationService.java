@@ -100,7 +100,7 @@ public class ApplicationService {
 
         User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
         Announcement announcement = announcementService.findById(request.getAnnouncementId());
-        Application application = Application.of(user, announcement, request);
+        Application application = request.toEntity(user, announcement);
 
         applicationRepository.save(application);
 

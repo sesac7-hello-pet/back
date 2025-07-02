@@ -1,7 +1,6 @@
 package com.sesac7.hellopet.domain.application.entity;
 
 import com.sesac7.hellopet.domain.announcement.entity.Announcement;
-import com.sesac7.hellopet.domain.application.dto.request.ApplicationCreateRequest;
 import com.sesac7.hellopet.domain.application.entity.info.agreement.AgreementInfo;
 import com.sesac7.hellopet.domain.application.entity.info.care.CareInfo;
 import com.sesac7.hellopet.domain.application.entity.info.experience.PetExperienceInfo;
@@ -73,7 +72,7 @@ public class Application {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ApplicationStatus status;
+    private ApplicationStatus status = ApplicationStatus.PENDING;
 
     @CreationTimestamp
     private LocalDateTime submittedAt;
@@ -94,22 +93,6 @@ public class Application {
         this.petExperienceInfo = petExperienceInfo;
         this.futurePlanInfo = futurePlanInfo;
         this.agreementInfo = agreementInfo;
-        this.status = status != null ? status : ApplicationStatus.PENDING;
-    }
-
-    public static Application of(User user, Announcement announcement, ApplicationCreateRequest request) {
-        return Application.builder()
-                          .user(user)
-                          .announcement(announcement)
-                          .reason(request.getReason())
-                          .housingInfo(HousingInfo.from(request.getHousingInfo()))
-                          .familyInfo(FamilyInfo.from(request.getFamilyInfo()))
-                          .careInfo(CareInfo.from(request.getCareInfo()))
-                          .financialInfo(FinancialInfo.from(request.getFinancialInfo()))
-                          .petExperienceInfo(PetExperienceInfo.from(request.getPetExperienceInfo()))
-                          .futurePlanInfo(FuturePlanInfo.from(request.getFuturePlanInfo()))
-                          .agreementInfo(AgreementInfo.from(request.getAgreement()))
-                          .build();
     }
 
     public void completeProcessing(ApplicationStatus newStatus) {
