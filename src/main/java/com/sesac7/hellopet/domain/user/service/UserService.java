@@ -212,6 +212,6 @@ public class UserService {
         if(!foundUser.getActivation()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 비활성화 된 유저입니다.");
         }
-        
+        foundUser.setActivation(false);
     }
 }
