@@ -13,12 +13,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class BoardSearchRequest {
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private BoardCategory category = BoardCategory.TOTAL;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private SearchType searchType = SearchType.TOTAL;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private SortType sortType = SortType.CURRENT;
 
