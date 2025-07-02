@@ -209,6 +209,9 @@ public class UserService {
 
     public void deactivateUser(Long userId) {
         User foundUser = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("잘못된 USER ID 입니다."));
-        if(!foundUser.getActivation()) 
+        if(!foundUser.getActivation()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 비활성화 된 유저입니다.");
+        }
+        
     }
 }
