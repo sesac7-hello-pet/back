@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.application.entity.info.care;
 
+import com.sesac7.hellopet.domain.application.dto.request.CareInfoRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -22,5 +23,11 @@ public class CareInfo {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CareTime careTime;
-}
 
+    public static CareInfo from(CareInfoRequest request) {
+        return new CareInfo(
+                request.getAbsenceTime(),
+                request.getCareTime()
+        );
+    }
+}

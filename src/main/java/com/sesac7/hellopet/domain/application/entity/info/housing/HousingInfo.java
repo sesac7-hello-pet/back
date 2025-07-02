@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.application.entity.info.housing;
 
+import com.sesac7.hellopet.domain.application.dto.request.HousingInfoRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -33,4 +34,14 @@ public class HousingInfo {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private HouseSizeRange houseSizeRange;
+
+    public static HousingInfo from(HousingInfoRequest request) {
+        return new HousingInfo(
+                request.getHousingType(),
+                request.getResidenceType(),
+                request.isPetAllowed(),
+                request.getPetLivingPlace(),
+                request.getHouseSizeRange()
+        );
+    }
 }

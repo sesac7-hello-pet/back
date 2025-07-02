@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.application.entity.info.experience;
 
+import com.sesac7.hellopet.domain.application.dto.request.PetExperienceInfoRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -18,4 +19,11 @@ public class PetExperienceInfo {
 
     @Column(columnDefinition = "TEXT")
     private String experienceDetails;
+
+    public static PetExperienceInfo from(PetExperienceInfoRequest request) {
+        return new PetExperienceInfo(
+                request.isHasPetExperience(),
+                request.getExperienceDetails()
+        );
+    }
 }
