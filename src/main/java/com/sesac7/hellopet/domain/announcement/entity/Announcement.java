@@ -40,9 +40,11 @@ public class Announcement {
     @OneToOne
     private Pet pet;
 
-    
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 
-
+    public void changeStatus(AnnouncementStatus newStatus) {
+        this.status = newStatus;
+        this.updateAt = LocalDateTime.now();
+    }
 }

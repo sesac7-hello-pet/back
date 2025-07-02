@@ -25,4 +25,12 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
                 ORDER BY app.submittedAt DESC
             """)
     List<Application> findApplicationsWithUserDetailByAnnouncementId(@Param("announcementId") Long announcementId);
+
+    @Query("""
+                SELECT app FROM Application app
+                WHERE app.announcement.id = :announcementId
+                AND app.id != :applicationId
+            """)
+    List<Application> findByAnnouncementIdAndExcludeApplicationId(@Param("announcementId") Long announcementId,
+                                                                  @Param("applicationId") Long applicationId);
 }

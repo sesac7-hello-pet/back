@@ -95,7 +95,7 @@ public class Application {
         this.agreementInfo = agreementInfo;
     }
 
-    public void completeProcessing(ApplicationStatus newStatus) {
+    public void changeStatus(ApplicationStatus newStatus) {
         this.status = newStatus;
         this.processedAt = LocalDateTime.now();
     }

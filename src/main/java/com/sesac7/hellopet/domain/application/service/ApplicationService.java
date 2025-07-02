@@ -5,6 +5,7 @@ import com.sesac7.hellopet.domain.announcement.entity.Announcement;
 import com.sesac7.hellopet.domain.announcement.service.AnnouncementService;
 import com.sesac7.hellopet.domain.application.dto.request.ApplicationCreateRequest;
 import com.sesac7.hellopet.domain.application.dto.request.ApplicationPageRequest;
+import com.sesac7.hellopet.domain.application.dto.response.ApplicationApprovalResponse;
 import com.sesac7.hellopet.domain.application.dto.response.ApplicationResponse;
 import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationResponse;
 import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationsPageResponse;
@@ -12,6 +13,7 @@ import com.sesac7.hellopet.domain.application.dto.response.UserApplicationPageRe
 import com.sesac7.hellopet.domain.application.dto.response.UserApplicationResponse;
 import com.sesac7.hellopet.domain.application.dto.response.detail.ApplicationDetailResponse;
 import com.sesac7.hellopet.domain.application.entity.Application;
+import com.sesac7.hellopet.domain.application.entity.ApplicationStatus;
 import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
@@ -105,5 +107,28 @@ public class ApplicationService {
         applicationRepository.save(application);
 
         return ApplicationResponse.from(application.getId());
+    }
+
+    public ApplicationApprovalResponse processApplicationApproval(Long announcementId, Long applicationId) {
+        approveAndRejectOtherApplications(announcementId, applicationId);
+        announcementService.completeAnnouncement(announcementId);
+
+        return ApplicationApprovalResponse.of(announcementId, applicationId);
+    }
+
+    private void approveAndRejectOtherApplications(Long announcementId, Long applicationId) {
+        Application application = applicationRepository.findById(applicationId)
+                                                       .orElseThrow(() -> new EntityNotFoundException(
+                                                               "해당 입양 신청서를 찾을 수 없습니다. id=" + applicationId)
+                                                       );
+
+        application.changeStatus(ApplicationStatus.APPROVED);
+
+        List<Application> otherApplications = applicationRepository.findByAnnouncementIdAndExcludeApplicationId(
+                announcementId, applicationId);
+
+        for (Application otherApplication : otherApplications) {
+            otherApplication.changeStatus(ApplicationStatus.REJECTED);
+        }
     }
 }
