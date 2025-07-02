@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -198,9 +197,12 @@ public class UserService {
     }
 
     public List<AdminUserListResponse> getUsers(UserSearchRequest request) {
-        Pageable pageable = request.toPageable();
-        Page<User> userPages = userRepository.searchUsersByCondition(request.getUserSearchType(), request.getKeyword(),
-                pageable);
+
+        System.out.println(request.toString());
+
+        Page<User> userPages = userRepository.searchUsersByCondition(request.getUserSearchType().name(),
+                request.getKeyword(),
+                request.toPageable());
 
         System.out.println("총 페이지 수   : " + userPages.getTotalPages());
         System.out.println("총 데이터 개수 : " + userPages.getTotalElements());
@@ -208,7 +210,7 @@ public class UserService {
         System.out.println("현재 페이지 번호: " + userPages.getNumber());
 
         for (int i = 0; i < userPages.getContent().size(); i++) {
-            System.out.println("컨텐츠[" + i + "]   : " + userPages.getContent().get(i));
+            System.out.println("컨텐츠[" + i + "]   : " + userPages.getContent().get(i).getEmail());
         }
 
         return null;
