@@ -100,4 +100,12 @@ public class BoardService {
         Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
         return BoardDetailResponse.from(board);
     }
+
+    public BoardPageResponse getMyBoard(CustomUserDetails details, int page, int size) {
+        User user = userFinder.findLoggedInUserByUsername(details.getUsername());
+        BoardSearchRequest request = BoardSearchRequest.toRequest(user.getEmail(), page, size);
+        BoardPageResponse response = getSearchList(request);
+        return response;
+    }
+
 }
