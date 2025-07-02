@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<UserPageResponse> getUsers(@RequestBody UserSearchRequest request) {
+    public ResponseEntity<UserPageResponse> getUsers(@ModelAttribute UserSearchRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUsers(request));
     }
 

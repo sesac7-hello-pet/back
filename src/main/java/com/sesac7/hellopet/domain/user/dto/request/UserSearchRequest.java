@@ -1,37 +1,26 @@
 package com.sesac7.hellopet.domain.user.dto.request;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import lombok.Getter;
+import lombok.Data;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-@Getter
+@Data
 public class UserSearchRequest {
 
-    @Enumerated(EnumType.STRING)
-    private UserSortType userSortType;
+    private UserSearchType userSearchType = UserSearchType.TOTAL;
+    private UserSortType userSortType = UserSortType.ID;
+    private UserAscDesc userAscDesc = UserAscDesc.ASC;
 
-    @Enumerated(EnumType.STRING)
-    private UserAscDesc userAscDesc;
+    private String keyword = "";
 
-    @Enumerated(EnumType.STRING)
-    private UserSearchType userSearchType;
-
-    private String keyword;
-
-    private Integer requestPage;
-    private Integer requestSize;
+    private Integer page = 0;
+    private Integer size = 10;
 
     public Pageable toPageable() {
-        // 1) 페이징 기본값
-        int page = requestPage != null ? requestPage : 0;
-        int size = requestSize != null ? requestSize : 10;
-
         // 2) 정렬 방향: 문자열→enum→Sort.Direction
         UserAscDesc ascDescEnum =
-                UserAscDesc.toEnum(userAscDesc != null ? userAscDesc.name() : null);
+                UserAscDesc.toEnum(String.valueOf(userAscDesc));
         Sort.Direction direction =
                 ascDescEnum == UserAscDesc.ASC
                         ? Sort.Direction.ASC
@@ -39,7 +28,7 @@ public class UserSearchRequest {
 
         // 3) 정렬 대상 프로퍼티: 문자열→enum→필드명 매핑
         UserSortType sortTypeEnum =
-                UserSortType.toEnum(userSortType != null ? userSortType.name() : null);
+                UserSortType.toEnum(String.valueOf(userSortType));
 
         String sortProperty;
         switch (sortTypeEnum) {

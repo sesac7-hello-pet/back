@@ -17,7 +17,7 @@ public class UserPageResponse {
     private List<AdminUserResponse> adminUserList = new ArrayList<>();
 
     public static UserPageResponse from(Page<AdminUserResponse> page, UserSearchRequest request) {
-        return new UserPageResponse(request.getRequestPage(), request.getRequestSize(), page.getTotalPages(),
+        return new UserPageResponse(request.getPage(), request.getSize(), page.getTotalPages(),
                 page.getTotalElements(), page.getContent());
     }
 }
