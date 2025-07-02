@@ -54,7 +54,7 @@ public class CommentService {
 
     public CommentResponse updateComment(Long commentId, CommentUpdateRequest request, CustomUserDetails details) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new EntityNotFoundException("댓글이 존재하지 않습니다."));
+                                           .orElseThrow(() -> new EntityNotFoundException("댓글이 존재하지 않습니다."));
 
         String writer = comment.getUser().getEmail();
         if (writer.equals(details.getUsername())) {
@@ -69,7 +69,7 @@ public class CommentService {
 
     public void deleteComment(Long commentId, CustomUserDetails details) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new EntityNotFoundException("댓글이 존재하지 않습니다."));
+                                           .orElseThrow(() -> new EntityNotFoundException("댓글이 존재하지 않습니다."));
 
         String writer = comment.getUser().getEmail();
         if (writer.equals(details.getUsername())) {
@@ -77,6 +77,13 @@ public class CommentService {
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 댓글을 삭제할 권한이 없습니다.");
         }
+
+    }
+
+    public CommentPageResponse getMyComments(String email, int page, int size) {
+        Page<Comment> commentPage = commentRepository.findByUserEmail(email, PageRequest.of(page, size));
+        Page<CommentResponse> pageResponse = commentPage.map(CommentResponse::from);
+        return CommentPageResponse.from(pageResponse, page, size);
 
     }
 }
