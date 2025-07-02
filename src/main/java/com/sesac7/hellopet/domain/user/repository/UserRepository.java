@@ -1,7 +1,6 @@
 package com.sesac7.hellopet.domain.user.repository;
 
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
-import com.sesac7.hellopet.domain.user.dto.request.UserSearchType;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.entity.UserRole;
 import java.util.List;
@@ -36,12 +35,25 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByRole(UserRole userRole);
 
     @Query("""
-            select u from User u join u.userDetail ud
-                        where (:searchType = com.sesac7.hellopet.domain.user.dto.request.UserSearchType.TOTAL and (u.email like %:keyword% or ud.username like %:keyword% or ud.nickname like %:keyword%)) 
-                                    or (:searchType = com.sesac7.hellopet.domain.user.dto.request.UserSearchType.USERNAME and (ud.username like %:keyword%))
-                                    or (:searchType = com.sesac7.hellopet.domain.user.dto.request.UserSearchType.EMAIL and (u.email like %:keyword%))
-                                    or (:searchType = com.sesac7.hellopet.domain.user.dto.request.UserSearchType.NICKNAME and (ud.nickname like %:keyword%))
+            select u
+            from   User u
+            join   u.userDetail ud
+            where  ( :searchType = 'TOTAL'
+                       and ( u.email    like concat('%', :keyword, '%')
+                          or ud.username like concat('%', :keyword, '%')
+                          or ud.nickname like concat('%', :keyword, '%') ) )
+            
+               or  ( :searchType = 'USERNAME'
+                       and ud.username like concat('%', :keyword, '%') )
+            
+               or  ( :searchType = 'EMAIL'
+                       and u.email like concat('%', :keyword, '%') )
+            
+               or  ( :searchType = 'NICKNAME'
+                       and ud.nickname like concat('%', :keyword, '%') )
             """)
-    Page<User> searchUsersByCondition(@Param("searchType") UserSearchType searchType, @Param("keyword") String keyword,
+    Page<User> searchUsersByCondition(@Param("searchType") String searchType,
+                                      @Param("keyword") String keyword,
                                       Pageable pageable);
+
 }
