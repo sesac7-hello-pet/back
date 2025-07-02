@@ -1,6 +1,7 @@
 package com.sesac7.hellopet.domain.user.repository;
 
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
+import com.sesac7.hellopet.domain.user.dto.response.AdminUserResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.entity.UserRole;
 import java.util.List;
@@ -35,7 +36,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByRole(UserRole userRole);
 
     @Query("""
-            select u
+            select new com.sesac7.hellopet.domain.user.dto.response.AdminUserResponse(
+                        u.id,
+                                    u.email,
+                                                u.role,
+                                                            ud.nickname,
+                                                                        ud.username,
+                                                                                    ud.phoneNumber
+                        )
             from   User u
             join   u.userDetail ud
             where  ( :searchType = 'TOTAL'
@@ -52,8 +60,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
                or  ( :searchType = 'NICKNAME'
                        and ud.nickname like concat('%', :keyword, '%') )
             """)
-    Page<User> searchUsersByCondition(@Param("searchType") String searchType,
-                                      @Param("keyword") String keyword,
-                                      Pageable pageable);
+    Page<AdminUserResponse> searchUsersByCondition(@Param("searchType") String searchType,
+                                                   @Param("keyword") String keyword,
+                                                   Pageable pageable);
 
 }
