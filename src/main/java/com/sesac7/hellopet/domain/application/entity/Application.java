@@ -72,7 +72,7 @@ public class Application {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ApplicationStatus status;
+    private ApplicationStatus status = ApplicationStatus.PENDING;
 
     @CreationTimestamp
     private LocalDateTime submittedAt;
@@ -93,7 +93,6 @@ public class Application {
         this.petExperienceInfo = petExperienceInfo;
         this.futurePlanInfo = futurePlanInfo;
         this.agreementInfo = agreementInfo;
-        this.status = status != null ? status : ApplicationStatus.PENDING;
     }
 
     public void completeProcessing(ApplicationStatus newStatus) {
