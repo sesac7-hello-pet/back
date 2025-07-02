@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.application.entity.info.family;
 
+import com.sesac7.hellopet.domain.application.dto.request.FamilyInfoRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -27,5 +28,14 @@ public class FamilyInfo {
 
     @Column(nullable = false)
     private boolean hasPetAllergy;
+
+    public static FamilyInfo from(FamilyInfoRequest request) {
+        return new FamilyInfo(
+                request.getNumberOfHousehold(),
+                request.isHasChildUnder13(),
+                request.getFamilyAgreement(),
+                request.isHasPetAllergy()
+        );
+    }
 }
 
