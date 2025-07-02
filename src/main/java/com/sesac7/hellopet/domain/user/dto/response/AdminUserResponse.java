@@ -13,4 +13,5 @@ public class AdminUserResponse {
     private String nickname;
     private String username;
     private String phoneNumber;
+    private Boolean activation;
 }
