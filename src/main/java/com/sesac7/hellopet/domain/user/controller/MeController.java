@@ -6,10 +6,11 @@ import com.sesac7.hellopet.domain.application.dto.response.UserApplicationPageRe
 import com.sesac7.hellopet.domain.application.service.ApplicationService;
 import com.sesac7.hellopet.domain.board.dto.response.BoardPageResponse;
 import com.sesac7.hellopet.domain.board.service.BoardService;
+import com.sesac7.hellopet.domain.comment.dto.response.CommentPageResponse;
+import com.sesac7.hellopet.domain.comment.service.CommentService;
 import com.sesac7.hellopet.domain.user.dto.request.UserUpdateRequest;
 import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserUpdateResponse;
-import com.sesac7.hellopet.domain.user.service.UserFinder;
 import com.sesac7.hellopet.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -36,7 +37,7 @@ public class MeController {
     private final UserService userService;
     private final ApplicationService applicationService;
     private final BoardService boardService;
-    private final UserFinder userFinder;
+    private final CommentService commentService;
 
     @GetMapping
     public ResponseEntity<UserDetailResponse> getDetail(@AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -73,4 +74,12 @@ public class MeController {
                                                        @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(boardService.getMyBoard(details, page, size));
     }
+
+    @GetMapping("/comments")
+    public ResponseEntity<CommentPageResponse> getComments(@AuthenticationPrincipal CustomUserDetails details,
+                                                           @RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(commentService.getMyComments(details.getUsername(), page, size));
+    }
+
 }
