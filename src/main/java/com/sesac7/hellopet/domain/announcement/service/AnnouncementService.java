@@ -124,4 +124,8 @@ public class AnnouncementService {
                                          .build();                                  // DTO 객체 생성 및 반환
     }
 
+    public void completeAnnouncement(Long id) {
+        Announcement announcement = findById(id);
+        announcement.changeStatus(AnnouncementStatus.COMPLETED);
+    }
 }
