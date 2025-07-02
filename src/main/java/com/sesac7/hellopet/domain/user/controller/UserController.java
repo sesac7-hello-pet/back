@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<AdminUserListResponse> getUsers(UserSearchRequest request) {
+    public List<AdminUserListResponse> getUsers(@RequestBody UserSearchRequest request) {
         return userService.getUsers(request);
     }
 

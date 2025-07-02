@@ -25,17 +25,24 @@ public class UserSearchRequest {
     private Integer requestSize;
 
     public Pageable toPageable() {
-
+        // 1) 페이징 기본값
         int page = requestPage != null ? requestPage : 0;
         int size = requestSize != null ? requestSize : 10;
 
+        // 2) 정렬 방향: 문자열→enum→Sort.Direction
+        UserAscDesc ascDescEnum =
+                UserAscDesc.toEnum(userAscDesc != null ? userAscDesc.name() : null);
         Sort.Direction direction =
-                (userAscDesc != null ? userAscDesc : UserAscDesc.ASC) == UserAscDesc.ASC
+                ascDescEnum == UserAscDesc.ASC
                         ? Sort.Direction.ASC
                         : Sort.Direction.DESC;
 
+        // 3) 정렬 대상 프로퍼티: 문자열→enum→필드명 매핑
+        UserSortType sortTypeEnum =
+                UserSortType.toEnum(userSortType != null ? userSortType.name() : null);
+
         String sortProperty;
-        switch (userSortType != null ? userSortType : UserSortType.ID) {
+        switch (sortTypeEnum) {
             case ROLE:
                 sortProperty = "role";
                 break;
@@ -56,6 +63,7 @@ public class UserSearchRequest {
                 sortProperty = "id";
         }
 
+        // 4) PageRequest 생성
         return PageRequest.of(page, size, Sort.by(direction, sortProperty));
     }
 }
