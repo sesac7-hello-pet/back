@@ -2,10 +2,12 @@ package com.sesac7.hellopet.domain.announcement.service;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementCreateRequest;
+import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementSearchRequest;
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementUpdateRequest;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
+import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementPageResponse;
 import com.sesac7.hellopet.domain.announcement.entity.Announcement;
 import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.entity.Pet;
@@ -19,7 +21,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,8 +62,8 @@ public class AnnouncementService {
                                                 .shelter(shelter)
                                                 .pet(pet)
                                                 .status(AnnouncementStatus.IN_PROGRESS)
-                                                .createAt(LocalDateTime.now())
-                                                .updateAt(LocalDateTime.now())
+                                                .createdAt(LocalDateTime.now())
+                                                .updatedAt(LocalDateTime.now())
                                                 .build();
 
         announcementRepository.save(announcement);
@@ -70,18 +75,10 @@ public class AnnouncementService {
      * 게시글 전체리스트 조회
      * @return AnnouncementListResponse 리스트
      */
-    public List<AnnouncementListResponse> getAllAnnouncements() {
-        List<Announcement> announcements = announcementRepository.findByStatus(AnnouncementStatus.IN_PROGRESS);
+    public AnnouncementPageResponse getAllAnnouncements(AnnouncementSearchRequest request) {
+        Page<AnnouncementListResponse> announcements = announcementRepository.searchAnnouncements(AnnouncementStatus.IN_PROGRESS, request.toPageable());
 
-        return announcements.stream()
-                            .map(a -> new AnnouncementListResponse(
-                                    a.getPet().getBreed(),            // Pet 품종
-                                    a.getPet().getImageUrl(),         // Pet 이미지 URL로 변경
-
-                                    a.getStatus() == AnnouncementStatus.IN_PROGRESS,
-                                    a.getId()
-                            ))
-                            .collect(Collectors.toList());
+        return AnnouncementPageResponse.from(announcements, request);
     }
 
     // 특정 공지사항 ID로 Announcement 엔터티를 조회하는 메서드
@@ -158,7 +155,7 @@ public class AnnouncementService {
         );
 
         // 4. 수정일 갱신
-        announcement.getUpdateAt();  // announcement.setUpdateAt(LocalDateTime.now()); 대신
+        announcement.getUpdatedAt();  // announcement.setUpdateAt(LocalDateTime.now()); 대신
 
         // 5. 요청 DTO 그대로 반환 (필요하면 Response DTO로 변경 권장)
         return announcementUpdateRequest;
@@ -184,21 +181,7 @@ public class AnnouncementService {
     /***
      * 내가 쓴 입양 공고 조회
      */
-    public List<AnnouncementListResponse> getMyAnnouncements(String email) {
-        List<Announcement> announcements = announcementRepository.findByShelter_UserDetail_User_Email(email);
-
-        return announcements.stream()
-                            .map(a -> new AnnouncementListResponse(
-                                    a.getPet().getBreed(),
-                                    a.getPet().getImageUrl(),
-                                    a.getStatus() == AnnouncementStatus.IN_PROGRESS,
-                                    a.getId()
-                            ))
-                            .collect(Collectors.toList());
-    }
-
-    public void completeAnnouncement(Long id) {
-        Announcement announcement = findById(id);
-        announcement.changeStatus(AnnouncementStatus.COMPLETED);
+    public Page<AnnouncementListResponse> getMyAnnouncements(String email, Pageable pageable) {
+        return announcementRepository.searchMyAnnouncement(email, pageable);
     }
 }

@@ -1,11 +1,12 @@
 package com.sesac7.hellopet.domain.announcement.dto.request;
 
-public enum AnnouncementSearchType {
+public enum AnnouncementSortType {
     CREATEDAT, ID,SHELTER;
 
-    public static AnnouncementSearchType getByName(String name) {
+    public static AnnouncementSortType getByName(String name) {
         try {
-            return AnnouncementSearchType.valueOf(name);
+            return AnnouncementSortType.valueOf(name);
+
         } catch (IllegalArgumentException e) {
             return CREATEDAT;
         }

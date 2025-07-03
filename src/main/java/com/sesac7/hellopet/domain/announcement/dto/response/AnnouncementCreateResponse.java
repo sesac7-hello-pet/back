@@ -19,7 +19,7 @@ public class AnnouncementCreateResponse {
     public static AnnouncementCreateResponse from(Announcement announcement) {
         return new AnnouncementCreateResponse(
                 announcement.getId(),
-                announcement.getShelter() + "-" + announcement.getCreateAt() + "-" + announcement.getId(),
+                announcement.getShelter() + "-" + announcement.getCreatedAt() + "-" + announcement.getId(),
                 announcement.getShelter().getUserDetail().getNickname(), "입양 공고 등록이 완료 되었습니다."
         );
     }

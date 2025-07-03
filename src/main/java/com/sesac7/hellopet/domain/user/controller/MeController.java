@@ -1,6 +1,7 @@
 package com.sesac7.hellopet.domain.user.controller;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
+import com.sesac7.hellopet.domain.announcement.service.AnnouncementService;
 import com.sesac7.hellopet.domain.application.dto.request.ApplicationPageRequest;
 import com.sesac7.hellopet.domain.application.dto.response.UserApplicationPageResponse;
 import com.sesac7.hellopet.domain.application.service.ApplicationService;
@@ -15,6 +16,7 @@ import com.sesac7.hellopet.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MeController {
 
+    private final AnnouncementService announcementService;
     private final UserService userService;
     private final ApplicationService applicationService;
     private final BoardService boardService;
@@ -81,5 +84,17 @@ public class MeController {
                                                            @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(commentService.getMyComments(details.getUsername(), page, size));
     }
+
+    /***
+     * 내가 쓴 입양 공고 조회
+     */
+    @GetMapping("/announcements")
+    public ResponseEntity<?> getMyAnnouncements(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            Pageable pageable) {
+
+               return ResponseEntity.ok(announcementService.getMyAnnouncements(userDetails.getUsername(), pageable));
+    }
+
 
 }
