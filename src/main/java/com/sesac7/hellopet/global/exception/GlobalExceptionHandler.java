@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.global.exception;
 
+import com.sesac7.hellopet.domain.application.validation.AlreadyProcessedApplicationException;
 import com.sesac7.hellopet.domain.application.validation.DuplicateApplicationException;
 import com.sesac7.hellopet.domain.application.validation.ExceptionResponse;
 import com.sesac7.hellopet.global.exception.custom.UnauthorizedException;
@@ -56,6 +57,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateApplicationException.class)
     public ResponseEntity<ExceptionResponse> responseDuplicateApplicationExceptionHandler(
             DuplicateApplicationException e) {
+        ExceptionResponse response = ExceptionResponse.of(e, HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.name());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(AlreadyProcessedApplicationException.class)
+    public ResponseEntity<ExceptionResponse> responseAlreadyProcessedApplicationExceptionHandler(
+            AlreadyProcessedApplicationException e) {
         ExceptionResponse response = ExceptionResponse.of(e, HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.name());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
