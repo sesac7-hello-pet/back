@@ -94,5 +94,6 @@ public class AuthService {
             throw new UnauthorizedException();
         }
         User foundUser = refreshFinder.getUserByToken(token);
+        ResponseCookie accessCookie = jwtUtil.generateAccessCookie(foundUser);
     }
 }
