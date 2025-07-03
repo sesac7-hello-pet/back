@@ -6,11 +6,14 @@ import com.sesac7.hellopet.domain.auth.dto.request.CheckPasswordRequest;
 import com.sesac7.hellopet.domain.auth.dto.request.LoginRequest;
 import com.sesac7.hellopet.domain.auth.dto.response.AuthResult;
 import com.sesac7.hellopet.domain.auth.dto.response.CheckPasswordResponse;
+import com.sesac7.hellopet.domain.auth.entity.RefreshToken;
+import com.sesac7.hellopet.domain.auth.repository.RefreshTokenRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import com.sesac7.hellopet.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class AuthService {
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private final UserService userService;
     private final UserFinder userFinder;
@@ -41,8 +46,14 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        return new AuthResult(jwtUtil.generateAccessCookie(userDetails), jwtUtil.generateRefreshCookie(userDetails),
-                userService.userLogin(userDetails.getUsername()));
+        ResponseCookie accessCookie = jwtUtil.generateAccessCookie(userDetails);
+        ResponseCookie refreshCookie = jwtUtil.generateRefreshCookie(userDetails);
+        User foundUser = userService.getUserByEmailFromDatabase(userDetails.getUsername());
+
+        refreshTokenRepository.save(
+                new RefreshToken(null, refreshCookie.getValue(), foundUser));
+
+        return new AuthResult(accessCookie, refreshCookie, userService.userLogin(userDetails.getUsername()));
     }
 
     public AuthResult userLogout() {
