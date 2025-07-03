@@ -1,6 +1,7 @@
 package com.sesac7.hellopet.domain.announcement.repository;
 
 import com.sesac7.hellopet.domain.announcement.entity.Announcement;
+import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,8 +10,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
 
-    // 전체 게시글 목록
-    List<Announcement> findAll();
+    // IN_PROGRESS 상태인 공고만 조회
+    List<Announcement> findByStatus(AnnouncementStatus status);
 
     // 특정 동물 ID 기준으로 조회
     Optional<Announcement> findById(Long petId);

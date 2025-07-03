@@ -70,9 +70,8 @@ public class AnnouncementService {
      * 게시글 전체리스트 조회
      * @return AnnouncementListResponse 리스트
      */
-
     public List<AnnouncementListResponse> getAllAnnouncements() {
-        List<Announcement> announcements = announcementRepository.findAll();
+        List<Announcement> announcements = announcementRepository.findByStatus(AnnouncementStatus.IN_PROGRESS);
 
         return announcements.stream()
                             .map(a -> new AnnouncementListResponse(
