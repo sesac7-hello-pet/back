@@ -29,27 +29,38 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public ResponseCookie generateCookie(CustomUserDetails userDetails) {
-        String token = doGenerateToken(userDetails, expiration);
-        return ResponseCookie.from("accessToken", token)
+    private ResponseCookie buildCookie(
+            String name,
+            String value,
+            long maxAgeMinutes
+    ) {
+        return ResponseCookie.from(name, value)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(Duration.ofMinutes(expiration))
                 .sameSite("Strict")
+                .maxAge(Duration.ofMinutes(maxAgeMinutes))
                 .build();
+    }
+
+    public ResponseCookie generateAccessCookie(CustomUserDetails userDetails) {
+        String token = doGenerateToken(userDetails, expiration);
+        return buildCookie("accessToken", token, expiration);
     }
 
     public ResponseCookie generateRefreshCookie(CustomUserDetails userDetails) {
         String token = doGenerateToken(userDetails, refreshExpiration);
-        return ResponseCookie.from("refreshToken", token)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(Duration.ofMinutes(refreshExpiration))
-                .sameSite("Strict")
-                .build();
+        return buildCookie("refreshToken", token, refreshExpiration);
     }
+
+    public ResponseCookie deleteAccessCookie() {
+        return buildCookie("accessToken", "", 0);
+    }
+
+    public ResponseCookie deleteRefreshCookie() {
+        return buildCookie("refreshToken", "", 0);
+    }
+
 
     private String doGenerateToken(CustomUserDetails userDetails, Long expiration) {
         Claims claims = Jwts.claims();

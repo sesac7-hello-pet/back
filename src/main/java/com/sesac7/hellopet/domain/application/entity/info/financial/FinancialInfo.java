@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.application.entity.info.financial;
 
+import com.sesac7.hellopet.domain.application.dto.request.FinancialInfoRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -21,5 +22,11 @@ public class FinancialInfo {
 
     @Column(nullable = false)
     private boolean hasEmergencyFund;
-}
 
+    public static FinancialInfo from(FinancialInfoRequest request) {
+        return new FinancialInfo(
+                request.getMonthlyBudget(),
+                request.isHasEmergencyFund()
+        );
+    }
+}

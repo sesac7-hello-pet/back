@@ -49,4 +49,8 @@ public class Announcement {
         this.updateAt = LocalDateTime.now();
     }
 
+    public void changeStatus(AnnouncementStatus newStatus) {
+        this.status = newStatus;
+        this.updateAt = LocalDateTime.now();
+    }
 }

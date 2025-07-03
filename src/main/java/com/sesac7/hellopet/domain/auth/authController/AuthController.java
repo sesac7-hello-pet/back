@@ -13,10 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -32,6 +29,15 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, result.getAccessCookie().toString())
                 .header(HttpHeaders.SET_COOKIE, result.getRefreshCookie().toString())
                 .body(result.getLoginResponse());
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        AuthResult result = authService.userLogout();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .header(HttpHeaders.SET_COOKIE, result.getAccessCookie().toString())
+                .header(HttpHeaders.SET_COOKIE, result.getRefreshCookie().toString())
+                .build();
     }
 
     @PostMapping("/check-password")

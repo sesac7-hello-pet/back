@@ -1,23 +1,35 @@
 package com.sesac7.hellopet.domain.user.service;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
+import com.sesac7.hellopet.common.utils.JwtUtil;
 import com.sesac7.hellopet.domain.auth.dto.request.CheckPasswordRequest;
 import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.dto.request.CheckField;
 import com.sesac7.hellopet.domain.user.dto.request.UserRegisterRequest;
+import com.sesac7.hellopet.domain.user.dto.request.UserSearchRequest;
 import com.sesac7.hellopet.domain.user.dto.request.UserUpdateRequest;
+import com.sesac7.hellopet.domain.user.dto.response.AdminUserResponse;
 import com.sesac7.hellopet.domain.user.dto.response.ExistResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserDetailResponse;
+import com.sesac7.hellopet.domain.user.dto.response.UserPageResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserRegisterResponse;
 import com.sesac7.hellopet.domain.user.dto.response.UserUpdateResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.entity.UserDetail;
+import com.sesac7.hellopet.domain.user.entity.UserRole;
 import com.sesac7.hellopet.domain.user.repository.UserDetailRepository;
 import com.sesac7.hellopet.domain.user.repository.UserRepository;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +54,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     /**
      * 회원가입시 유저 정보를 가지고 User, UserDetail 엔티티를 저장하고 정보를 반환합니다.
@@ -164,8 +177,36 @@ public class UserService {
         return passwordEncoder.matches(request.getPassword(), loggedInUser.getPassword());
     }
 
-    public void disableUser(CustomUserDetails userDetails) {
+    public List<ResponseCookie> disableUser(CustomUserDetails userDetails) {
         User foundUser = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+        foundUser.setActivation(false);
+
+        SecurityContextHolder.clearContext();
+
+        ResponseCookie deleteAccess = jwtUtil.deleteAccessCookie();
+
+        ResponseCookie deleteRefresh = jwtUtil.deleteRefreshCookie();
+
+        return new ArrayList<>(List.of(deleteAccess, deleteRefresh));
+    }
+
+    public UserPageResponse getUsers(UserSearchRequest request) {
+
+        Page<AdminUserResponse> userPages = userRepository.searchUsersByCondition(request.getUserSearchType().name(),
+                request.getKeyword(),
+                request.toPageable());
+
+        return UserPageResponse.from(userPages, request);
+    }
+
+    public void deactivateUser(Long userId) {
+        User foundUser = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("잘못된 USER ID 입니다."));
+        if(!foundUser.getActivation()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 비활성화 된 유저입니다.");
+        }
+        if(foundUser.getRole().equals(UserRole.ADMIN)) {
+            throw new AuthorizationDeniedException("권한이 없습니다.");
+        }
         foundUser.setActivation(false);
     }
 }

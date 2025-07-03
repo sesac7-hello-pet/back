@@ -30,12 +30,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "applications")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Application {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,7 +44,6 @@ public class Application {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "announcement_id", nullable = false)
-    @Getter
     private Announcement announcement;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -73,11 +72,9 @@ public class Application {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Getter
-    private ApplicationStatus status;
+    private ApplicationStatus status = ApplicationStatus.PENDING;
 
     @CreationTimestamp
-    @Getter
     private LocalDateTime submittedAt;
     private LocalDateTime processedAt;
 
@@ -96,10 +93,9 @@ public class Application {
         this.petExperienceInfo = petExperienceInfo;
         this.futurePlanInfo = futurePlanInfo;
         this.agreementInfo = agreementInfo;
-        this.status = status != null ? status : ApplicationStatus.PENDING;
     }
 
-    public void completeProcessing(ApplicationStatus newStatus) {
+    public void changeStatus(ApplicationStatus newStatus) {
         this.status = newStatus;
         this.processedAt = LocalDateTime.now();
     }

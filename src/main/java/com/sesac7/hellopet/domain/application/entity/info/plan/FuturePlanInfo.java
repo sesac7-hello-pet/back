@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.application.entity.info.plan;
 
+import com.sesac7.hellopet.domain.application.dto.request.FuturePlanInfoRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -18,4 +19,11 @@ public class FuturePlanInfo {
 
     @Column(columnDefinition = "TEXT")
     private String planDetails;
+
+    public static FuturePlanInfo from(FuturePlanInfoRequest request) {
+        return new FuturePlanInfo(
+                request.isHasFuturePlan(),
+                request.getPlanDetails()
+        );
+    }
 }
