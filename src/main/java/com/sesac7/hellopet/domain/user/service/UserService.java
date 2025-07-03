@@ -184,7 +184,6 @@ public class UserService {
         SecurityContextHolder.clearContext();
 
         ResponseCookie deleteAccess = jwtUtil.deleteAccessCookie();
-
         ResponseCookie deleteRefresh = jwtUtil.deleteRefreshCookie();
 
         return new ArrayList<>(List.of(deleteAccess, deleteRefresh));
@@ -200,13 +199,18 @@ public class UserService {
     }
 
     public void deactivateUser(Long userId) {
-        User foundUser = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("잘못된 USER ID 입니다."));
-        if(!foundUser.getActivation()) {
+        User foundUser = userRepository.findById(userId)
+                                       .orElseThrow(() -> new UsernameNotFoundException("잘못된 USER ID 입니다."));
+        if (!foundUser.getActivation()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 비활성화 된 유저입니다.");
         }
-        if(foundUser.getRole().equals(UserRole.ADMIN)) {
+        if (foundUser.getRole().equals(UserRole.ADMIN)) {
             throw new AuthorizationDeniedException("권한이 없습니다.");
         }
         foundUser.setActivation(false);
+    }
+
+    public User getUserByEmailFromDatabase(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("잘못된 유저 입니다."));
     }
 }
