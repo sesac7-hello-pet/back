@@ -90,12 +90,13 @@ public class AuthService {
                              .filter(c -> "refreshToken".equals(c.getName()))
                              .map(Cookie::getValue)
                              .findFirst().orElse(null);
+
         if (token == null) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException(jwtUtil.deleteAccessCookie(), jwtUtil.deleteRefreshCookie());
         }
-        
+
         if (jwtUtil.isTokenExpired(token)) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException(jwtUtil.deleteAccessCookie(), jwtUtil.deleteRefreshCookie());
         }
 
         User foundUser = refreshFinder.getUserByToken(token);
