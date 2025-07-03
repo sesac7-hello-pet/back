@@ -11,7 +11,11 @@ import com.sesac7.hellopet.domain.auth.repository.RefreshTokenRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import com.sesac7.hellopet.domain.user.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.Arrays;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -67,7 +71,7 @@ public class AuthService {
         User foundUser = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
 
         refreshFinder.deleteRefreshByUser(foundUser);
-        
+
         SecurityContextHolder.clearContext();
         return new AuthResult(jwtUtil.deleteAccessCookie(), jwtUtil.deleteRefreshCookie(), null);
     }
@@ -80,4 +84,10 @@ public class AuthService {
         return new CheckPasswordResponse("확인 되었습니다.", true);
     }
 
+    public void reissueAccess(HttpServletRequest request) {
+        String token = Arrays.stream(Optional.ofNullable(request.getCookies()).orElse(new Cookie[0]))
+                             .filter(c -> "refreshToken".equals(c.getName()))
+                             .map(Cookie::getValue)
+                             .findFirst().orElse(null);
+    }
 }
