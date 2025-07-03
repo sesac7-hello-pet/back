@@ -17,14 +17,11 @@ import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,7 +73,8 @@ public class AnnouncementService {
      * @return AnnouncementListResponse 리스트
      */
     public AnnouncementPageResponse getAllAnnouncements(AnnouncementSearchRequest request) {
-        Page<AnnouncementListResponse> announcements = announcementRepository.searchAnnouncements(AnnouncementStatus.IN_PROGRESS, request.toPageable());
+        Page<AnnouncementListResponse> announcements = announcementRepository.searchAnnouncements(
+                AnnouncementStatus.IN_PROGRESS, request.toPageable());
 
         return AnnouncementPageResponse.from(announcements, request);
     }
@@ -183,5 +181,10 @@ public class AnnouncementService {
      */
     public Page<AnnouncementListResponse> getMyAnnouncements(String email, Pageable pageable) {
         return announcementRepository.searchMyAnnouncement(email, pageable);
+    }
+
+    public void completeAnnouncement(Long id) {
+        Announcement announcement = findById(id);
+        announcement.changeStatus(AnnouncementStatus.COMPLETED);
     }
 }
