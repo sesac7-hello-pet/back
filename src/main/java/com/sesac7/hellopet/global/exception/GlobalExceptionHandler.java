@@ -1,9 +1,11 @@
 package com.sesac7.hellopet.global.exception;
 
+import com.sesac7.hellopet.global.exception.custom.UnauthorizedException;
 import com.sesac7.hellopet.global.exception.custom.WithdrawUserException;
 import com.sesac7.hellopet.global.exception.dto.response.ErrorMessage;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,7 +19,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorMessage> responseStatusExceptionHandler(ResponseStatusException e) {
         return ResponseEntity.status(e.getStatusCode())
-                .body(new ErrorMessage(String.valueOf(e.getStatusCode().value()), e.getReason()));
+                             .body(new ErrorMessage(String.valueOf(e.getStatusCode().value()), e.getReason()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -39,5 +41,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorMessage> responseInactivationUserExceptionHandler(WithdrawUserException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorMessage(HttpStatus.FORBIDDEN.toString(),
                 e.getMessage()));
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorMessage> responseUnauthorizedUserExceptionHandler(UnauthorizedException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .header(HttpHeaders.SET_COOKIE, e.getAccessCookie().toString())
+                             .header(HttpHeaders.SET_COOKIE, e.getRefreshCookie().toString())
+                             .body(new ErrorMessage(HttpStatus.BAD_REQUEST.toString(), e.getMessage()));
     }
 }

@@ -33,17 +33,12 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String token = Arrays.stream(Optional.ofNullable(request.getCookies()).orElse(new Cookie[0]))
-                .filter(c -> "accessToken".equals(c.getName()))
-                .map(Cookie::getValue)
-                .findFirst().orElse(null);
+                             .filter(c -> "accessToken".equals(c.getName()))
+                             .map(Cookie::getValue)
+                             .findFirst().orElse(null);
 
-        if (token == null) {
+        if (token == null || jwtUtil.isTokenExpired(token)) {
             filterChain.doFilter(request, response);
-            return;
-        }
-
-        if (jwtUtil.isTokenExpired(token)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
