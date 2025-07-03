@@ -93,6 +93,11 @@ public class AuthService {
         if (token == null) {
             throw new UnauthorizedException();
         }
+        
+        if (jwtUtil.isTokenExpired(token)) {
+            throw new UnauthorizedException();
+        }
+
         User foundUser = refreshFinder.getUserByToken(token);
         return jwtUtil.generateAccessCookie(foundUser);
     }
