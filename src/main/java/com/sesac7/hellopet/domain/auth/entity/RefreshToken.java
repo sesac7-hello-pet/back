@@ -1,5 +1,6 @@
-package com.sesac7.hellopet.domain.user.entity;
+package com.sesac7.hellopet.domain.auth.entity;
 
+import com.sesac7.hellopet.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,35 +13,21 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Table(name = "user_details")
 @Getter
+@Table(name = "refresh_tokens")
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDetail {
+public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
-    private String nickname;
-
-    @Column(nullable = false)
-    private String username;
-
-    @Setter
-    private String userProfileUrl;
-
-    @Setter
-    @Column(nullable = false)
-    private String address;
-
-    @Column(nullable = false)
-    private String phoneNumber;
+    @Column(nullable = false, unique = true)
+    private String tokenHash;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", unique = true)
     private User user;
 }
