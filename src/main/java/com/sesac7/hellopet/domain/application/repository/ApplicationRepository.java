@@ -36,4 +36,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
                                                                   @Param("applicationId") Long applicationId);
 
     Optional<Application> findByIdAndAnnouncementId(Long applicationId, Long announcementId);
+
+    Optional<Application> findByApplicantIdAndAnnouncementId(Long userId, Long announcementId);
 }
