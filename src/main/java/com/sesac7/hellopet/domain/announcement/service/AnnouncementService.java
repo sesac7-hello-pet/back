@@ -5,29 +5,23 @@ import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementCreateReq
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementUpdateRequest;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.entity.Announcement;
 import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
-import com.sesac7.hellopet.domain.user.service.UserFinder;
 import com.sesac7.hellopet.domain.user.entity.User;
+import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
 
 @Service
 @RequiredArgsConstructor
@@ -76,19 +70,18 @@ public class AnnouncementService {
      * 게시글 전체리스트 조회
      * @return AnnouncementListResponse 리스트
      */
-
     public List<AnnouncementListResponse> getAllAnnouncements() {
-        List<Announcement> announcements = announcementRepository.findAll();
+        List<Announcement> announcements = announcementRepository.findByStatus(AnnouncementStatus.IN_PROGRESS);
 
         return announcements.stream()
                             .map(a -> new AnnouncementListResponse(
                                     a.getPet().getBreed(),            // Pet 품종
                                     a.getPet().getImageUrl(),         // Pet 이미지 URL로 변경
 
-                        a.getStatus() == AnnouncementStatus.IN_PROGRESS,
-                        a.getId()
-                ))
-                .collect(Collectors.toList());
+                                    a.getStatus() == AnnouncementStatus.IN_PROGRESS,
+                                    a.getId()
+                            ))
+                            .collect(Collectors.toList());
     }
 
     // 특정 공지사항 ID로 Announcement 엔터티를 조회하는 메서드
@@ -129,6 +122,7 @@ public class AnnouncementService {
                                          .imageUrl(pet.getImageUrl())               // 펫의 이미지 URL 설정
                                          .build();                                  // DTO 객체 생성 및 반환
     }
+
     /***
      * 게시글 수정(update)
      */
@@ -140,7 +134,8 @@ public class AnnouncementService {
 
         // 1. 게시글 조회
         Announcement announcement = announcementRepository.findById(id)
-                                                          .orElseThrow(() -> new EntityNotFoundException("입양 공고가 존재하지 않습니다."));
+                                                          .orElseThrow(() -> new EntityNotFoundException(
+                                                                  "입양 공고가 존재하지 않습니다."));
 
         // 2. 작성자 확인
 //        if (!announcement.getShelter().getUserDetail().getUser().getEmail().equals(username)) {
@@ -150,7 +145,6 @@ public class AnnouncementService {
         if (!announcement.getShelter().getEmail().equals(username)) {
             throw new Exception("수정권한이 없습니다");
         }
-
 
         // 3. Pet 수정 (updateInfo 메서드로 대체 권장)
         Pet pet = announcement.getPet();
@@ -176,7 +170,8 @@ public class AnnouncementService {
      */
     public void deleteAnnouncement(Long id, String username) {
         Announcement announcement = announcementRepository.findById(id)
-                                                          .orElseThrow(() -> new EntityNotFoundException("삭제할 공고가 존재하지 않습니다."));
+                                                          .orElseThrow(() -> new EntityNotFoundException(
+                                                                  "삭제할 공고가 존재하지 않습니다."));
 
         // 🔐 작성자 확인
         if (!announcement.getShelter().getUserDetail().getUser().getEmail().equals(username)) {
@@ -185,6 +180,7 @@ public class AnnouncementService {
 
         announcementRepository.delete(announcement);
     }
+
     /***
      * 내가 쓴 입양 공고 조회
      */
@@ -200,12 +196,6 @@ public class AnnouncementService {
                             ))
                             .collect(Collectors.toList());
     }
-
-
-
-
-
-
 
     public void completeAnnouncement(Long id) {
         Announcement announcement = findById(id);
