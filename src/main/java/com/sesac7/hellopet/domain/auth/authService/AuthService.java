@@ -61,6 +61,13 @@ public class AuthService {
     }
 
     public AuthResult userLogout() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        User foundUser = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+
+        refreshFinder.deleteRefreshByUser(foundUser);
+        
         SecurityContextHolder.clearContext();
         return new AuthResult(jwtUtil.deleteAccessCookie(), jwtUtil.deleteRefreshCookie(), null);
     }
