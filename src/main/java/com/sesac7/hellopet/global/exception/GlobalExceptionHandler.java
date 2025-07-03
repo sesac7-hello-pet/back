@@ -1,5 +1,7 @@
 package com.sesac7.hellopet.global.exception;
 
+import com.sesac7.hellopet.domain.application.validation.DuplicateApplicationException;
+import com.sesac7.hellopet.domain.application.validation.ExceptionResponse;
 import com.sesac7.hellopet.global.exception.custom.UnauthorizedException;
 import com.sesac7.hellopet.global.exception.custom.WithdrawUserException;
 import com.sesac7.hellopet.global.exception.dto.response.ErrorMessage;
@@ -49,5 +51,13 @@ public class GlobalExceptionHandler {
                              .header(HttpHeaders.SET_COOKIE, e.getAccessCookie().toString())
                              .header(HttpHeaders.SET_COOKIE, e.getRefreshCookie().toString())
                              .body(new ErrorMessage(HttpStatus.BAD_REQUEST.toString(), e.getMessage()));
+    }
+
+    @ExceptionHandler(DuplicateApplicationException.class)
+    public ResponseEntity<ExceptionResponse> responseDuplicateApplicationExceptionHandler(
+            DuplicateApplicationException e) {
+        ExceptionResponse response = ExceptionResponse.of(e, HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.name());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }
