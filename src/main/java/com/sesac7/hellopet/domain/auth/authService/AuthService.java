@@ -85,7 +85,7 @@ public class AuthService {
         return new CheckPasswordResponse("확인 되었습니다.", true);
     }
 
-    public void reissueAccess(HttpServletRequest request) {
+    public ResponseCookie reissueAccess(HttpServletRequest request) {
         String token = Arrays.stream(Optional.ofNullable(request.getCookies()).orElse(new Cookie[0]))
                              .filter(c -> "refreshToken".equals(c.getName()))
                              .map(Cookie::getValue)
@@ -94,6 +94,6 @@ public class AuthService {
             throw new UnauthorizedException();
         }
         User foundUser = refreshFinder.getUserByToken(token);
-        ResponseCookie accessCookie = jwtUtil.generateAccessCookie(foundUser);
+        return jwtUtil.generateAccessCookie(foundUser);
     }
 }
