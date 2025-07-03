@@ -6,13 +6,11 @@ import com.sesac7.hellopet.domain.auth.dto.request.CheckPasswordRequest;
 import com.sesac7.hellopet.domain.auth.dto.request.LoginRequest;
 import com.sesac7.hellopet.domain.auth.dto.response.AuthResult;
 import com.sesac7.hellopet.domain.auth.dto.response.CheckPasswordResponse;
-import com.sesac7.hellopet.domain.auth.dto.response.LoginResponse;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import com.sesac7.hellopet.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,12 +41,13 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        return new AuthResult(jwtUtil.generateAccessCookie(userDetails), jwtUtil.generateRefreshCookie(userDetails), userService.userLogin(userDetails.getUsername()));
+        return new AuthResult(jwtUtil.generateAccessCookie(userDetails), jwtUtil.generateRefreshCookie(userDetails),
+                userService.userLogin(userDetails.getUsername()));
     }
 
     public AuthResult userLogout() {
         SecurityContextHolder.clearContext();
-        return new AuthResult(jwtUtil. deleteAccessCookie(), jwtUtil.deleteRefreshCookie(), null);
+        return new AuthResult(jwtUtil.deleteAccessCookie(), jwtUtil.deleteRefreshCookie(), null);
     }
 
     public CheckPasswordResponse checkPassword(@Valid CheckPasswordRequest request, CustomUserDetails userDetails) {
