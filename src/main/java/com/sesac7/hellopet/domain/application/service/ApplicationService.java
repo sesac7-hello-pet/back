@@ -55,7 +55,7 @@ public class ApplicationService {
                     .announcementId(announcement.getId())
                     .applicationStatusLabel(application.getStatus().name())
                     .submittedAt(application.getSubmittedAt())
-                    .petImageUrl(announcement.getImageUrl())
+                    .petImageUrl(announcement.getPet().getImageUrl())
                     .build();
         });
     }

@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
 @Getter
 @Builder
@@ -44,5 +45,8 @@ public class Announcement {
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 
+    public void updateTimestamp() {
+        this.updateAt = LocalDateTime.now();
+    }
 
 }
