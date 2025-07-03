@@ -26,18 +26,23 @@ public class AuthController {
         AuthResult result = authService.userLogin(request);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .header(HttpHeaders.SET_COOKIE, result.getAccessCookie().toString())
-                .header(HttpHeaders.SET_COOKIE, result.getRefreshCookie().toString())
-                .body(result.getLoginResponse());
+                             .header(HttpHeaders.SET_COOKIE, result.getAccessCookie().toString())
+                             .header(HttpHeaders.SET_COOKIE, result.getRefreshCookie().toString())
+                             .body(result.getLoginResponse());
     }
 
     @DeleteMapping("/logout")
     public ResponseEntity<Void> logout() {
         AuthResult result = authService.userLogout();
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .header(HttpHeaders.SET_COOKIE, result.getAccessCookie().toString())
-                .header(HttpHeaders.SET_COOKIE, result.getRefreshCookie().toString())
-                .build();
+                             .header(HttpHeaders.SET_COOKIE, result.getAccessCookie().toString())
+                             .header(HttpHeaders.SET_COOKIE, result.getRefreshCookie().toString())
+                             .build();
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<Void> reissue() {
+        return null;
     }
 
     @PostMapping("/check-password")
