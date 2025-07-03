@@ -16,7 +16,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -115,7 +114,7 @@ public class AnnouncementController {
             @AuthenticationPrincipal CustomUserDetails userDetails) throws Exception {
 
         AnnouncementUpdateRequest updated = announcementService.updateAnnouncement(
-                id, announcementUpdateRequest, userDetails.getUsername()  );
+                id, announcementUpdateRequest, userDetails.getUsername());
         return ResponseEntity.ok(updated);
     }
 
@@ -150,9 +149,4 @@ public class AnnouncementController {
 
         return ResponseEntity.ok(myAnnouncements);
     }
-
-
-
-
 }
-
