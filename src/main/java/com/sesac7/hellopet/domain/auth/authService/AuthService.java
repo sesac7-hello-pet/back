@@ -93,5 +93,6 @@ public class AuthService {
         if (token == null) {
             throw new UnauthorizedException();
         }
+        User foundUser = refreshFinder.getUserByToken(token);
     }
 }

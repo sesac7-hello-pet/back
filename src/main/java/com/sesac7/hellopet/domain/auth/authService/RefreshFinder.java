@@ -6,4 +6,6 @@ public interface RefreshFinder {
     Boolean existRefresh(String refreshToken);
 
     void deleteRefreshByUser(User foundUser);
+
+    User getUserByToken(String token);
 }
