@@ -11,6 +11,7 @@ import com.sesac7.hellopet.domain.auth.repository.RefreshTokenRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import com.sesac7.hellopet.domain.user.service.UserService;
+import com.sesac7.hellopet.global.exception.custom.UnauthorizedException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -89,5 +90,8 @@ public class AuthService {
                              .filter(c -> "refreshToken".equals(c.getName()))
                              .map(Cookie::getValue)
                              .findFirst().orElse(null);
+        if (token == null) {
+            throw new UnauthorizedException();
+        }
     }
 }
