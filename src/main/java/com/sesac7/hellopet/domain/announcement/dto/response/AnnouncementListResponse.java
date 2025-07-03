@@ -22,7 +22,7 @@ public class AnnouncementListResponse {
                 announcement.getPet().getBreed(),        // pet에서 breed 가져오기
                 announcement.getPet().getImageUrl(),               // announcement의 imageUrl 사용
 
-                announcement.getStatus() == AnnouncementStatus.ACTIVE, // enum 상태 변환 (예시)
+                announcement.getStatus() == AnnouncementStatus.IN_PROGRESS, // enum 상태 변환 (예시)
                 announcement.getId()
         );
     }
