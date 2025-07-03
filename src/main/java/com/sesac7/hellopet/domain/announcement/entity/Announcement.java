@@ -41,16 +41,15 @@ public class Announcement {
     @OneToOne
     private Pet pet;
 
-    
-    private LocalDateTime createAt;
-    private LocalDateTime updateAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public void updateTimestamp() {
-        this.updateAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void changeStatus(AnnouncementStatus newStatus) {
         this.status = newStatus;
-        this.updateAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 }

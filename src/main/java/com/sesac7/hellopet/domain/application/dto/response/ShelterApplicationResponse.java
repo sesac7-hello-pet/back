@@ -20,7 +20,7 @@ public class ShelterApplicationResponse {
         UserDetail userDetail = application.getApplicant().getUserDetail();
         return ShelterApplicationResponse.builder()
                                          .announcementId(announcement.getId())
-                                         .announcementCreatedAt(announcement.getCreateAt())
+                                         .announcementCreatedAt(announcement.getCreatedAt())
                                          .userName(userDetail.getUsername())
                                          .userPhoneNumber(userDetail.getPhoneNumber())
                                          .userEmail(application.getApplicant().getEmail())

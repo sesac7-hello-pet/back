@@ -2,10 +2,12 @@ package com.sesac7.hellopet.domain.announcement.controller;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementCreateRequest;
+import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementSearchRequest;
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementUpdateRequest;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
+import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementPageResponse;
 import com.sesac7.hellopet.domain.announcement.service.AnnouncementService;
 import com.sesac7.hellopet.domain.application.dto.request.ApplicationPageRequest;
 import com.sesac7.hellopet.domain.application.dto.response.ApplicationApprovalResponse;
@@ -14,6 +16,8 @@ import com.sesac7.hellopet.domain.application.service.ApplicationService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -57,10 +62,10 @@ public class AnnouncementController {
      */
 
     @GetMapping
-    public ResponseEntity<List<AnnouncementListResponse>> getAllAnnouncements() {
-        List<AnnouncementListResponse> announcements = announcementService.getAllAnnouncements();
-        return ResponseEntity.ok(announcements);
+    public ResponseEntity <AnnouncementPageResponse> getAllAnnouncements(@ModelAttribute AnnouncementSearchRequest request) {
+        return ResponseEntity.ok(announcementService.getAllAnnouncements(request));
     }
+
 
     /**
      * 공고별 신청 내역 조회
@@ -115,7 +120,7 @@ public class AnnouncementController {
             @AuthenticationPrincipal CustomUserDetails userDetails) throws Exception {
 
         AnnouncementUpdateRequest updated = announcementService.updateAnnouncement(
-                id, announcementUpdateRequest, userDetails.getUsername()  );
+                id, announcementUpdateRequest, userDetails.getUsername());
         return ResponseEntity.ok(updated);
     }
 
@@ -135,24 +140,7 @@ public class AnnouncementController {
         return ResponseEntity.ok("삭제가 완료되었습니다.");
     }
 
-    /***
-     * 내가 쓴 입양 공고 조회
-     */
-    @GetMapping("/my")
-    public ResponseEntity<?> getMyAnnouncements(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
-
-        String username = userDetails.getUsername();  // 이메일 or 사용자 ID 등
-
-        List<AnnouncementListResponse> myAnnouncements = announcementService.getMyAnnouncements(username);
-
-        return ResponseEntity.ok(myAnnouncements);
-    }
-
 
 
 
 }
-
