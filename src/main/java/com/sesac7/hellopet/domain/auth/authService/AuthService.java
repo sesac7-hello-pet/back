@@ -30,6 +30,8 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     private final UserService userService;
+    private final RefreshFinder refreshFinder;
+
     private final UserFinder userFinder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
@@ -50,8 +52,10 @@ public class AuthService {
         ResponseCookie refreshCookie = jwtUtil.generateRefreshCookie(userDetails);
         User foundUser = userService.getUserByEmailFromDatabase(userDetails.getUsername());
 
-        refreshTokenRepository.save(
-                new RefreshToken(null, refreshCookie.getValue(), foundUser));
+        if (!refreshFinder.existRefresh(refreshCookie.getValue())) {
+            refreshTokenRepository.save(
+                    new RefreshToken(null, refreshCookie.getValue(), foundUser));
+        }
 
         return new AuthResult(accessCookie, refreshCookie, userService.userLogin(userDetails.getUsername()));
     }
