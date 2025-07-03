@@ -43,5 +43,14 @@ public class Pet {
     @Column
     private String imageUrl;
 
+    public void updateInfo(String breed, String gender, int age, String health, String personality, String imageUrl) {
+        this.breed = breed;
+        this.gender = gender;
+        this.age = age;
+        this.health = health;
+        this.personality = personality;
+        this.imageUrl = imageUrl;
+    }
+
 
 }
