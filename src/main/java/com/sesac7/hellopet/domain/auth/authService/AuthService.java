@@ -57,9 +57,8 @@ public class AuthService {
         ResponseCookie refreshCookie = jwtUtil.generateRefreshCookie(userDetails);
         User foundUser = userService.getUserByEmailFromDatabase(userDetails.getUsername());
 
-        if (!refreshFinder.existRefresh(refreshCookie.getValue())) {
-            refreshTokenRepository.save(
-                    new RefreshToken(null, refreshCookie.getValue(), foundUser));
+        if (!refreshFinder.existRefreshByUser(foundUser)) {
+            refreshTokenRepository.save(new RefreshToken(null, refreshCookie.getValue(), foundUser));
         }
 
         return new AuthResult(accessCookie, refreshCookie, userService.userLogin(userDetails.getUsername()));

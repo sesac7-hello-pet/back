@@ -13,10 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class RefreshFinderImpl implements RefreshFinder {
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public Boolean existRefresh(String refreshToken) {
-        return refreshTokenRepository.existsRefreshTokenByToken(refreshToken);
-    }
-
     @Override
     public void deleteRefreshByUser(User foundUser) {
         refreshTokenRepository.deleteRefreshTokenByUser(foundUser);
@@ -27,4 +23,10 @@ public class RefreshFinderImpl implements RefreshFinder {
         RefreshToken refreshToken = refreshTokenRepository.findRefreshTokenByToken(token);
         return refreshToken.getUser();
     }
+
+    @Override
+    public boolean existRefreshByUser(User foundUser) {
+        return refreshTokenRepository.existsRefreshTokenByUser(foundUser);
+    }
+
 }
