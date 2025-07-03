@@ -5,6 +5,7 @@ import com.sesac7.hellopet.global.exception.custom.WithdrawUserException;
 import com.sesac7.hellopet.global.exception.dto.response.ErrorMessage;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -44,7 +45,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorMessage> responseUnauthorizedUserExceptionHandler(UnauthorizedException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessage(HttpStatus.UNAUTHORIZED.toString(),
-                e.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .header(HttpHeaders.SET_COOKIE, e.getAccessCookie().toString())
+                             .header(HttpHeaders.SET_COOKIE, e.getRefreshCookie().toString())
+                             .body(new ErrorMessage(HttpStatus.BAD_REQUEST.toString(), e.getMessage()));
     }
 }
