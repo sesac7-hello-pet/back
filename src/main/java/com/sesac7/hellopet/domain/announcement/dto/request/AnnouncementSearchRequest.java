@@ -31,5 +31,4 @@ public class AnnouncementSearchRequest {
         return PageRequest.of(page, size, Sort.by(direction, sortProperty));
 
     }
-
 }

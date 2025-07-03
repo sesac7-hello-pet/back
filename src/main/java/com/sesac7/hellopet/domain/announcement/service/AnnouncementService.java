@@ -6,9 +6,6 @@ import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementSearchReq
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementUpdateRequest;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementPageResponse;
 import com.sesac7.hellopet.domain.announcement.entity.Announcement;
@@ -16,8 +13,8 @@ import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
-import com.sesac7.hellopet.domain.user.service.UserFinder;
 import com.sesac7.hellopet.domain.user.entity.User;
+import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,9 +27,6 @@ import org.springframework.security.access.AccessDeniedException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
 
 @Service
 @RequiredArgsConstructor
@@ -85,7 +79,6 @@ public class AnnouncementService {
         Page<AnnouncementListResponse> announcements = announcementRepository.searchAnnouncements(AnnouncementStatus.IN_PROGRESS, request.toPageable());
 
         return AnnouncementPageResponse.from(announcements, request);
-
     }
 
     // 특정 공지사항 ID로 Announcement 엔터티를 조회하는 메서드
@@ -190,11 +183,5 @@ public class AnnouncementService {
      */
     public Page<AnnouncementListResponse> getMyAnnouncements(String email, Pageable pageable) {
         return announcementRepository.searchMyAnnouncement(email, pageable);
-    }
-
-
-    public void completeAnnouncement(Long id) {
-        Announcement announcement = findById(id);
-        announcement.changeStatus(AnnouncementStatus.COMPLETED);
     }
 }
