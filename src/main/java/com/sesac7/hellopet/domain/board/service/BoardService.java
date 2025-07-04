@@ -12,6 +12,7 @@ import com.sesac7.hellopet.domain.board.entity.Board;
 import com.sesac7.hellopet.domain.board.repository.BoardRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
+import com.sesac7.hellopet.global.annotation.IsBoardOwner;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -66,22 +67,16 @@ public class BoardService {
         return BoardResponse.from(saved);
     }
 
-    public BoardResponse updateBoard(Long boardId, BoardUpdateRequest request, CustomUserDetails details) {
+    @IsBoardOwner
+    public BoardResponse updateBoard(Long boardId, BoardUpdateRequest request) {
         Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
-        String writer = board.getUser().getEmail();
-        String userEmail = details.getUsername();
-        if (writer.equals(userEmail)) {
-            board.setTitle(request.getTitle());
-            board.setContent(request.getContent());
-            board.setImage_url(request.getImg_url());
-            board.setBoardCategory(request.getBoardCategory());
-            board.setPetType(request.getPetType());
-            board.setUpdatedAt(LocalDateTime.now());
-            Board saved = repository.save(board);
-            return BoardResponse.from(saved);
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 게시글을 수정할 권한이 없습니다.");
-        }
+        board.setTitle(request.getTitle());
+        board.setContent(request.getContent());
+        board.setImage_url(request.getImg_url());
+        board.setBoardCategory(request.getBoardCategory());
+        board.setPetType(request.getPetType());
+        board.setUpdatedAt(LocalDateTime.now());
+        return BoardResponse.from(board);
     }
 
     public void deleteBoard(Long boardId, CustomUserDetails details) {

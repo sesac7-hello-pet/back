@@ -7,7 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+import java.util.Arrays;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,11 +20,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private static final List<String> SKIP = List.of(
-            "/auth/**",
-            "/users/**"
-    );
     private final AntPathMatcher matcher = new AntPathMatcher();
+    private static final String[] WHITELIST = {
+            "/users/**",
+            "/auth/**"
+    };
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
@@ -68,9 +68,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String ctx = request.getContextPath();
-        String path = request.getRequestURI().substring(ctx.length());
-
-        return SKIP.stream().anyMatch(p -> matcher.match(p, path));
+        String uri = request.getRequestURI();         // /api/v1/users/signup
+        return Arrays.stream(WHITELIST)
+                     .anyMatch(p -> matcher.match(p, uri));
     }
 }
