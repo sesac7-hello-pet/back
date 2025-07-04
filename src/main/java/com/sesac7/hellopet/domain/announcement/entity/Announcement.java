@@ -54,4 +54,5 @@ public class Announcement {
         this.status = newStatus;
         this.updatedAt = LocalDateTime.now();
     }
-}
+
+    }

@@ -6,6 +6,7 @@ import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementSearchReq
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementUpdateRequest;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
+import com.sesac7.hellopet.global.annotation.IsAnnouncementOwner;
 import java.time.LocalDate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,9 +51,11 @@ public class AnnouncementService {
      * @param customUserDetails
      * @return
      */
+    @IsAnnouncementOwner
     public AnnouncementCreateResponse createAnnouncement(AnnouncementCreateRequest announcementCreateRequest,
                                                          CustomUserDetails customUserDetails) {
         Pet pet = Pet.builder()
+                     .animalType(announcementCreateRequest.getAnimalType())
                      .breed(announcementCreateRequest.getBreed())
                      .gender(announcementCreateRequest.getGender())
                      .age(announcementCreateRequest.getAge())
@@ -135,6 +138,7 @@ public class AnnouncementService {
     /***
      * 게시글 수정(update)
      */
+    @IsAnnouncementOwner
     @Transactional
     public AnnouncementUpdateRequest updateAnnouncement(
             Long id,
@@ -146,10 +150,6 @@ public class AnnouncementService {
                                                           .orElseThrow(() -> new EntityNotFoundException(
                                                                   "입양 공고가 존재하지 않습니다."));
 
-        // 2. 작성자 확인
-//        if (!announcement.getShelter().getUserDetail().getUser().getEmail().equals(username)) {
-//            throw new Exception("수정권한이 없습니다");
-//        }
 
         if (!announcement.getShelter().getEmail().equals(username)) {
             throw new Exception("수정권한이 없습니다");
@@ -177,6 +177,7 @@ public class AnnouncementService {
      * 게시글 삭제
      * @param id 삭제할 공고의 ID
      */
+    @IsAnnouncementOwner
     public void deleteAnnouncement(Long id, String username) {
         Announcement announcement = announcementRepository.findById(id)
                                                           .orElseThrow(() -> new EntityNotFoundException(
@@ -193,6 +194,7 @@ public class AnnouncementService {
     /***
      * 내가 쓴 입양 공고 조회
      */
+    @IsAnnouncementOwner
     public AnnouncementPageResponse getMyAnnouncements(String email, Pageable pageable) {
         Page<AnnouncementListResponse> announcementListResponses = announcementRepository.searchMyAnnouncement(email,
                 pageable);
