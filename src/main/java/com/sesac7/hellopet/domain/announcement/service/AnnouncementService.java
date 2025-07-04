@@ -6,6 +6,7 @@ import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementSearchReq
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementUpdateRequest;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
+import com.sesac7.hellopet.global.annotation.IsAnnouncementOwner;
 import java.time.LocalDate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,7 @@ public class AnnouncementService {
      * @param customUserDetails
      * @return
      */
+    @IsAnnouncementOwner
     public AnnouncementCreateResponse createAnnouncement(AnnouncementCreateRequest announcementCreateRequest,
                                                          CustomUserDetails customUserDetails) {
         Pet pet = Pet.builder()
@@ -136,6 +138,7 @@ public class AnnouncementService {
     /***
      * 게시글 수정(update)
      */
+    @IsAnnouncementOwner
     @Transactional
     public AnnouncementUpdateRequest updateAnnouncement(
             Long id,
@@ -174,6 +177,7 @@ public class AnnouncementService {
      * 게시글 삭제
      * @param id 삭제할 공고의 ID
      */
+    @IsAnnouncementOwner
     public void deleteAnnouncement(Long id, String username) {
         Announcement announcement = announcementRepository.findById(id)
                                                           .orElseThrow(() -> new EntityNotFoundException(
@@ -190,6 +194,7 @@ public class AnnouncementService {
     /***
      * 내가 쓴 입양 공고 조회
      */
+    @IsAnnouncementOwner
     public AnnouncementPageResponse getMyAnnouncements(String email, Pageable pageable) {
         Page<AnnouncementListResponse> announcementListResponses = announcementRepository.searchMyAnnouncement(email,
                 pageable);
