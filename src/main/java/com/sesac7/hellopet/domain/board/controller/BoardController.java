@@ -58,4 +58,10 @@ public class BoardController {
 
     }
 
+    @PutMapping("/{boardId}/like")
+    public ResponseEntity<Void> updateLike(@PathVariable Long boardId) {
+        boardService.updateLike(boardId);
+        return ResponseEntity.noContent().build();
+    }
+
 }
