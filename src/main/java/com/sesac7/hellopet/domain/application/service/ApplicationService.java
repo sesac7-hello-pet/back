@@ -15,6 +15,7 @@ import com.sesac7.hellopet.domain.application.dto.response.detail.ApplicationDet
 import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.ApplicationStatus;
 import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
+import com.sesac7.hellopet.domain.application.validation.AlreadyProcessedApplicationException;
 import com.sesac7.hellopet.domain.application.validation.DuplicateApplicationException;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
@@ -128,9 +129,9 @@ public class ApplicationService {
     }
 
     private void approveAndRejectOtherApplications(Long announcementId, Long applicationId) {
-        Application application = applicationRepository.findByIdAndAnnouncementId(applicationId, announcementId)
-                                                       .orElseThrow(() -> new EntityNotFoundException(
-                                                               "해당 공고에 일치하는 신청서를 찾을 수 없습니다."));
+        Application application = applicationRepository.findByIdAndAnnouncementIdAndStatus(applicationId,
+                                                               announcementId, ApplicationStatus.PENDING)
+                                                       .orElseThrow(() -> new AlreadyProcessedApplicationException());
 
         application.changeStatus(ApplicationStatus.APPROVED);
 
