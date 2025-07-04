@@ -1,12 +1,17 @@
 package com.sesac7.hellopet.common.utils;
 
+import com.sesac7.hellopet.domain.user.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
@@ -35,16 +40,21 @@ public class JwtUtil {
             long maxAgeMinutes
     ) {
         return ResponseCookie.from(name, value)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .sameSite("Strict")
-                .maxAge(Duration.ofMinutes(maxAgeMinutes))
-                .build();
+                             .httpOnly(true)
+                             .secure(true)
+                             .path("/")
+                             .sameSite("Strict")
+                             .maxAge(Duration.ofMinutes(maxAgeMinutes))
+                             .build();
     }
 
     public ResponseCookie generateAccessCookie(CustomUserDetails userDetails) {
         String token = doGenerateToken(userDetails, expiration);
+        return buildCookie("accessToken", token, expiration);
+    }
+
+    public ResponseCookie generateAccessCookie(User user) {
+        String token = doGenerateToken(user, expiration);
         return buildCookie("accessToken", token, expiration);
     }
 
@@ -61,17 +71,28 @@ public class JwtUtil {
         return buildCookie("refreshToken", "", 0);
     }
 
-
     private String doGenerateToken(CustomUserDetails userDetails, Long expiration) {
         Claims claims = Jwts.claims();
         claims.setSubject(userDetails.getUsername());
         return Jwts.builder()
-                .setClaims(claims)
-                .claim("role", userDetails.getRole().name())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expiration * 60 * 1000))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
+                   .setClaims(claims)
+                   .claim("role", userDetails.getRole().name())
+                   .setIssuedAt(new Date(System.currentTimeMillis()))
+                   .setExpiration(new Date(System.currentTimeMillis() + expiration * 60 * 1000))
+                   .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                   .compact();
+    }
+
+    private String doGenerateToken(User user, Long expiration) {
+        Claims claims = Jwts.claims();
+        claims.setSubject(user.getEmail());
+        return Jwts.builder()
+                   .setClaims(claims)
+                   .claim("role", user.getRole().name())
+                   .setIssuedAt(new Date(System.currentTimeMillis()))
+                   .setExpiration(new Date(System.currentTimeMillis() + expiration * 60 * 1000))
+                   .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                   .compact();
     }
 
     public String getEmailFromToken(String token) {
@@ -99,5 +120,13 @@ public class JwtUtil {
 
     private Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
+    }
+
+    public String findCookie(HttpServletRequest req, String name) {
+        return Arrays.stream(Optional.ofNullable(req.getCookies()).orElse(new Cookie[0]))
+                     .filter(c -> name.equals(c.getName()))
+                     .map(Cookie::getValue)
+                     .findFirst()
+                     .orElse(null);
     }
 }

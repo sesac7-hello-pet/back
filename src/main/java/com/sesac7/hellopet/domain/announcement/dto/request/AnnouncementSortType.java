@@ -6,6 +6,7 @@ public enum AnnouncementSortType {
     public static AnnouncementSortType getByName(String name) {
         try {
             return AnnouncementSortType.valueOf(name);
+
         } catch (IllegalArgumentException e) {
             return CREATEDAT;
         }

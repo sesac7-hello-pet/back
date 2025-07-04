@@ -1,11 +1,14 @@
 package com.sesac7.hellopet.global.config;
 
+import com.sesac7.hellopet.global.exception.handler.RestAccessDeniedHandler;
+import com.sesac7.hellopet.global.exception.handler.RestAuthEntryPoint;
 import com.sesac7.hellopet.global.filter.JwtFilter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,6 +30,8 @@ public class SecurityConfig {
     @Value("${app.front-url}")
     private String frontOrigin;
     private final JwtFilter jwtFilter;
+    private final RestAccessDeniedHandler deniedHandler;
+    private final RestAuthEntryPoint entryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -40,8 +45,25 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
-                );
+                        .requestMatchers("/auth/**", "/users").permitAll()
+                        .requestMatchers("/me/**").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/boards/**", "/announcements/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/announcements/**/application/**", "/applications/**")
+                        .hasRole("SHELTER")
+                        .requestMatchers(HttpMethod.POST, "/boards", "/applications").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/applications").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/announcements").hasRole("SHELTER")
+                        .requestMatchers(HttpMethod.PUT, "/boards/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/announcements/**/application/**").hasRole("SHELTER")
+                        .requestMatchers(HttpMethod.PUT, "/announcements/**").hasRole("SHELTER")
+                        .requestMatchers(HttpMethod.DELETE, "/boards/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/applications/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/announcements/**").hasRole("SHELTER")
+                        .anyRequest().authenticated())
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint(entryPoint)
+                        .accessDeniedHandler(deniedHandler));
         return http.build();
     }
 

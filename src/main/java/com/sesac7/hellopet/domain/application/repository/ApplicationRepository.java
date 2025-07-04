@@ -1,6 +1,7 @@
 package com.sesac7.hellopet.domain.application.repository;
 
 import com.sesac7.hellopet.domain.application.entity.Application;
+import com.sesac7.hellopet.domain.application.entity.ApplicationStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,5 +36,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     List<Application> findByAnnouncementIdAndExcludeApplicationId(@Param("announcementId") Long announcementId,
                                                                   @Param("applicationId") Long applicationId);
 
-    Optional<Application> findByIdAndAnnouncementId(Long applicationId, Long announcementId);
+    Optional<Application> findByIdAndAnnouncementIdAndStatus(Long applicationId, Long announcementId,
+                                                             ApplicationStatus status);
+
+    Optional<Application> findByApplicantIdAndAnnouncementId(Long userId, Long announcementId);
 }

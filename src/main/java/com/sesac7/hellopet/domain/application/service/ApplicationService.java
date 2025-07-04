@@ -15,10 +15,13 @@ import com.sesac7.hellopet.domain.application.dto.response.detail.ApplicationDet
 import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.ApplicationStatus;
 import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
+import com.sesac7.hellopet.domain.application.validation.AlreadyProcessedApplicationException;
+import com.sesac7.hellopet.domain.application.validation.DuplicateApplicationException;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -37,7 +40,7 @@ public class ApplicationService {
     public void deleteApplication(Long id, CustomUserDetails userDetails) {
         Application application = applicationRepository.findById(id)
                                                        .orElseThrow(() -> new EntityNotFoundException(
-                                                               "해당 입양 신청서를 찾을 수 없습니다. id=" + id)
+                                                               "해당 번호의 입양 신청서를 찾을 수 없습니다. id=" + id)
                                                        );
 
         User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
@@ -53,7 +56,7 @@ public class ApplicationService {
     public ApplicationDetailResponse getApplication(Long id) {
         Application application = applicationRepository.findById(id)
                                                        .orElseThrow(() -> new EntityNotFoundException(
-                                                               "해당 번호의 신청서를 찾을 수 없습니다. id=" + id));
+                                                               "해당 번호의 입양 신청서를 찾을 수 없습니다. id=" + id));
 
         return ApplicationDetailResponse.from(application);
     }
@@ -102,8 +105,17 @@ public class ApplicationService {
 
         User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
         Announcement announcement = announcementService.findById(request.getAnnouncementId());
-        Application application = request.toEntity(user, announcement);
 
+        Optional<Application> existingApplication = applicationRepository.findByApplicantIdAndAnnouncementId(
+                user.getId(),
+                announcement.getId()
+        );
+
+        if (existingApplication.isPresent()) {
+            throw new DuplicateApplicationException();
+        }
+
+        Application application = request.toEntity(user, announcement);
         applicationRepository.save(application);
 
         return ApplicationResponse.from(application.getId());
@@ -117,9 +129,9 @@ public class ApplicationService {
     }
 
     private void approveAndRejectOtherApplications(Long announcementId, Long applicationId) {
-        Application application = applicationRepository.findByIdAndAnnouncementId(applicationId, announcementId)
-                                                       .orElseThrow(() -> new EntityNotFoundException(
-                                                               "해당 공고에 일치하는 신청서를 찾을 수 없습니다."));
+        Application application = applicationRepository.findByIdAndAnnouncementIdAndStatus(applicationId,
+                                                               announcementId, ApplicationStatus.PENDING)
+                                                       .orElseThrow(() -> new AlreadyProcessedApplicationException());
 
         application.changeStatus(ApplicationStatus.APPROVED);
 
