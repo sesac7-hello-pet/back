@@ -44,6 +44,8 @@ public class Announcement {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private LocalDateTime announcementPeriod;
+
     public void updateTimestamp() {
         this.updatedAt = LocalDateTime.now();
     }

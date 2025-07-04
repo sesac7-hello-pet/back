@@ -6,6 +6,7 @@ import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementSearchReq
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementUpdateRequest;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
+import java.time.LocalDate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 
@@ -63,14 +64,15 @@ public class AnnouncementService {
         petRepository.save(pet);
 
         User shelter = userFinder.findLoggedInUserByUsername(customUserDetails.getUsername());
-
         Announcement announcement = Announcement.builder()
                                                 .shelter(shelter)
                                                 .pet(pet)
                                                 .status(AnnouncementStatus.IN_PROGRESS)
+                                                .announcementPeriod(announcementCreateRequest.getSelectedDate())
                                                 .createdAt(LocalDateTime.now())
-                                                .updatedAt(LocalDateTime.now())
+                                                .updatedAt(null)
                                                 .build();
+
 
         announcementRepository.save(announcement);
 
@@ -123,6 +125,7 @@ public class AnnouncementService {
                                          .health(pet.getHealth())                   // 펫의 건강 상태 정보 설정
                                          .personality(pet.getPersonality())         // 펫의 성격 정보 설정
                                          .shelterName(announcement.getShelter().getUserDetail().getNickname())
+                .announcementPeriod(announcement.getAnnouncementPeriod())
                                          .imageUrl(pet.getImageUrl())               // 펫의 이미지 URL 설정
                                          .build();                                  // DTO 객체 생성 및 반환
     }

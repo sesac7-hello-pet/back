@@ -95,7 +95,9 @@ public class DataSetterImpl implements DataSetter {
                     shelters.get(getRandomIndex(shelters)),
                     AnnouncementStatus.IN_PROGRESS,
                     pet,
-                    LocalDateTime.now(), null);
+                    LocalDateTime.now(),
+                    null,
+                    LocalDateTime.now());
 
             announcementRepository.save(announcement);
         }
