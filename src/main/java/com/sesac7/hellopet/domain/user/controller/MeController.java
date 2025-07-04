@@ -1,6 +1,7 @@
 package com.sesac7.hellopet.domain.user.controller;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
+import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementPageResponse;
 import com.sesac7.hellopet.domain.announcement.service.AnnouncementService;
 import com.sesac7.hellopet.domain.application.dto.request.ApplicationPageRequest;
 import com.sesac7.hellopet.domain.application.dto.response.UserApplicationPageResponse;
@@ -89,7 +90,7 @@ public class MeController {
      * 내가 쓴 입양 공고 조회
      */
     @GetMapping("/announcements")
-    public ResponseEntity<?> getMyAnnouncements(
+    public ResponseEntity<AnnouncementPageResponse> getMyAnnouncements(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             Pageable pageable) {
 

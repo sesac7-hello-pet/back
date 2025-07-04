@@ -7,6 +7,7 @@ import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementUpdateReq
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
 import java.time.LocalDate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 
@@ -125,7 +126,8 @@ public class AnnouncementService {
                                          .health(pet.getHealth())                   // 펫의 건강 상태 정보 설정
                                          .personality(pet.getPersonality())         // 펫의 성격 정보 설정
                                          .shelterName(announcement.getShelter().getUserDetail().getNickname())
-                .announcementPeriod(announcement.getAnnouncementPeriod())
+                                         .createdAt(announcement.getCreatedAt())
+                                         .announcementPeriod(announcement.getAnnouncementPeriod())
                                          .imageUrl(pet.getImageUrl())               // 펫의 이미지 URL 설정
                                          .build();                                  // DTO 객체 생성 및 반환
     }
@@ -191,8 +193,12 @@ public class AnnouncementService {
     /***
      * 내가 쓴 입양 공고 조회
      */
-    public Page<AnnouncementListResponse> getMyAnnouncements(String email, Pageable pageable) {
-        return announcementRepository.searchMyAnnouncement(email, pageable);
+    public AnnouncementPageResponse getMyAnnouncements(String email, Pageable pageable) {
+        Page<AnnouncementListResponse> announcementListResponses = announcementRepository.searchMyAnnouncement(email,
+                pageable);
+
+        AnnouncementSearchRequest searchRequest = new AnnouncementSearchRequest();
+        return AnnouncementPageResponse.from(announcementListResponses, searchRequest);
     }
 
 
