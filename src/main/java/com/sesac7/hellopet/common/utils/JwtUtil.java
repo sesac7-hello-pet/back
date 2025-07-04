@@ -5,9 +5,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
@@ -116,5 +120,13 @@ public class JwtUtil {
 
     private Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
+    }
+
+    public String findCookie(HttpServletRequest req, String name) {
+        return Arrays.stream(Optional.ofNullable(req.getCookies()).orElse(new Cookie[0]))
+                     .filter(c -> name.equals(c.getName()))
+                     .map(Cookie::getValue)
+                     .findFirst()
+                     .orElse(null);
     }
 }
