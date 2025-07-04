@@ -5,6 +5,7 @@ import com.sesac7.hellopet.domain.application.dto.request.ApplicationCreateReque
 import com.sesac7.hellopet.domain.application.dto.response.ApplicationResponse;
 import com.sesac7.hellopet.domain.application.dto.response.detail.ApplicationDetailResponse;
 import com.sesac7.hellopet.domain.application.service.ApplicationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class ApplicationController {
     }
 
     @PostMapping("/applications")
-    public ResponseEntity<ApplicationResponse> createApplication(@RequestBody ApplicationCreateRequest request,
+    public ResponseEntity<ApplicationResponse> createApplication(@Valid @RequestBody ApplicationCreateRequest request,
                                                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
         ApplicationResponse response = applicationService.createApplication(request, userDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

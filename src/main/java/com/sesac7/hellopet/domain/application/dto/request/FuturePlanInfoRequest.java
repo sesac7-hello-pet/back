@@ -9,7 +9,7 @@ import lombok.Getter;
 public class FuturePlanInfoRequest {
 
     @NotNull(message = "향후 계획 보유 여부는 필수 입력 항목입니다.")
-    private boolean hasFuturePlan;
+    private Boolean hasFuturePlan;
 
     private String planDetails;
 }

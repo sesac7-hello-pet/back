@@ -51,7 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/me/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/boards/**", "/announcements/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/announcements/**/application/**", "/applications/**")
+                        .requestMatchers(HttpMethod.GET, "/applications/**", "/announcements/**/application/**")
                         .hasRole("SHELTER")
                         .requestMatchers(HttpMethod.POST, "/boards", "/applications").authenticated()
                         .requestMatchers(HttpMethod.POST, "/applications").hasRole("USER")

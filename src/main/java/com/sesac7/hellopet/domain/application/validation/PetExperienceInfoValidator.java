@@ -13,7 +13,12 @@ public class PetExperienceInfoValidator implements
             return true;
         }
 
-        if (value.isHasPetExperience()) {
+        // hasPetExperience가 null인 경우 → null 여부는 @NotNull이 검증하므로 여기서는 검증하지 않음
+        if (value.getHasPetExperience() == null) {
+            return true;
+        }
+
+        if (value.getHasPetExperience()) {
             return value.getExperienceDetails() != null && !value.getExperienceDetails().trim().isEmpty();
         }
 

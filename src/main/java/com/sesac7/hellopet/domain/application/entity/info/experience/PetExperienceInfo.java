@@ -22,7 +22,7 @@ public class PetExperienceInfo {
 
     public static PetExperienceInfo from(PetExperienceInfoRequest request) {
         return new PetExperienceInfo(
-                request.isHasPetExperience(),
+                request.getHasPetExperience(),
                 request.getExperienceDetails()
         );
     }

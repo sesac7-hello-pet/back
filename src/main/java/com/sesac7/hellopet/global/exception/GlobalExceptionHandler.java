@@ -12,6 +12,7 @@ import java.util.NoSuchElementException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -115,6 +116,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ExceptionResponse> responseBadCredentialsExceptionHandler(BadCredentialsException e) {
         return generateExceptionResponse(e, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ExceptionResponse> responseHttpMessageNotReadableExceptionHandler(
+            HttpMessageNotReadableException e) {
+        return generateExceptionResponse(e, HttpStatus.BAD_REQUEST);
     }
 
     private ResponseEntity<ExceptionResponse> generateExceptionResponse(Exception e, HttpStatus status) {
