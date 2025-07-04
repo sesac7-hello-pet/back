@@ -10,7 +10,7 @@ public class UnauthorizedException extends RuntimeException {
     private final ResponseCookie refreshCookie;
 
     public UnauthorizedException(ResponseCookie accessCookie, ResponseCookie refreshCookie) {
-        super("Refresh 토큰이 없습니다.");
+        super("Refresh 토큰이 없습니다. 로그인이 필요합니다.");
         this.accessCookie = accessCookie;
         this.refreshCookie = refreshCookie;
     }
