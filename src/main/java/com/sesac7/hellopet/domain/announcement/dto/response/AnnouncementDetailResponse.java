@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.announcement.dto.response;
 
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,5 +15,7 @@ public class AnnouncementDetailResponse {
     private String personality;
     private int age;
     private String shelterName; // 보호소
+    private LocalDateTime createdAt;
+    private LocalDateTime announcementPeriod;
     private String imageUrl; // 강아지 이미지
 }

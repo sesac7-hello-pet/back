@@ -6,6 +6,11 @@ import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementSearchReq
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementUpdateRequest;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
+import java.time.LocalDate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementPageResponse;
 import com.sesac7.hellopet.domain.announcement.entity.Announcement;
@@ -13,17 +18,23 @@ import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
-import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
+import com.sesac7.hellopet.domain.user.entity.User;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @Service
 @RequiredArgsConstructor
@@ -54,14 +65,15 @@ public class AnnouncementService {
         petRepository.save(pet);
 
         User shelter = userFinder.findLoggedInUserByUsername(customUserDetails.getUsername());
-
         Announcement announcement = Announcement.builder()
                                                 .shelter(shelter)
                                                 .pet(pet)
                                                 .status(AnnouncementStatus.IN_PROGRESS)
+                                                .announcementPeriod(announcementCreateRequest.getSelectedDate())
                                                 .createdAt(LocalDateTime.now())
-                                                .updatedAt(LocalDateTime.now())
+                                                .updatedAt(null)
                                                 .build();
+
 
         announcementRepository.save(announcement);
 
@@ -73,10 +85,10 @@ public class AnnouncementService {
      * @return AnnouncementListResponse 리스트
      */
     public AnnouncementPageResponse getAllAnnouncements(AnnouncementSearchRequest request) {
-        Page<AnnouncementListResponse> announcements = announcementRepository.searchAnnouncements(
-                AnnouncementStatus.IN_PROGRESS, request.toPageable());
+        Page<AnnouncementListResponse> announcements = announcementRepository.searchAnnouncements(AnnouncementStatus.IN_PROGRESS, request.toPageable());
 
         return AnnouncementPageResponse.from(announcements, request);
+
     }
 
     // 특정 공지사항 ID로 Announcement 엔터티를 조회하는 메서드
@@ -114,6 +126,8 @@ public class AnnouncementService {
                                          .health(pet.getHealth())                   // 펫의 건강 상태 정보 설정
                                          .personality(pet.getPersonality())         // 펫의 성격 정보 설정
                                          .shelterName(announcement.getShelter().getUserDetail().getNickname())
+                                         .createdAt(announcement.getCreatedAt())
+                                         .announcementPeriod(announcement.getAnnouncementPeriod())
                                          .imageUrl(pet.getImageUrl())               // 펫의 이미지 URL 설정
                                          .build();                                  // DTO 객체 생성 및 반환
     }
@@ -179,9 +193,14 @@ public class AnnouncementService {
     /***
      * 내가 쓴 입양 공고 조회
      */
-    public Page<AnnouncementListResponse> getMyAnnouncements(String email, Pageable pageable) {
-        return announcementRepository.searchMyAnnouncement(email, pageable);
+    public AnnouncementPageResponse getMyAnnouncements(String email, Pageable pageable) {
+        Page<AnnouncementListResponse> announcementListResponses = announcementRepository.searchMyAnnouncement(email,
+                pageable);
+
+        AnnouncementSearchRequest searchRequest = new AnnouncementSearchRequest();
+        return AnnouncementPageResponse.from(announcementListResponses, searchRequest);
     }
+
 
     public void completeAnnouncement(Long id) {
         Announcement announcement = findById(id);

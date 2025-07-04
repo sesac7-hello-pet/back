@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/users").permitAll()
+                        .requestMatchers("/auth/**", "/users/**").permitAll()
                         .requestMatchers("/me/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/boards/**", "/announcements/**").permitAll()
@@ -55,8 +55,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/applications").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/announcements").hasRole("SHELTER")
                         .requestMatchers(HttpMethod.PUT, "/boards/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/announcements/**/application/**").hasRole("SHELTER")
                         .requestMatchers(HttpMethod.PUT, "/announcements/**").hasRole("SHELTER")
+                        .requestMatchers(HttpMethod.PUT, "/announcements/**/application/**").hasRole("SHELTER")
                         .requestMatchers(HttpMethod.DELETE, "/boards/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/applications/**").hasRole("USER")
                         .requestMatchers(HttpMethod.DELETE, "/announcements/**").hasRole("SHELTER")
