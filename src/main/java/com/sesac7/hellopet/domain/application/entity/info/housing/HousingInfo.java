@@ -39,7 +39,7 @@ public class HousingInfo {
         return new HousingInfo(
                 request.getHousingType(),
                 request.getResidenceType(),
-                request.isPetAllowed(),
+                request.getPetAllowed(),
                 request.getPetLivingPlace(),
                 request.getHouseSizeRange()
         );

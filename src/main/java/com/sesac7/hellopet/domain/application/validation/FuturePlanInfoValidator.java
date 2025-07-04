@@ -13,7 +13,12 @@ public class FuturePlanInfoValidator implements
             return true;
         }
 
-        if (value.isHasFuturePlan()) {
+        // hasFuturePlan이 null인 경우 → null 여부는 @NotNull이 검증하므로 여기서는 검증하지 않음
+        if (value.getHasFuturePlan() == null) {
+            return true;
+        }
+
+        if (value.getHasFuturePlan()) {
             return value.getPlanDetails() != null && !value.getPlanDetails().trim().isEmpty();
         }
 

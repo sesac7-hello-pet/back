@@ -26,7 +26,7 @@ public class FinancialInfo {
     public static FinancialInfo from(FinancialInfoRequest request) {
         return new FinancialInfo(
                 request.getMonthlyBudget(),
-                request.isHasEmergencyFund()
+                request.getHasEmergencyFund()
         );
     }
 }

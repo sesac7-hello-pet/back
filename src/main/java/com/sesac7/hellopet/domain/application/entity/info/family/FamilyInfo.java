@@ -32,9 +32,9 @@ public class FamilyInfo {
     public static FamilyInfo from(FamilyInfoRequest request) {
         return new FamilyInfo(
                 request.getNumberOfHousehold(),
-                request.isHasChildUnder13(),
+                request.getHasChildUnder13(),
                 request.getFamilyAgreement(),
-                request.isHasPetAllergy()
+                request.getHasPetAllergy()
         );
     }
 }
