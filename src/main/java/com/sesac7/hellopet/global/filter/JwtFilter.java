@@ -65,4 +65,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String ctx = request.getContextPath();
+        String path = request.getRequestURI().substring(ctx.length());
+
+        return SKIP.stream().anyMatch(p -> matcher.match(p, path));
+    }
 }
