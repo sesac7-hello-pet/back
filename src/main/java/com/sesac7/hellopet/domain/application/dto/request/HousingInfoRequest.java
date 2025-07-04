@@ -17,7 +17,7 @@ public class HousingInfoRequest {
     private ResidenceType residenceType;
 
     @NotNull(message = "반려동물 허용 여부는 필수 입력 항목입니다.")
-    private boolean petAllowed;
+    private Boolean petAllowed;
 
     @NotNull(message = "반려동물 생활 공간은 필수 입력 항목입니다.")
     private PetLivingPlace petLivingPlace;

@@ -11,11 +11,11 @@ public class FamilyInfoRequest {
     private int numberOfHousehold;
 
     @NotNull(message = "만 13세 미만 자녀 여부는 필수 입력 항목입니다.")
-    private boolean hasChildUnder13;
+    private Boolean hasChildUnder13;
 
     @NotNull(message = "가족 동의 여부는 필수 입력 항목입니다.")
     private FamilyAgreement familyAgreement;
 
     @NotNull(message = "반려동물 알레르기 여부는 필수 입력 항목입니다.")
-    private boolean hasPetAllergy;
+    private Boolean hasPetAllergy;
 }
