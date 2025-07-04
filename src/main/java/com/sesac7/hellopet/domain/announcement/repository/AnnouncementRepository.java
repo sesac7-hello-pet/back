@@ -2,6 +2,7 @@ package com.sesac7.hellopet.domain.announcement.repository;
 
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.entity.Announcement;
+import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
