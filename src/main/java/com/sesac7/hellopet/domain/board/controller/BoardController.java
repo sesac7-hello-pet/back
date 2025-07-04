@@ -41,9 +41,8 @@ public class BoardController {
 
     @PutMapping("/{boardId}")
     public ResponseEntity<BoardResponse> updateBoard(@PathVariable Long boardId,
-                                                     @RequestBody @Valid BoardUpdateRequest request,
-                                                     @AuthenticationPrincipal CustomUserDetails details) {
-        return ResponseEntity.ok(boardService.updateBoard(boardId, request, details));
+                                                     @RequestBody @Valid BoardUpdateRequest request) {
+        return ResponseEntity.ok(boardService.updateBoard(boardId, request));
     }
 
     @DeleteMapping("/{boardId}")
