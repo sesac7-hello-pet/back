@@ -36,16 +36,16 @@ public class UserSearchRequest {
                 sortProperty = "role";
                 break;
             case USERNAME:
-                sortProperty = "username";
+                sortProperty = "userDetail.username";
                 break;
             case EMAIL:
                 sortProperty = "email";
                 break;
             case NICKNAME:
-                sortProperty = "nickname";
+                sortProperty = "userDetail.nickname";
                 break;
             case PHONENUMBER:
-                sortProperty = "phoneNumber";
+                sortProperty = "userDetail.phoneNumber";
                 break;
             case ID:
             default:
