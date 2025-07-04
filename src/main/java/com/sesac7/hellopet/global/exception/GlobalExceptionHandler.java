@@ -171,4 +171,9 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
+
+    private ResponseEntity<ExceptionResponse> generateExceptionResponse(Exception e, HttpStatus status) {
+        ExceptionResponse response = ExceptionResponse.of(e, status.value(), status.name());
+        return ResponseEntity.status(status).body(response);
+    }
 }
