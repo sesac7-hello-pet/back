@@ -77,7 +77,7 @@ public class DataSetterImpl implements DataSetter {
                 gender = "암컷";
             }
 
-            Pet pet = new Pet(null, gender,
+            Pet pet = new Pet(null, "고양이", gender,
                     data.getHealthStatuses().get(getRandomIndex(data.getHealthStatuses())),
                     data.getPersonalities().get(getRandomIndex(data.getPersonalities())),
                     i % 10,

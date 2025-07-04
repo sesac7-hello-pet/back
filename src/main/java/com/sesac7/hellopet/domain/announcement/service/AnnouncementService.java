@@ -53,6 +53,7 @@ public class AnnouncementService {
     public AnnouncementCreateResponse createAnnouncement(AnnouncementCreateRequest announcementCreateRequest,
                                                          CustomUserDetails customUserDetails) {
         Pet pet = Pet.builder()
+                     .animalType(announcementCreateRequest.getAnimalType())
                      .breed(announcementCreateRequest.getBreed())
                      .gender(announcementCreateRequest.getGender())
                      .age(announcementCreateRequest.getAge())
@@ -146,10 +147,6 @@ public class AnnouncementService {
                                                           .orElseThrow(() -> new EntityNotFoundException(
                                                                   "입양 공고가 존재하지 않습니다."));
 
-        // 2. 작성자 확인
-//        if (!announcement.getShelter().getUserDetail().getUser().getEmail().equals(username)) {
-//            throw new Exception("수정권한이 없습니다");
-//        }
 
         if (!announcement.getShelter().getEmail().equals(username)) {
             throw new Exception("수정권한이 없습니다");

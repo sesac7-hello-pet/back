@@ -23,6 +23,9 @@ public class Pet {
     private Long id; // 강아지 공고번호 id
 
     @Column(nullable = false)
+    private String animalType;
+
+    @Column(nullable = false)
     private String gender;
 
     @Column(nullable = false)
