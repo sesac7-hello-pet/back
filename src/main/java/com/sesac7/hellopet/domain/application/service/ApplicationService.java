@@ -15,10 +15,12 @@ import com.sesac7.hellopet.domain.application.dto.response.detail.ApplicationDet
 import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.ApplicationStatus;
 import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
+import com.sesac7.hellopet.domain.application.validation.DuplicateApplicationException;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -102,8 +104,17 @@ public class ApplicationService {
 
         User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
         Announcement announcement = announcementService.findById(request.getAnnouncementId());
-        Application application = request.toEntity(user, announcement);
 
+        Optional<Application> existingApplication = applicationRepository.findByApplicantIdAndAnnouncementId(
+                user.getId(),
+                announcement.getId()
+        );
+
+        if (existingApplication.isPresent()) {
+            throw new DuplicateApplicationException();
+        }
+
+        Application application = request.toEntity(user, announcement);
         applicationRepository.save(application);
 
         return ApplicationResponse.from(application.getId());
