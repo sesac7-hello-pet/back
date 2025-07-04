@@ -103,6 +103,8 @@ public class AuthService {
         try {
             foundUser = refreshFinder.getUserByToken(token);
         } catch (NullPointerException e) {
+            String email = jwtUtil.getEmailFromToken(token);
+            refreshFinder.deleteRefreshByEmail(email);
             throw new UnauthorizedException(jwtUtil.deleteAccessCookie(), jwtUtil.deleteRefreshCookie());
         }
 
