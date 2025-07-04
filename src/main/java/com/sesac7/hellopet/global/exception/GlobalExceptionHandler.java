@@ -2,10 +2,9 @@ package com.sesac7.hellopet.global.exception;
 
 import com.sesac7.hellopet.domain.application.validation.AlreadyProcessedApplicationException;
 import com.sesac7.hellopet.domain.application.validation.DuplicateApplicationException;
-import com.sesac7.hellopet.domain.application.validation.ExceptionResponse;
 import com.sesac7.hellopet.global.exception.custom.UnauthorizedException;
 import com.sesac7.hellopet.global.exception.custom.WithdrawUserException;
-import com.sesac7.hellopet.global.exception.dto.response.ErrorMessage;
+import com.sesac7.hellopet.global.exception.dto.response.ExceptionResponse;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpHeaders;
@@ -20,9 +19,12 @@ import org.springframework.web.server.ResponseStatusException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<ErrorMessage> responseStatusExceptionHandler(ResponseStatusException e) {
-        return ResponseEntity.status(e.getStatusCode())
-                             .body(new ErrorMessage(String.valueOf(e.getStatusCode().value()), e.getReason()));
+    public ResponseEntity<ExceptionResponse> responseStatusExceptionHandler(ResponseStatusException e) {
+        ExceptionResponse response = ExceptionResponse.of(e,
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.name());
+
+        return ResponseEntity.status(e.getStatusCode()).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -41,32 +43,43 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(WithdrawUserException.class)
-    public ResponseEntity<ErrorMessage> responseInactivationUserExceptionHandler(WithdrawUserException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorMessage(HttpStatus.FORBIDDEN.toString(),
-                e.getMessage()));
+    public ResponseEntity<ExceptionResponse> responseInactivationUserExceptionHandler(WithdrawUserException e) {
+        ExceptionResponse response = ExceptionResponse.of(e,
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.name());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ErrorMessage> responseUnauthorizedUserExceptionHandler(UnauthorizedException e) {
+    public ResponseEntity<ExceptionResponse> responseUnauthorizedUserExceptionHandler(UnauthorizedException e) {
+        ExceptionResponse response = ExceptionResponse.of(e,
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.name());
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .header(HttpHeaders.SET_COOKIE, e.getAccessCookie().toString())
                              .header(HttpHeaders.SET_COOKIE, e.getRefreshCookie().toString())
-                             .body(new ErrorMessage(HttpStatus.BAD_REQUEST.toString(), e.getMessage()));
+                             .body(response);
     }
 
     @ExceptionHandler(DuplicateApplicationException.class)
     public ResponseEntity<ExceptionResponse> responseDuplicateApplicationExceptionHandler(
             DuplicateApplicationException e) {
-        ExceptionResponse response = ExceptionResponse.of(e, HttpStatus.BAD_REQUEST.value(),
+        ExceptionResponse response = ExceptionResponse.of(e,
+                HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.name());
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(AlreadyProcessedApplicationException.class)
     public ResponseEntity<ExceptionResponse> responseAlreadyProcessedApplicationExceptionHandler(
             AlreadyProcessedApplicationException e) {
-        ExceptionResponse response = ExceptionResponse.of(e, HttpStatus.BAD_REQUEST.value(),
+        ExceptionResponse response = ExceptionResponse.of(e,
+                HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.name());
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

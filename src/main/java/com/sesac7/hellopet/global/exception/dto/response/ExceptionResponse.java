@@ -1,4 +1,4 @@
-package com.sesac7.hellopet.domain.application.validation;
+package com.sesac7.hellopet.global.exception.dto.response;
 
 import java.time.LocalDateTime;
 import lombok.Builder;
