@@ -24,15 +24,17 @@ import org.springframework.web.server.ResponseStatusException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // 다른 구체적인 핸들러에서 처리되지 않은 예외가 발생했을 때 마지막으로 호출
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponse> responseExceptionHandler(Exception e) {
+        return generateExceptionResponse(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     // ResponseStatusException -> 구체적인 예외 클래스로 변경
     // 모든 팀원 수정 이후 메서드 삭제 예정
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ExceptionResponse> responseStatusExceptionHandler(ResponseStatusException e) {
-        ExceptionResponse response = ExceptionResponse.of(e,
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.name());
-
-        return ResponseEntity.status(e.getStatusCode()).body(response);
+        return generateExceptionResponse(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -50,15 +52,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
-    @ExceptionHandler(WithdrawUserException.class)
-    public ResponseEntity<ExceptionResponse> responseInactivationUserExceptionHandler(WithdrawUserException e) {
-        ExceptionResponse response = ExceptionResponse.of(e,
-                HttpStatus.FORBIDDEN.value(),
-                HttpStatus.FORBIDDEN.name());
-
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-    }
-
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ExceptionResponse> responseUnauthorizedUserExceptionHandler(UnauthorizedException e) {
         ExceptionResponse response = ExceptionResponse.of(e,
@@ -71,105 +64,57 @@ public class GlobalExceptionHandler {
                              .body(response);
     }
 
+    @ExceptionHandler(WithdrawUserException.class)
+    public ResponseEntity<ExceptionResponse> responseInactivationUserExceptionHandler(WithdrawUserException e) {
+        return generateExceptionResponse(e, HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(DuplicateApplicationException.class)
     public ResponseEntity<ExceptionResponse> responseDuplicateApplicationExceptionHandler(
             DuplicateApplicationException e) {
-        ExceptionResponse response = ExceptionResponse.of(e,
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.name());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return generateExceptionResponse(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AlreadyProcessedApplicationException.class)
     public ResponseEntity<ExceptionResponse> responseAlreadyProcessedApplicationExceptionHandler(
             AlreadyProcessedApplicationException e) {
-        ExceptionResponse response = ExceptionResponse.of(e,
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.name());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return generateExceptionResponse(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> responseEntityNotFoundExceptionHandler(
-            EntityNotFoundException e) {
-        ExceptionResponse response = ExceptionResponse.of(e,
-                HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND.name());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    public ResponseEntity<ExceptionResponse> responseEntityNotFoundExceptionHandler(EntityNotFoundException e) {
+        return generateExceptionResponse(e, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ExceptionResponse> responseAccessDeniedExceptionHandler(
-            AccessDeniedException e) {
-        ExceptionResponse response = ExceptionResponse.of(e,
-                HttpStatus.FORBIDDEN.value(),
-                HttpStatus.FORBIDDEN.name());
-
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    public ResponseEntity<ExceptionResponse> responseAccessDeniedExceptionHandler(AccessDeniedException e) {
+        return generateExceptionResponse(e, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ExceptionResponse> responseNoSuchElementExceptionHandler(
-            NoSuchElementException e) {
-        ExceptionResponse response = ExceptionResponse.of(e,
-                HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND.name());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-    }
-
-    // 다른 구체적인 핸들러에서 처리되지 않은 예외가 발생했을 때 마지막으로 호출
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionResponse> responseExceptionHandler(
-            Exception e) {
-        ExceptionResponse response = ExceptionResponse.of(e,
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                HttpStatus.INTERNAL_SERVER_ERROR.name());
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    public ResponseEntity<ExceptionResponse> responseNoSuchElementExceptionHandler(NoSuchElementException e) {
+        return generateExceptionResponse(e, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ExceptionResponse> responseIllegalArgumentExceptionHandler(
-            IllegalArgumentException e) {
-        ExceptionResponse response = ExceptionResponse.of(e,
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.name());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    public ResponseEntity<ExceptionResponse> responseIllegalArgumentExceptionHandler(IllegalArgumentException e) {
+        return generateExceptionResponse(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> responseUsernameNotFoundExceptionHandler(
-            UsernameNotFoundException e) {
-        ExceptionResponse response = ExceptionResponse.of(e,
-                HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.name());
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    public ResponseEntity<ExceptionResponse> responseUsernameNotFoundExceptionHandler(UsernameNotFoundException e) {
+        return generateExceptionResponse(e, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<ExceptionResponse> responseAuthorizationDeniedExceptionHandler(
             AuthorizationDeniedException e) {
-        ExceptionResponse response = ExceptionResponse.of(e,
-                HttpStatus.FORBIDDEN.value(),
-                HttpStatus.FORBIDDEN.name());
-
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        return generateExceptionResponse(e, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ExceptionResponse> responseBadCredentialsExceptionHandler(
-            BadCredentialsException e) {
-        ExceptionResponse response = ExceptionResponse.of(e,
-                HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.name());
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    public ResponseEntity<ExceptionResponse> responseBadCredentialsExceptionHandler(BadCredentialsException e) {
+        return generateExceptionResponse(e, HttpStatus.UNAUTHORIZED);
     }
 
     private ResponseEntity<ExceptionResponse> generateExceptionResponse(Exception e, HttpStatus status) {
