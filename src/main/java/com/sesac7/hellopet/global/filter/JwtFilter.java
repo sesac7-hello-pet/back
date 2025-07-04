@@ -22,8 +22,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final AntPathMatcher matcher = new AntPathMatcher();
     private static final String[] WHITELIST = {
-            "/users/**",
-            "/auth/**"
+            "/api/v1/users/**",
+            "/api/v1/auth/**"
     };
 
     private final JwtUtil jwtUtil;
