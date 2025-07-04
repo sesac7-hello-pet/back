@@ -14,6 +14,7 @@ import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
     private final UserFinder userFinder;
+    private final ConversionService conversionService;
 
     public CommentResponse createComment(CommentCreateRequest request, Long boardId,
                                          CustomUserDetails details) {
@@ -40,6 +42,8 @@ public class CommentService {
         Comment comment = request.toDomain(board, user);
 
         Comment saved = commentRepository.save(comment);
+
+        board.setCommentsCount(board.getCommentsCount() + 1);
         return CommentResponse.from(saved);
 
     }

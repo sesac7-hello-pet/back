@@ -90,9 +90,9 @@ public class BoardService {
         }
     }
 
-    @Transactional(readOnly = true)
     public BoardDetailResponse getBoardDetail(Long boardId) {
         Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
+        board.setViewsCount(board.getViewsCount() + 1);
         return BoardDetailResponse.from(board);
     }
 
@@ -101,6 +101,11 @@ public class BoardService {
         BoardSearchRequest request = BoardSearchRequest.toRequest(user.getEmail(), page, size);
         BoardPageResponse response = getSearchList(request);
         return response;
+    }
+
+    public void updateLike(Long boardId) {
+        Board board = repository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
+        board.setLikesCount(board.getLikesCount() + 1);
     }
 
 }
