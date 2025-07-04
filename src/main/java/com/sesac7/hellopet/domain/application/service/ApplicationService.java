@@ -40,7 +40,7 @@ public class ApplicationService {
     public void deleteApplication(Long id, CustomUserDetails userDetails) {
         Application application = applicationRepository.findById(id)
                                                        .orElseThrow(() -> new EntityNotFoundException(
-                                                               "해당 입양 신청서를 찾을 수 없습니다. id=" + id)
+                                                               "해당 번호의 입양 신청서를 찾을 수 없습니다. id=" + id)
                                                        );
 
         User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
@@ -56,7 +56,7 @@ public class ApplicationService {
     public ApplicationDetailResponse getApplication(Long id) {
         Application application = applicationRepository.findById(id)
                                                        .orElseThrow(() -> new EntityNotFoundException(
-                                                               "해당 번호의 신청서를 찾을 수 없습니다. id=" + id));
+                                                               "해당 번호의 입양 신청서를 찾을 수 없습니다. id=" + id));
 
         return ApplicationDetailResponse.from(application);
     }
