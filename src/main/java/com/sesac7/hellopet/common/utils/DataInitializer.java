@@ -13,9 +13,9 @@ public class DataInitializer {
 
     @PostConstruct
     public void initAllData() {
-//        dataSetter.userGenerator(HOW_MANY_MAKE_DATA);
-//        dataSetter.announcementGenerator(HOW_MANY_MAKE_DATA);
-//        dataSetter.boardGenerator(HOW_MANY_MAKE_DATA);
-//        dataSetter.commentGenerator(HOW_MANY_MAKE_DATA);
+        dataSetter.userGenerator(HOW_MANY_MAKE_DATA);
+        dataSetter.announcementGenerator(HOW_MANY_MAKE_DATA);
+        dataSetter.boardGenerator(HOW_MANY_MAKE_DATA);
+        dataSetter.commentGenerator(HOW_MANY_MAKE_DATA);
     }
 }
