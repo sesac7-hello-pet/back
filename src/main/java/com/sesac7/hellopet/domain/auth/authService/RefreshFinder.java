@@ -8,4 +8,6 @@ public interface RefreshFinder {
     User getUserByToken(String token);
 
     boolean existRefreshByUser(User foundUser);
+
+    void deleteRefreshByEmail(String email);
 }

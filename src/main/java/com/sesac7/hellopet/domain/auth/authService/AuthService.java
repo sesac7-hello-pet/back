@@ -98,7 +98,16 @@ public class AuthService {
             throw new UnauthorizedException(jwtUtil.deleteAccessCookie(), jwtUtil.deleteRefreshCookie());
         }
 
-        User foundUser = refreshFinder.getUserByToken(token);
+        User foundUser;
+
+        try {
+            foundUser = refreshFinder.getUserByToken(token);
+        } catch (NullPointerException e) {
+            String email = jwtUtil.getEmailFromToken(token);
+            refreshFinder.deleteRefreshByEmail(email);
+            throw new UnauthorizedException(jwtUtil.deleteAccessCookie(), jwtUtil.deleteRefreshCookie());
+        }
+
         return jwtUtil.generateAccessCookie(foundUser);
     }
 }
