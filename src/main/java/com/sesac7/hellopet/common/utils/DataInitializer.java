@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class DataInitializer {
     private final DataSetter dataSetter;
 
-    private static final int HOW_MANY_MAKE_DATA = 30;
+    private static final int HOW_MANY_MAKE_DATA = 100;
 
     @PostConstruct
     public void initAllData() {
