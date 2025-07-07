@@ -9,10 +9,10 @@ import org.springframework.data.domain.Sort;
 @Data
 public class AnnouncementSearchRequest {
 
-    private Integer page=0;
-    private Integer size=10;
-    private AnnouncementSortType requestSortType= AnnouncementSortType.CREATEDAT;
-    private AnnouncementAscDescType requestAscDescType=AnnouncementAscDescType.DESC;
+    private Integer page = 0;
+    private Integer size = 9;
+    private AnnouncementSortType requestSortType = AnnouncementSortType.CREATEDAT;
+    private AnnouncementAscDescType requestAscDescType = AnnouncementAscDescType.DESC;
 
     public Pageable toPageable() {
         Sort.Direction direction =
@@ -25,7 +25,7 @@ public class AnnouncementSearchRequest {
 
             case ID -> "id";
 
-            case CREATEDAT  -> "createdAt";
+            case CREATEDAT -> "createdAt";
         };
 
         return PageRequest.of(page, size, Sort.by(direction, sortProperty));

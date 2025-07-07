@@ -6,7 +6,6 @@ import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementSearchReq
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementUpdateRequest;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
-import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementPageResponse;
 import com.sesac7.hellopet.domain.announcement.service.AnnouncementService;
 import com.sesac7.hellopet.domain.application.dto.request.ApplicationPageRequest;
@@ -14,10 +13,7 @@ import com.sesac7.hellopet.domain.application.dto.response.ApplicationApprovalRe
 import com.sesac7.hellopet.domain.application.dto.response.ShelterApplicationsPageResponse;
 import com.sesac7.hellopet.domain.application.service.ApplicationService;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,7 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -61,10 +56,10 @@ public class AnnouncementController {
      */
 
     @GetMapping
-    public ResponseEntity <AnnouncementPageResponse> getAllAnnouncements(@ModelAttribute AnnouncementSearchRequest request) {
+    public ResponseEntity<AnnouncementPageResponse> getAllAnnouncements(
+            @ModelAttribute AnnouncementSearchRequest request) {
         return ResponseEntity.ok(announcementService.getAllAnnouncements(request));
     }
-
 
     /**
      * 공고별 신청 내역 조회

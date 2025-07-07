@@ -6,12 +6,6 @@ import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementSearchReq
 import com.sesac7.hellopet.domain.announcement.dto.request.AnnouncementUpdateRequest;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementCreateResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementDetailResponse;
-import com.sesac7.hellopet.global.annotation.IsAnnouncementOwner;
-import java.time.LocalDate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementListResponse;
 import com.sesac7.hellopet.domain.announcement.dto.response.AnnouncementPageResponse;
 import com.sesac7.hellopet.domain.announcement.entity.Announcement;
@@ -19,23 +13,17 @@ import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
-import com.sesac7.hellopet.domain.user.service.UserFinder;
 import com.sesac7.hellopet.domain.user.entity.User;
+import com.sesac7.hellopet.domain.user.service.UserFinder;
+import com.sesac7.hellopet.global.annotation.IsAnnouncementOwner;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
 
 @Service
 @RequiredArgsConstructor
@@ -76,7 +64,6 @@ public class AnnouncementService {
                                                 .updatedAt(null)
                                                 .build();
 
-
         announcementRepository.save(announcement);
 
         return AnnouncementCreateResponse.from(announcement);
@@ -88,7 +75,8 @@ public class AnnouncementService {
      */
     @Transactional(readOnly = true)
     public AnnouncementPageResponse getAllAnnouncements(AnnouncementSearchRequest request) {
-        Page<AnnouncementListResponse> announcements = announcementRepository.searchAnnouncements(AnnouncementStatus.IN_PROGRESS, request.toPageable());
+        Page<AnnouncementListResponse> announcements = announcementRepository.searchAnnouncements(
+                AnnouncementStatus.IN_PROGRESS, request.toPageable());
 
         return AnnouncementPageResponse.from(announcements, request);
 
@@ -151,7 +139,6 @@ public class AnnouncementService {
                                                           .orElseThrow(() -> new EntityNotFoundException(
                                                                   "입양 공고가 존재하지 않습니다."));
 
-
 //        if (!announcement.getShelter().getEmail().equals(username)) {
 //            throw new Exception("수정권한이 없습니다");
 //        }
@@ -176,7 +163,7 @@ public class AnnouncementService {
 
     /***
      * 게시글 삭제
-     * @param id 삭제할 공고의 ID
+     * @param announcementId 삭제할 공고의 ID
      */
     @IsAnnouncementOwner
     public void deleteAnnouncement(Long announcementId, String username) {
@@ -203,7 +190,6 @@ public class AnnouncementService {
         AnnouncementSearchRequest searchRequest = new AnnouncementSearchRequest();
         return AnnouncementPageResponse.from(announcementListResponses, searchRequest);
     }
-
 
     public void completeAnnouncement(Long id) {
         Announcement announcement = findById(id);
