@@ -35,6 +35,15 @@ public class SecurityConfig {
     private final RestAccessDeniedHandler deniedHandler;
     private final RestAuthEntryPoint entryPoint;
 
+    private final String[] authMatcher = {"/auth/**", "/auth/logout"};
+    private final String[] userMatcher = {"/users/**"};
+    private final String[] meMatcher = {"/me/**"};
+    private final String[] adminMatcher = {"/admin/**"};
+    private final String[] boardMatcher = {"/boards", "/boards/**"};
+    private final String[] applicationMatcher = {"/applications", "/applications/**"};
+    private final String[] announcementMatcher = {"/announcements", "/announcements/**",
+            "/announcements/*/applications/**"};
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -47,25 +56,33 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/users/**").permitAll()
-                        .requestMatchers("/me/**").authenticated()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/boards/**", "/announcements/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/announcements/*/application/**", "/applications/**")
+                        .requestMatchers(authMatcher[0], userMatcher[0]).permitAll()
+                        .requestMatchers(meMatcher[0]).authenticated()
+                        .requestMatchers(adminMatcher[0]).hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, boardMatcher[1], announcementMatcher[1]).permitAll()
+                        .requestMatchers(HttpMethod.GET, announcementMatcher[2], applicationMatcher[1])
                         .hasRole("SHELTER")
-                        .requestMatchers(HttpMethod.POST, "/boards", "/applications").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/applications").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/announcements").hasRole("SHELTER")
-                        .requestMatchers(HttpMethod.PUT, "/boards/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/announcements/**").hasRole("SHELTER")
-                        .requestMatchers(HttpMethod.PUT, "/announcements/*/application/**").hasRole("SHELTER")
-                        .requestMatchers(HttpMethod.DELETE, "/boards/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/applications/**").hasRole("USER")
-                        .requestMatchers(HttpMethod.DELETE, "/announcements/**").hasRole("SHELTER")
+
+                        .requestMatchers(HttpMethod.POST, boardMatcher[0], applicationMatcher[0]).authenticated()
+                        .requestMatchers(HttpMethod.POST, applicationMatcher[0]).hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, announcementMatcher[0]).hasRole("SHELTER")
+
+                        .requestMatchers(HttpMethod.PUT, boardMatcher[1]).authenticated()
+                        .requestMatchers(HttpMethod.PUT, announcementMatcher[1]).hasRole("SHELTER")
+                        .requestMatchers(HttpMethod.PUT, announcementMatcher[2]).hasRole("SHELTER")
+
+                        .requestMatchers(HttpMethod.DELETE, boardMatcher[1]).authenticated()
+                        .requestMatchers(HttpMethod.DELETE, applicationMatcher[1]).hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, announcementMatcher[1]).hasRole("SHELTER")
+
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(entryPoint)
-                        .accessDeniedHandler(deniedHandler));
+                        .accessDeniedHandler(deniedHandler))
+                .logout(logout -> logout.logoutUrl(authMatcher[1])
+                                        .logoutSuccessHandler((req, res, auth) -> res.setStatus(204)));
+        ;
         return http.build();
     }
 

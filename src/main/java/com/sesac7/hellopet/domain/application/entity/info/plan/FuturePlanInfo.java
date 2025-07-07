@@ -22,7 +22,7 @@ public class FuturePlanInfo {
 
     public static FuturePlanInfo from(FuturePlanInfoRequest request) {
         return new FuturePlanInfo(
-                request.isHasFuturePlan(),
+                request.getHasFuturePlan(),
                 request.getPlanDetails()
         );
     }

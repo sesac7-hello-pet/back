@@ -25,6 +25,7 @@ public class UserDetail {
     private Long id;
 
     @Setter
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     @Column(nullable = false)
@@ -37,7 +38,7 @@ public class UserDetail {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String phoneNumber;
 
     @OneToOne(fetch = FetchType.LAZY)

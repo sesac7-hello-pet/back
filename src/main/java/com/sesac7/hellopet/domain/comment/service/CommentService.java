@@ -40,6 +40,8 @@ public class CommentService {
         Comment comment = request.toDomain(board, user);
 
         Comment saved = commentRepository.save(comment);
+
+        board.setCommentsCount(board.getCommentsCount() + 1);
         return CommentResponse.from(saved);
 
     }
