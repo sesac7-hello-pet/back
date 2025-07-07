@@ -15,6 +15,7 @@ import com.sesac7.hellopet.global.exception.custom.UnauthorizedException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +62,7 @@ public class AuthService {
             refreshFinder.deleteRefreshByEmail(userDetails.getUsername());
         }
 
-        refreshTokenRepository.save(new RefreshToken(null, refreshCookie.getValue(), foundUser));
+        refreshFinder.saveRefresh(new RefreshToken(null, refreshCookie.getValue(), foundUser, LocalDateTime.now()));
 
         return new AuthResult(accessCookie, refreshCookie, userService.userLogin(userDetails.getUsername()));
     }
