@@ -2,7 +2,6 @@ package com.sesac7.hellopet.domain.user.service;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.user.entity.User;
-import com.sesac7.hellopet.domain.user.repository.UserRepository;
 import com.sesac7.hellopet.global.exception.custom.WithdrawUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,12 +13,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UserFinder userFinder;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail((email))
-                                  .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 Email 입니다. "));
+        User user = userFinder.findLoggedInUserByUsername(email);
 
         if (!user.getActivation()) {
             throw new WithdrawUserException();
