@@ -9,6 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CommentResponse {
     private Long id;
+    private String email;
     private String nickname;
     private String content;
     private LocalDateTime createdAt;
@@ -18,6 +19,7 @@ public class CommentResponse {
     public static CommentResponse from(Comment comment) {
         return new CommentResponse(
                 comment.getId(),
+                comment.getUser().getEmail(),
                 comment.getUser().getUserDetail().getNickname(),
                 comment.getContent(),
                 comment.getCreatedAt(),
