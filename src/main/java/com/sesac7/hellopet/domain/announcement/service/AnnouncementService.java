@@ -132,7 +132,8 @@ public class AnnouncementService {
                                          .shelterName(announcement.getShelter().getUserDetail().getNickname())
                                          .createdAt(announcement.getCreatedAt())
                                          .announcementPeriod(announcement.getAnnouncementPeriod())
-                                         .imageUrl(pet.getImageUrl())               // 펫의 이미지 URL 설정
+                                         .imageUrl(pet.getImageUrl())
+                                         .announcementStatus(announcement.getStatus()) // 펫의 이미지 URL 설정
                                          .build();                                  // DTO 객체 생성 및 반환
     }
 
