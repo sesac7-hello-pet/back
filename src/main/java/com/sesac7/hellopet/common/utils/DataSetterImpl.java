@@ -86,8 +86,7 @@ public class DataSetterImpl implements DataSetter {
                     "견종",
                     data.getDogPhotos().get(getRandomIndex(data.getDogPhotos()))
 
-                    );
-
+            );
 
             petRepository.save(pet);
 
@@ -116,7 +115,7 @@ public class DataSetterImpl implements DataSetter {
                     data.getBoardContents().get(getRandomIndex(data.getBoardContents())),
                     data.getDogPhotos().get(getRandomIndex(data.getDogPhotos())),
                     0, 0, 0, LocalDateTime.now(), null,
-                    boardCategory[ThreadLocalRandom.current().nextInt(boardCategory.length)],
+                    boardCategory[i % 2],
                     petType[ThreadLocalRandom.current().nextInt(petType.length)],
                     users.get(getRandomIndex(users)), null
             );
