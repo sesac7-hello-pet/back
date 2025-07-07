@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.auth.authService;
 
+import com.sesac7.hellopet.domain.auth.entity.RefreshToken;
 import com.sesac7.hellopet.domain.auth.repository.RefreshTokenRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,11 @@ public class RefreshFinderImpl implements RefreshFinder {
     @Override
     public void deleteRefreshByEmail(String email) {
         refreshTokenRepository.deleteRefreshTokenByUser_Email(email);
+    }
+
+    @Override
+    public void saveRefresh(RefreshToken refreshToken) {
+        refreshTokenRepository.save(refreshToken);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.sesac7.hellopet.domain.auth.authService;
 
+import com.sesac7.hellopet.domain.auth.entity.RefreshToken;
 import com.sesac7.hellopet.domain.user.entity.User;
 
 public interface RefreshFinder {
@@ -10,4 +11,6 @@ public interface RefreshFinder {
     boolean existRefreshByUser(User foundUser);
 
     void deleteRefreshByEmail(String email);
+
+    void saveRefresh(RefreshToken refreshToken);
 }
