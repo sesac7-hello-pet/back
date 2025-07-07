@@ -51,7 +51,6 @@ public class AnnouncementService {
      * @param customUserDetails
      * @return
      */
-    @IsAnnouncementOwner
     public AnnouncementCreateResponse createAnnouncement(AnnouncementCreateRequest announcementCreateRequest,
                                                          CustomUserDetails customUserDetails) {
         Pet pet = Pet.builder()
@@ -87,6 +86,7 @@ public class AnnouncementService {
      * 게시글 전체리스트 조회
      * @return AnnouncementListResponse 리스트
      */
+    @Transactional(readOnly = true)
     public AnnouncementPageResponse getAllAnnouncements(AnnouncementSearchRequest request) {
         Page<AnnouncementListResponse> announcements = announcementRepository.searchAnnouncements(AnnouncementStatus.IN_PROGRESS, request.toPageable());
 
@@ -111,6 +111,7 @@ public class AnnouncementService {
      * @return AnnouncementDetailResponse DTO - 상세 입양 공고 정보
      * @throws NoSuchElementException 해당 ID의 입양 공고가 없으면 예외 발생
      */
+    @Transactional(readOnly = true)
     public AnnouncementDetailResponse getAnnouncementDetail(Long id) {
         // announcementRepository를 통해 DB에서 해당 ID의 Announcement 엔터티를 조회한다.
         // 조회 결과가 없으면 NoSuchElementException 예외를 던진다.
@@ -139,21 +140,20 @@ public class AnnouncementService {
      * 게시글 수정(update)
      */
     @IsAnnouncementOwner
-    @Transactional
     public AnnouncementUpdateRequest updateAnnouncement(
-            Long id,
+            Long announcementId,
             AnnouncementUpdateRequest announcementUpdateRequest,
             String username) throws Exception {
 
         // 1. 게시글 조회
-        Announcement announcement = announcementRepository.findById(id)
+        Announcement announcement = announcementRepository.findById(announcementId)
                                                           .orElseThrow(() -> new EntityNotFoundException(
                                                                   "입양 공고가 존재하지 않습니다."));
 
 
-        if (!announcement.getShelter().getEmail().equals(username)) {
-            throw new Exception("수정권한이 없습니다");
-        }
+//        if (!announcement.getShelter().getEmail().equals(username)) {
+//            throw new Exception("수정권한이 없습니다");
+//        }
 
         // 3. Pet 수정 (updateInfo 메서드로 대체 권장)
         Pet pet = announcement.getPet();
@@ -178,15 +178,15 @@ public class AnnouncementService {
      * @param id 삭제할 공고의 ID
      */
     @IsAnnouncementOwner
-    public void deleteAnnouncement(Long id, String username) {
-        Announcement announcement = announcementRepository.findById(id)
+    public void deleteAnnouncement(Long announcementId, String username) {
+        Announcement announcement = announcementRepository.findById(announcementId)
                                                           .orElseThrow(() -> new EntityNotFoundException(
                                                                   "삭제할 공고가 존재하지 않습니다."));
 
-        // 🔐 작성자 확인
-        if (!announcement.getShelter().getUserDetail().getUser().getEmail().equals(username)) {
-            throw new AccessDeniedException("삭제 권한이 없습니다.");
-        }
+//        // 🔐 작성자 확인
+//        if (!announcement.getShelter().getUserDetail().getUser().getEmail().equals(username)) {
+//            throw new AccessDeniedException("삭제 권한이 없습니다.");
+//        }
 
         announcementRepository.delete(announcement);
     }
@@ -194,7 +194,7 @@ public class AnnouncementService {
     /***
      * 내가 쓴 입양 공고 조회
      */
-    @IsAnnouncementOwner
+    @Transactional(readOnly = true)
     public AnnouncementPageResponse getMyAnnouncements(String email, Pageable pageable) {
         Page<AnnouncementListResponse> announcementListResponses = announcementRepository.searchMyAnnouncement(email,
                 pageable);
