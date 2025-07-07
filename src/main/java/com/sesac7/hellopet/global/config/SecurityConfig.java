@@ -35,7 +35,7 @@ public class SecurityConfig {
     private final RestAccessDeniedHandler deniedHandler;
     private final RestAuthEntryPoint entryPoint;
 
-    private final String[] authMatcher = {"/auth/**"};
+    private final String[] authMatcher = {"/auth/**", "/auth/logout"};
     private final String[] userMatcher = {"/users/**"};
     private final String[] meMatcher = {"/me/**"};
     private final String[] adminMatcher = {"/admin/**"};
@@ -79,7 +79,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(entryPoint)
-                        .accessDeniedHandler(deniedHandler));
+                        .accessDeniedHandler(deniedHandler))
+                .logout(logout -> logout.logoutUrl(authMatcher[1])
+                                        .logoutSuccessHandler((req, res, auth) -> res.setStatus(204)));
+        ;
         return http.build();
     }
 
