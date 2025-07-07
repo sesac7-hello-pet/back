@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BoardResponse {
     private Long id;
+    private String email;
     private String nickname;
     private String title;
     private String content;
@@ -35,6 +36,7 @@ public class BoardResponse {
     public static BoardResponse from(Board board) {
         return new BoardResponse(
                 board.getId(),
+                board.getUser().getEmail(),
                 board.getUser().getUserDetail().getNickname(),
                 board.getTitle(),
                 board.getContent(),
