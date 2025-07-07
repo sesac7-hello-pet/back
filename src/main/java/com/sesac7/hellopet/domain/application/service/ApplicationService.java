@@ -74,10 +74,10 @@ public class ApplicationService {
         List<ShelterApplicationResponse> content = applications
                 .subList(start, end)
                 .stream()
-                .map(application -> ShelterApplicationResponse.of(announcement, application))
+                .map(application -> ShelterApplicationResponse.from(application))
                 .toList();
 
-        return ShelterApplicationsPageResponse.of(pageable, content, applications.size());
+        return ShelterApplicationsPageResponse.of(pageable, content, applications.size(), announcement);
     }
 
     @Transactional(readOnly = true)
