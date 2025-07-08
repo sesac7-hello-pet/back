@@ -35,7 +35,7 @@ public class SecurityConfig {
     private final RestAccessDeniedHandler deniedHandler;
     private final RestAuthEntryPoint entryPoint;
 
-    private final String[] authMatcher = {"/auth/**", "/auth/logout"};
+    private final String[] authMatcher = {"/auth/**", "/auth/logout", "/auth/check-password"};
     private final String[] userMatcher = {"/users/**"};
     private final String[] meMatcher = {"/me/**"};
     private final String[] adminMatcher = {"/admin/**"};
@@ -56,6 +56,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(authMatcher[1], authMatcher[2]).authenticated()
                         .requestMatchers(authMatcher[0], userMatcher[0]).permitAll()
                         .requestMatchers(meMatcher[0]).authenticated()
                         .requestMatchers(adminMatcher[0]).hasRole("ADMIN")
