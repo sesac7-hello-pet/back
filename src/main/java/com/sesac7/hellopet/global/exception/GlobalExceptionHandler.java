@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -69,6 +70,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(WithdrawUserException.class)
     public ResponseEntity<ExceptionResponse> responseInactivationUserExceptionHandler(WithdrawUserException e) {
         return generateExceptionResponse(e, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<ExceptionResponse> handleInternalAuth(InternalAuthenticationServiceException ex) {
+        if (ex.getCause() instanceof WithdrawUserException cause) {
+            return generateExceptionResponse(cause, HttpStatus.FORBIDDEN);
+        }
+        return generateExceptionResponse(ex, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(DuplicateApplicationException.class)
