@@ -18,6 +18,7 @@ import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
 import com.sesac7.hellopet.domain.application.validation.AlreadyProcessedApplicationException;
 import com.sesac7.hellopet.domain.application.validation.DuplicateApplicationException;
 import com.sesac7.hellopet.domain.user.entity.User;
+import com.sesac7.hellopet.domain.user.entity.UserRole;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -121,7 +123,16 @@ public class ApplicationService {
         return ApplicationResponse.from(application.getId());
     }
 
-    public ApplicationApprovalResponse processApplicationApproval(Long announcementId, Long applicationId) {
+    public ApplicationApprovalResponse processApplicationApproval(Long announcementId,
+                                                                  Long applicationId,
+                                                                  UserDetails userDetails) {
+
+        User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+        Announcement announcement = announcementService.findById(announcementId);
+        if (!announcement.getShelter().getId().equals(user.getId()) || user.getRole() != UserRole.SHELTER) {
+            throw new AccessDeniedException("해당 입양 공고에 대한 승인 권한이 없습니다.");
+        }
+
         approveAndRejectOtherApplications(announcementId, applicationId);
         announcementService.completeAnnouncement(announcementId);
 
