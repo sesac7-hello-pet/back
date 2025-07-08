@@ -87,11 +87,12 @@ public class AnnouncementController {
     @PutMapping("/{announcementId}/applications/{applicationId}")
     public ResponseEntity<ApplicationApprovalResponse> updateApplicationStatus(
             @PathVariable Long announcementId,
-            @PathVariable Long applicationId) {
+            @PathVariable Long applicationId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         ApplicationApprovalResponse response = applicationService.processApplicationApproval(
-                announcementId,
-                applicationId);
+                announcementId, applicationId, userDetails);
+
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

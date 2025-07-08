@@ -16,8 +16,10 @@ import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.ApplicationStatus;
 import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
 import com.sesac7.hellopet.domain.application.validation.AlreadyProcessedApplicationException;
+import com.sesac7.hellopet.domain.application.validation.AnnouncementApprovalPermissionException;
 import com.sesac7.hellopet.domain.application.validation.DuplicateApplicationException;
 import com.sesac7.hellopet.domain.user.entity.User;
+import com.sesac7.hellopet.domain.user.entity.UserRole;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -121,25 +124,44 @@ public class ApplicationService {
         return ApplicationResponse.from(application.getId());
     }
 
-    public ApplicationApprovalResponse processApplicationApproval(Long announcementId, Long applicationId) {
-        approveAndRejectOtherApplications(announcementId, applicationId);
-        announcementService.completeAnnouncement(announcementId);
+    public ApplicationApprovalResponse processApplicationApproval(Long announcementId,
+                                                                  Long applicationId,
+                                                                  UserDetails userDetails) {
+        // 보호소의 공고 승인 권한 검증
+        validateShelterApprovalPermission(announcementId, userDetails);
 
+        // 해당 공고에 대해 신청서 승인 및 나머지 신청서 일괄 거절 처리
+        approveAndRejectApplications(announcementId, applicationId);
+
+        // 공고 상태를 완료로 변경
+        announcementService.completeAnnouncement(announcementId);
+        
         return ApplicationApprovalResponse.of(announcementId, applicationId);
     }
 
-    private void approveAndRejectOtherApplications(Long announcementId, Long applicationId) {
-        Application application = applicationRepository.findByIdAndAnnouncementIdAndStatus(applicationId,
-                                                               announcementId, ApplicationStatus.PENDING)
+    private void validateShelterApprovalPermission(Long announcementId, UserDetails userDetails) {
+        User loginUser = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+        Announcement announcement = announcementService.findById(announcementId);
+
+        boolean isShelter = loginUser.getRole() == UserRole.SHELTER;
+        boolean isShelterOwner = announcement.getShelter().getId().equals(loginUser.getId());
+
+        if (!(isShelter && isShelterOwner)) {
+            throw new AnnouncementApprovalPermissionException();
+        }
+    }
+
+    private void approveAndRejectApplications(Long announcementId, Long applicationId) {
+        Application approvedApp = applicationRepository.findByIdAndAnnouncementIdAndStatus(
+                                                               applicationId, announcementId, ApplicationStatus.PENDING
+                                                       )
                                                        .orElseThrow(() -> new AlreadyProcessedApplicationException());
 
-        application.changeStatus(ApplicationStatus.APPROVED);
+        approvedApp.approve();
 
-        List<Application> otherApplications = applicationRepository.findByAnnouncementIdAndExcludeApplicationId(
+        List<Application> rejectedApps = applicationRepository.findByAnnouncementIdAndExcludeApplicationId(
                 announcementId, applicationId);
 
-        for (Application otherApplication : otherApplications) {
-            otherApplication.changeStatus(ApplicationStatus.REJECTED);
-        }
+        rejectedApps.forEach(other -> other.reject());
     }
 }
