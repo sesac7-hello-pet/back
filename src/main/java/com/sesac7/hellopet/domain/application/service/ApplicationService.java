@@ -73,10 +73,18 @@ public class ApplicationService {
     }
 
     @Transactional(readOnly = true)
-    public ShelterApplicationsPageResponse getShelterApplications(Long id, ApplicationPageRequest request) {
-        Announcement announcement = announcementService.findById(id);
-        Pageable pageable = request.toPageable();
+    public ShelterApplicationsPageResponse getShelterApplications(Long id,
+                                                                  ApplicationPageRequest request,
+                                                                  CustomUserDetails userDetails) {
 
+        Announcement announcement = announcementService.findById(id);
+        User shelter = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+
+        if (!announcement.getShelter().getId().equals(shelter.getId())) {
+            throw new AccessDeniedException("해당 공고에 대한 접근 권한이 없습니다.");
+        }
+
+        Pageable pageable = request.toPageable();
         Page<Application> page = applicationRepository.findByAnnouncementId(id, pageable);
 
         List<ShelterApplicationResponse> content = page.stream()
