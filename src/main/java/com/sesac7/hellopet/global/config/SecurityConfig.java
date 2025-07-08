@@ -60,11 +60,11 @@ public class SecurityConfig {
                         .requestMatchers(meMatcher[0]).authenticated()
                         .requestMatchers(adminMatcher[0]).hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.GET, boardMatcher[1], announcementMatcher[1]).permitAll()
                         .requestMatchers(HttpMethod.GET, announcementMatcher[2], applicationMatcher[1])
                         .hasRole("SHELTER")
+                        .requestMatchers(HttpMethod.GET, boardMatcher[1], announcementMatcher[1]).permitAll()
 
-                        .requestMatchers(HttpMethod.POST, boardMatcher[0], applicationMatcher[0]).authenticated()
+                        .requestMatchers(HttpMethod.POST, boardMatcher[0]).authenticated()
                         .requestMatchers(HttpMethod.POST, applicationMatcher[0]).hasRole("USER")
                         .requestMatchers(HttpMethod.POST, announcementMatcher[0]).hasRole("SHELTER")
 
