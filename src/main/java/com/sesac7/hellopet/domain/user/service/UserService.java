@@ -180,6 +180,7 @@ public class UserService {
     public List<ResponseCookie> disableUser(CustomUserDetails userDetails) {
         User foundUser = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
         foundUser.setActivation(false);
+        userRepository.save(foundUser);
 
         SecurityContextHolder.clearContext();
 
