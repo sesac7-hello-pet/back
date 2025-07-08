@@ -8,4 +8,5 @@ public interface DataSetter {
     void announcementGenerator(int num);
     void boardGenerator(int num);
     void commentGenerator(int num);
+    void applicationGenerator(int num);
 }

@@ -1,5 +1,13 @@
 package com.sesac7.hellopet.common.store;
 
+import com.sesac7.hellopet.domain.application.entity.info.care.AbsenceTime;
+import com.sesac7.hellopet.domain.application.entity.info.care.CareTime;
+import com.sesac7.hellopet.domain.application.entity.info.family.FamilyAgreement;
+import com.sesac7.hellopet.domain.application.entity.info.financial.MonthlyBudget;
+import com.sesac7.hellopet.domain.application.entity.info.housing.HouseSizeRange;
+import com.sesac7.hellopet.domain.application.entity.info.housing.HousingType;
+import com.sesac7.hellopet.domain.application.entity.info.housing.PetLivingPlace;
+import com.sesac7.hellopet.domain.application.entity.info.housing.ResidenceType;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -62,6 +70,65 @@ public class DataStore {
             "https://item.kakaocdn.net/do/0686e84a412bbb56f49e19d84dfe4d6626397d82c8691bdabf557d1536959d9c",
             "https://item.kakaocdn.net/do/0686e84a412bbb56f49e19d84dfe4d66ff1cf2d4e1bdc11c5e3dd410963d18c7"
 
+    ));
+
+    List<String > petTypes = new ArrayList<>(List.of("강아지", "고양이", "기타"));
+    List<String> breeds = new ArrayList<>(List.of(
+            // 🐶 주요 견종 25
+            "골든 리트리버",
+            "래브라도 리트리버",
+            "포메라니안",
+            "말티즈",
+            "비글",
+            "불독",
+            "시베리안 허스키",
+            "도베르만",
+            "시추",
+            "요크셔 테리어",
+            "푸들",
+            "보더 콜리",
+            "코카 스파니엘",
+            "미니어처 슈나우저",
+            "치와와",
+            "비숑 프리제",
+            "웰시 코기",
+            "잭 러셀 테리어",
+            "오스트레일리언 셰퍼드",
+            "그레이트 데인",
+            "달마티안",
+            "샤페이",
+            "로트와일러",
+            "알래스칸 말라뮤트",
+            "프렌치 불도그",
+
+            // 🐱 주요 묘종 24
+            "러시안 블루",
+            "스코티시 폴드",
+            "먼치킨",
+            "샴",
+            "페르시안",
+            "메인쿤",
+            "벵골",
+            "아메리칸 숏헤어",
+            "브리티시 쇼트헤어",
+            "터키시 앙고라",
+            "라가머핀",
+            "라펌",
+            "오시캣",
+            "래그돌",
+            "데본 렉스",
+            "코니시 렉스",
+            "싱가푸라",
+            "스핑크스",
+            "애비시니안",
+            "토이거",
+            "소말리",
+            "버만",
+            "사바나",
+            "오리엔탈 쇼트헤어",
+
+            // 기타
+            "기타"
     ));
 
     List<String> healthStatuses = new ArrayList<>(List.of(
@@ -538,5 +605,95 @@ public class DataStore {
             "궁금증 해결됐어요, 감사!",
             "게시글 감사합니다. 많은 도움 됐어요 😊"
     ));
+    // 1) 사유
+    List<String> reasons = List.of(
+            "외로움을 달래기 위해",
+            "가족과 함께 생활하기 위해",
+            "아이 교육용으로 반려동물을 키워보고 싶어서",
+            "운동을 목적으로 산책 친구가 필요해서",
+            "반려동물 복지를 경험해보고 싶어서"
+    );
+
+    // 2) HousingInfo
+    List<HousingType> housingTypes = List.of(
+            HousingType.APARTMENT,
+            HousingType.VILLA,
+            HousingType.OFFICETEL,
+            HousingType.DETACHED_HOUSE,
+            HousingType.DORMITORY,
+            HousingType.MOBILE_HOME
+    );
+    List<ResidenceType> residenceTypes = List.of(
+            ResidenceType.OWNED,
+            ResidenceType.JEONSE,
+            ResidenceType.MONTHLY_RENT,
+            ResidenceType.TEMPORARY
+    );
+    List<Boolean> petAllowedOptions = List.of(true, false);
+    List<PetLivingPlace> petLivingPlaces = List.of(
+            PetLivingPlace.INDOOR,
+            PetLivingPlace.OUTDOOR,
+            PetLivingPlace.BOTH
+    );
+    List<HouseSizeRange> houseSizeRanges = List.of(
+            HouseSizeRange.LESS_THAN_33,
+            HouseSizeRange.FROM_33_TO_66,
+            HouseSizeRange.FROM_66_TO_99,
+            HouseSizeRange.OVER_99
+    );
+
+    // 3) FamilyInfo
+    List<Integer> numberOfHouseholds = List.of(1, 2, 3, 4, 5);
+    List<Boolean> hasChildUnder13Options = List.of(true, false);
+    List<FamilyAgreement> familyAgreements = List.of(
+            FamilyAgreement.ALL_AGREE,
+            FamilyAgreement.SOME_DISAGREE
+    );
+    List<Boolean> hasPetAllergyOptions = List.of(true, false);
+
+    // 4) CareInfo
+    List<AbsenceTime> absenceTimes = List.of(
+            AbsenceTime.ONE_TO_THREE,
+            AbsenceTime.FOUR_TO_SIX,
+            AbsenceTime.SEVEN_TO_NINE,
+            AbsenceTime.TEN_OR_MORE
+    );
+    List<CareTime> careTimes = List.of(
+            CareTime.ONE_OR_LESS,
+            CareTime.TWO_TO_THREE,
+            CareTime.FOUR_OR_MORE
+    );
+
+    // 5) FinancialInfo
+    List<MonthlyBudget> monthlyBudgets = List.of(
+            MonthlyBudget.UNDER_50K,
+            MonthlyBudget.FROM_50K_TO_100K,
+            MonthlyBudget.FROM_100K_TO_200K,
+            MonthlyBudget.OVER_200K
+    );
+    List<Boolean> hasEmergencyFundOptions = List.of(true, false);
+
+    // 6) PetExperienceInfo
+    List<Boolean> hasPetExperienceOptions = List.of(true, false);
+    List<String> experienceDetails = List.of(
+            "개 2년 키운 경험",
+            "고양이 3마리 돌본 경험",
+            "작은 동물(토끼) 1년 반 키운 경험",
+            "반려동물 없음"
+    );
+
+    // 7) FuturePlanInfo
+    List<Boolean> hasFuturePlanOptions = List.of(true, false);
+    List<String> planDetails = List.of(
+            "매일 산책 및 정기 검진 계획",
+            "사료 및 용품 예산 확보 완료",
+            "친구·가족과 함께 돌볼 예정",
+            "장기 출장 시 대리 돌봄 준비"
+    );
+
+    // 8) AgreementInfo
+    List<Boolean> agreedToAccuracyOptions = List.of(true, false);
+    List<Boolean> agreedToCareOptions     = List.of(true, false);
+    List<Boolean> agreedToPrivacyOptions  = List.of(true, false);
 
 }

@@ -6,12 +6,25 @@ import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
+import com.sesac7.hellopet.domain.application.dto.request.*;
+import com.sesac7.hellopet.domain.application.entity.Application;
+import com.sesac7.hellopet.domain.application.entity.ApplicationStatus;
+import com.sesac7.hellopet.domain.application.entity.info.agreement.AgreementInfo;
+import com.sesac7.hellopet.domain.application.entity.info.care.CareInfo;
+import com.sesac7.hellopet.domain.application.entity.info.experience.PetExperienceInfo;
+import com.sesac7.hellopet.domain.application.entity.info.family.FamilyInfo;
+import com.sesac7.hellopet.domain.application.entity.info.financial.FinancialInfo;
+import com.sesac7.hellopet.domain.application.entity.info.housing.HousingInfo;
+import com.sesac7.hellopet.domain.application.entity.info.plan.FuturePlanInfo;
+import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
 import com.sesac7.hellopet.domain.board.entity.Board;
 import com.sesac7.hellopet.domain.board.entity.BoardCategory;
 import com.sesac7.hellopet.domain.board.entity.BoardComment;
 import com.sesac7.hellopet.domain.board.entity.PetType;
 import com.sesac7.hellopet.domain.board.repository.BoardCommentRepository;
 import com.sesac7.hellopet.domain.board.repository.BoardRepository;
+import com.sesac7.hellopet.domain.comment.entity.Comment;
+import com.sesac7.hellopet.domain.comment.repository.CommentRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.entity.UserDetail;
 import com.sesac7.hellopet.domain.user.entity.UserRole;
@@ -35,7 +48,8 @@ public class DataSetterImpl implements DataSetter {
     private final PetRepository petRepository;
     private final AnnouncementRepository announcementRepository;
     private final BoardRepository boardRepository;
-    private final BoardCommentRepository boardCommentRepository;
+    private final CommentRepository commentRepository;
+    private final ApplicationRepository applicationRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -77,13 +91,12 @@ public class DataSetterImpl implements DataSetter {
                 gender = "암컷";
             }
 
-            Pet pet = new Pet(null, "고양이", gender,
+            Pet pet = new Pet(null, data.getPetTypes().get(getRandomIndex(data.getPetTypes())), gender,
                     data.getHealthStatuses().get(getRandomIndex(data.getHealthStatuses())),
                     data.getPersonalities().get(getRandomIndex(data.getPersonalities())),
                     i % 10,
-
                     data.getAddresses().get(getRandomIndex(data.getAddresses())),
-                    "견종",
+                    data.getBreeds().get(getRandomIndex(data.getBreeds())),
                     data.getDogPhotos().get(getRandomIndex(data.getDogPhotos()))
 
             );
@@ -130,27 +143,91 @@ public class DataSetterImpl implements DataSetter {
         List<Board> boards = boardRepository.findAll();
 
         for (int i = 0; i < num; i++) {
-            BoardComment parentComment = new BoardComment(null,
+            Comment parentComment = new Comment(null,
                     data.getComments().get(getRandomIndex(data.getComments())),
                     LocalDateTime.now(), null,
-                    users.get(getRandomIndex(users)),
                     boards.get(getRandomIndex(boards)),
-                    null
+                    users.get(getRandomIndex(users))
             );
-            boardCommentRepository.save(parentComment);
+            commentRepository.save(parentComment);
         }
+    }
 
-        List<BoardComment> parents = boardCommentRepository.findAll();
+    public void saveApplications(int number) {
+        List<User> applicants = userRepository.findByRole(UserRole.USER);
+        List<Announcement> announcements = announcementRepository.findAll();
 
-        for (int i = 0; i < num; i++) {
-            BoardComment children = new BoardComment(null,
-                    data.getComments().get(getRandomIndex(data.getComments())),
-                    LocalDateTime.now(), null,
-                    users.get(getRandomIndex(users)),
-                    boards.get(getRandomIndex(boards)),
-                    parents.get(getRandomIndex(parents))
+        for (int i = 0; i < number; i++) {
+            // 1) 랜덤 신청자 & 공고
+            User applicant = applicants.get(getRandomIndex(applicants));
+            Announcement announcement = announcements.get(getRandomIndex(announcements));
+
+            // 2) 랜덤 사유
+            String reason = data.getReasons().get(getRandomIndex(data.getReasons()));
+
+            HousingInfo housingInfo = new HousingInfo(
+                    data.getHousingTypes().get(getRandomIndex(data.getHousingTypes())),
+                    data.getResidenceTypes().get(getRandomIndex(data.getResidenceTypes())),
+                    data.getPetAllowedOptions().get(getRandomIndex(data.getPetAllowedOptions())),
+                    data.getPetLivingPlaces().get(getRandomIndex(data.getPetLivingPlaces())),
+                    data.getHouseSizeRanges().get(getRandomIndex(data.getHouseSizeRanges()))
             );
-            boardCommentRepository.save(children);
+
+            // 4) FamilyInfo
+            FamilyInfo familyInfo = new FamilyInfo(
+                    data.getNumberOfHouseholds().get(getRandomIndex(data.getNumberOfHouseholds())),
+                    data.getHasChildUnder13Options().get(getRandomIndex(data.getHasChildUnder13Options())),
+                    data.getFamilyAgreements().get(getRandomIndex(data.getFamilyAgreements())),
+                    data.getHasPetAllergyOptions().get(getRandomIndex(data.getHasPetAllergyOptions()))
+            );
+
+            // 5) CareInfo
+            CareInfo careInfo = new CareInfo(
+                    data.getAbsenceTimes().get(getRandomIndex(data.getAbsenceTimes())),
+                    data.getCareTimes().get(getRandomIndex(data.getCareTimes()))
+            );
+
+            // 6) FinancialInfo
+            FinancialInfo financialInfo = new FinancialInfo(
+                    data.getMonthlyBudgets().get(getRandomIndex(data.getMonthlyBudgets())),
+                    data.getHasEmergencyFundOptions().get(getRandomIndex(data.getHasEmergencyFundOptions()))
+            );
+
+            // 7) PetExperienceInfo
+            PetExperienceInfo petExperienceInfo = new PetExperienceInfo(
+                    data.getHasPetExperienceOptions().get(getRandomIndex(data.getHasPetExperienceOptions())),
+                    data.getExperienceDetails().get(getRandomIndex(data.getExperienceDetails()))
+            );
+
+            // 8) FuturePlanInfo
+            FuturePlanInfo futurePlanInfo = new FuturePlanInfo(
+                    data.getHasFuturePlanOptions().get(getRandomIndex(data.getHasFuturePlanOptions())),
+                    data.getPlanDetails().get(getRandomIndex(data.getPlanDetails()))
+            );
+
+            // 9) AgreementInfo
+            AgreementInfo agreementInfo = new AgreementInfo(
+                    data.getAgreedToAccuracyOptions().get(0),
+                    data.getAgreedToCareOptions().get(0),
+                    data.getAgreedToPrivacyOptions().get(0)
+            );
+
+            // 10) 빌더로 Application 생성 & 저장
+            Application application = Application.builder()
+                    .user(applicant)
+                    .announcement(announcement)
+                    .reason(reason)
+                    .housingInfo(housingInfo)
+                    .familyInfo(familyInfo)
+                    .careInfo(careInfo)
+                    .financialInfo(financialInfo)
+                    .petExperienceInfo(petExperienceInfo)
+                    .futurePlanInfo(futurePlanInfo)
+                    .agreementInfo(agreementInfo)
+                    .status(ApplicationStatus.PENDING)
+                    .build();
+
+            applicationRepository.save(application);
         }
     }
 
@@ -188,7 +265,13 @@ public class DataSetterImpl implements DataSetter {
 
     @Override
     public void commentGenerator(int num) {
-        int howMany = boardCommentRepository.findAll().size();
+        int howMany = commentRepository.findAll().size();
         saveComment(num - howMany);
+    }
+
+    @Override
+    public void applicationGenerator(int num) {
+        int howMany = applicationRepository.findAll().size();
+        saveApplications(num - howMany);
     }
 }
