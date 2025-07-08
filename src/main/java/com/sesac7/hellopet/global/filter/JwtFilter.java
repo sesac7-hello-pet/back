@@ -25,7 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
             "/api/v1/users/**",
             "/api/v1/auth/login",
             "/api/v1/auth/signup",
-            "/api/v1/auth/reissue"
+            "/api/v1/auth/refresh"
     };
 
     private final JwtUtil jwtUtil;
