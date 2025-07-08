@@ -25,6 +25,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -67,41 +68,30 @@ public class ApplicationService {
     @Transactional(readOnly = true)
     public ShelterApplicationsPageResponse getShelterApplications(Long id, ApplicationPageRequest request) {
         Announcement announcement = announcementService.findById(id);
-
-        List<Application> applications = applicationRepository.findApplicationsWithUserDetailByAnnouncementId(id);
-
         Pageable pageable = request.toPageable();
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), applications.size());
 
-        List<ShelterApplicationResponse> content = applications
-                .subList(start, end)
-                .stream()
-                .map(application -> ShelterApplicationResponse.from(application))
-                .toList();
+        Page<Application> page = applicationRepository.findByAnnouncementId(id, pageable);
 
-        return ShelterApplicationsPageResponse.of(pageable, content, applications.size(), announcement);
+        List<ShelterApplicationResponse> content = page.stream()
+                                                       .map(app -> ShelterApplicationResponse.from(app))
+                                                       .toList();
+
+        return ShelterApplicationsPageResponse.of(pageable, content, page.getTotalElements(), announcement);
     }
 
     @Transactional(readOnly = true)
     public UserApplicationPageResponse getUserApplications(CustomUserDetails userDetails,
                                                            ApplicationPageRequest request) {
         User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
-
-        List<Application> applications = applicationRepository.findApplicationsWithAnnouncementByApplicantId(
-                user.getId());
-
         Pageable pageable = request.toPageable();
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), applications.size());
 
-        List<UserApplicationResponse> content = applications
-                .subList(start, end)
-                .stream()
-                .map(application -> UserApplicationResponse.of(application, application.getAnnouncement()))
-                .toList();
+        Page<Application> page = applicationRepository.findByApplicantId(user.getId(), pageable);
 
-        return UserApplicationPageResponse.of(pageable, content, applications.size());
+        List<UserApplicationResponse> content = page.stream()
+                                                    .map(app -> UserApplicationResponse.of(app, app.getAnnouncement()))
+                                                    .toList();
+
+        return UserApplicationPageResponse.of(pageable, content, page.getTotalElements());
     }
 
     public ApplicationResponse createApplication(ApplicationCreateRequest request, CustomUserDetails userDetails) {
@@ -135,7 +125,7 @@ public class ApplicationService {
 
         // 공고 상태를 완료로 변경
         announcementService.completeAnnouncement(announcementId);
-        
+
         return ApplicationApprovalResponse.of(announcementId, applicationId);
     }
 

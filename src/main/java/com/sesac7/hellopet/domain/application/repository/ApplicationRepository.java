@@ -4,6 +4,9 @@ import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.ApplicationStatus;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,22 +14,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
-    @Query("""
-            SELECT app FROM Application app
-            JOIN FETCH app.announcement
-            WHERE app.applicant.id = :applicantId
-            ORDER BY app.submittedAt DESC
-            """)
-    List<Application> findApplicationsWithAnnouncementByApplicantId(@Param("applicantId") Long applicantId);
+    @EntityGraph(attributePaths = {"announcement"})
+    Page<Application> findByApplicantId(Long applicantId, Pageable pageable);
 
-    @Query("""
-                SELECT app FROM Application app
-                JOIN FETCH app.applicant user
-                JOIN FETCH user.userDetail
-                WHERE app.announcement.id = :announcementId
-                ORDER BY app.submittedAt DESC
-            """)
-    List<Application> findApplicationsWithUserDetailByAnnouncementId(@Param("announcementId") Long announcementId);
+    @EntityGraph(attributePaths = {"applicant", "applicant.userDetail"})
+    Page<Application> findByAnnouncementId(Long announcementId, Pageable pageable);
 
     @Query("""
                 SELECT app FROM Application app
