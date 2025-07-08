@@ -19,7 +19,7 @@ public class UserApplicationResponse {
         return UserApplicationResponse.builder()
                                       .applicationId(application.getId())
                                       .announcementId(announcement.getId())
-                                      .applicationStatusLabel(application.getStatus().name())
+                                      .applicationStatusLabel(application.getStatus().getLabel())
                                       .submittedAt(application.getSubmittedAt())
                                       .petImageUrl(announcement.getPet().getImageUrl())
                                       .build();
