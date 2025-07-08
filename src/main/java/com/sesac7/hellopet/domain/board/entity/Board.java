@@ -2,6 +2,7 @@ package com.sesac7.hellopet.domain.board.entity;
 
 import com.sesac7.hellopet.domain.comment.entity.Comment;
 import com.sesac7.hellopet.domain.user.entity.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -57,7 +58,7 @@ public class Board {
     @ManyToOne
     private User user;
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comment = new ArrayList<>();
 
 }
