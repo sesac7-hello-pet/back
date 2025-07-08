@@ -8,6 +8,7 @@ import com.sesac7.hellopet.domain.application.entity.info.family.FamilyInfo;
 import com.sesac7.hellopet.domain.application.entity.info.financial.FinancialInfo;
 import com.sesac7.hellopet.domain.application.entity.info.housing.HousingInfo;
 import com.sesac7.hellopet.domain.application.entity.info.plan.FuturePlanInfo;
+import com.sesac7.hellopet.domain.application.validation.AlreadyProcessedApplicationException;
 import com.sesac7.hellopet.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -95,8 +96,18 @@ public class Application {
         this.agreementInfo = agreementInfo;
     }
 
-    public void changeStatus(ApplicationStatus newStatus) {
-        this.status = newStatus;
+    public void approve() {
+        if (this.status != ApplicationStatus.PENDING) {
+            throw new AlreadyProcessedApplicationException();
+        }
+        this.status = ApplicationStatus.APPROVED;
         this.processedAt = LocalDateTime.now();
+    }
+
+    public void reject() {
+        if (this.status == ApplicationStatus.PENDING) {
+            this.status = ApplicationStatus.REJECTED;
+            this.processedAt = LocalDateTime.now();
+        }
     }
 }

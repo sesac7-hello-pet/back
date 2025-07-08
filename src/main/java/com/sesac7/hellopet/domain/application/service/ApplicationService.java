@@ -127,31 +127,41 @@ public class ApplicationService {
     public ApplicationApprovalResponse processApplicationApproval(Long announcementId,
                                                                   Long applicationId,
                                                                   UserDetails userDetails) {
+        // 보호소의 공고 승인 권한 검증
+        validateShelterApprovalPermission(announcementId, userDetails);
 
-        User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
-        Announcement announcement = announcementService.findById(announcementId);
-        if (!announcement.getShelter().getId().equals(user.getId()) || user.getRole() != UserRole.SHELTER) {
-            throw new AnnouncementApprovalPermissionException();
-        }
+        // 해당 공고에 대해 신청서 승인 및 나머지 신청서 일괄 거절 처리
+        approveAndRejectApplications(announcementId, applicationId);
 
-        approveAndRejectOtherApplications(announcementId, applicationId);
+        // 공고 상태를 완료로 변경
         announcementService.completeAnnouncement(announcementId);
-
+        
         return ApplicationApprovalResponse.of(announcementId, applicationId);
     }
 
-    private void approveAndRejectOtherApplications(Long announcementId, Long applicationId) {
-        Application application = applicationRepository.findByIdAndAnnouncementIdAndStatus(applicationId,
-                                                               announcementId, ApplicationStatus.PENDING)
+    private void validateShelterApprovalPermission(Long announcementId, UserDetails userDetails) {
+        User loginUser = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+        Announcement announcement = announcementService.findById(announcementId);
+
+        boolean isShelter = loginUser.getRole() == UserRole.SHELTER;
+        boolean isShelterOwner = announcement.getShelter().getId().equals(loginUser.getId());
+
+        if (!(isShelter && isShelterOwner)) {
+            throw new AnnouncementApprovalPermissionException();
+        }
+    }
+
+    private void approveAndRejectApplications(Long announcementId, Long applicationId) {
+        Application approvedApp = applicationRepository.findByIdAndAnnouncementIdAndStatus(
+                                                               applicationId, announcementId, ApplicationStatus.PENDING
+                                                       )
                                                        .orElseThrow(() -> new AlreadyProcessedApplicationException());
 
-        application.changeStatus(ApplicationStatus.APPROVED);
+        approvedApp.approve();
 
-        List<Application> otherApplications = applicationRepository.findByAnnouncementIdAndExcludeApplicationId(
+        List<Application> rejectedApps = applicationRepository.findByAnnouncementIdAndExcludeApplicationId(
                 announcementId, applicationId);
 
-        for (Application otherApplication : otherApplications) {
-            otherApplication.changeStatus(ApplicationStatus.REJECTED);
-        }
+        rejectedApps.forEach(other -> other.reject());
     }
 }
