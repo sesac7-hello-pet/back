@@ -17,6 +17,7 @@ import com.sesac7.hellopet.domain.application.entity.ApplicationStatus;
 import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
 import com.sesac7.hellopet.domain.application.validation.AlreadyProcessedApplicationException;
 import com.sesac7.hellopet.domain.application.validation.AnnouncementApprovalPermissionException;
+import com.sesac7.hellopet.domain.application.validation.ApplicationAlreadyApprovedException;
 import com.sesac7.hellopet.domain.application.validation.DuplicateApplicationException;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.entity.UserRole;
@@ -51,6 +52,10 @@ public class ApplicationService {
 
         if (!application.getApplicant().getId().equals(user.getId())) {
             throw new AccessDeniedException("입양 신청서를 삭제할 권한이 없습니다.");
+        }
+
+        if (application.getStatus() == ApplicationStatus.APPROVED) {
+            throw new ApplicationAlreadyApprovedException(application.getId());
         }
 
         applicationRepository.delete(application);
