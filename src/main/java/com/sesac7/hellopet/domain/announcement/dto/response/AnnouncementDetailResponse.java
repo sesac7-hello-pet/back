@@ -20,4 +20,5 @@ public class AnnouncementDetailResponse {
     private LocalDateTime announcementPeriod;
     private String imageUrl; // 강아지 이미지
     private AnnouncementStatus announcementStatus; // 입양 상태
+    private String animalType;
 }

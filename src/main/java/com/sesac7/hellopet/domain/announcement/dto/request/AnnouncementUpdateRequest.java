@@ -12,5 +12,6 @@ public class AnnouncementUpdateRequest {
     private int age;                   // 나이
     private int Date;                  // 공고 기간
     private String image;              // 이미지
+    private String animalType;         // 동물 종류
 
 }

@@ -121,7 +121,9 @@ public class AnnouncementService {
                                          .createdAt(announcement.getCreatedAt())
                                          .announcementPeriod(announcement.getAnnouncementPeriod())
                                          .imageUrl(pet.getImageUrl())
-                                         .announcementStatus(announcement.getStatus()) // 펫의 이미지 URL 설정
+                                         .announcementStatus(announcement.getStatus())
+                                         .animalType(pet.getAnimalType())
+                // 펫의 이미지 URL 설정
                                          .build();                                  // DTO 객체 생성 및 반환
     }
 
@@ -151,7 +153,8 @@ public class AnnouncementService {
                 announcementUpdateRequest.getAge(),
                 announcementUpdateRequest.getHealth(),
                 announcementUpdateRequest.getPersonality(),
-                announcementUpdateRequest.getImage()
+                announcementUpdateRequest.getImage(),
+                announcementUpdateRequest.getAnimalType()
         );
 
         // 4. 수정일 갱신
