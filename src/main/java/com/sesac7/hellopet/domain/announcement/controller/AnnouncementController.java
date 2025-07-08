@@ -64,16 +64,18 @@ public class AnnouncementController {
     /**
      * 공고별 신청 내역 조회
      *
-     * @param id      공고 ID
-     * @param request 페이지 정보를 담은 요청 DTO
-     * @return 공고 ID에 해당는 공고에 접수된 신청서 리스트 및 페이지 정보
+     * @param id          공고 ID
+     * @param request     페이지 정보를 담은 요청 DTO
+     * @param userDetails 로그인한 보호소 정보
+     * @return 공고 ID에 해당하는 공고에 접수된 신청서 리스트 및 페이지 정보
      */
     @GetMapping("/{id}/applications")
     public ResponseEntity<ShelterApplicationsPageResponse> getApplications(
             @PathVariable Long id,
-            @ModelAttribute @Valid ApplicationPageRequest request) {
+            @ModelAttribute @Valid ApplicationPageRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        ShelterApplicationsPageResponse response = applicationService.getShelterApplications(id, request);
+        ShelterApplicationsPageResponse response = applicationService.getShelterApplications(id, request, userDetails);
         return ResponseEntity.ok(response);
     }
 
