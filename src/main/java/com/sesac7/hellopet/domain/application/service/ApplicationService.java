@@ -16,6 +16,7 @@ import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.ApplicationStatus;
 import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
 import com.sesac7.hellopet.domain.application.validation.AlreadyProcessedApplicationException;
+import com.sesac7.hellopet.domain.application.validation.AnnouncementApprovalPermissionException;
 import com.sesac7.hellopet.domain.application.validation.DuplicateApplicationException;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.entity.UserRole;
@@ -130,7 +131,7 @@ public class ApplicationService {
         User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
         Announcement announcement = announcementService.findById(announcementId);
         if (!announcement.getShelter().getId().equals(user.getId()) || user.getRole() != UserRole.SHELTER) {
-            throw new AccessDeniedException("해당 입양 공고에 대한 승인 권한이 없습니다.");
+            throw new AnnouncementApprovalPermissionException();
         }
 
         approveAndRejectOtherApplications(announcementId, applicationId);
