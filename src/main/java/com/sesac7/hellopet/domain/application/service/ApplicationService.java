@@ -167,10 +167,6 @@ public class ApplicationService {
                                                        .orElseThrow(() -> new AlreadyProcessedApplicationException());
 
         approvedApp.approve();
-
-        List<Application> rejectedApps = applicationRepository.findByAnnouncementIdAndExcludeApplicationId(
-                announcementId, applicationId);
-
-        rejectedApps.forEach(other -> other.reject());
+        applicationRepository.bulkRejectApplications(announcementId, applicationId);
     }
 }
