@@ -9,6 +9,7 @@ import lombok.Getter;
 @Builder
 public class ShelterApplicationResponse {
     private Long applicationId;
+    private String applicationStatusLabel;
     private String userName;
     private String userPhoneNumber;
     private String userEmail;
@@ -17,6 +18,7 @@ public class ShelterApplicationResponse {
         UserDetail userDetail = application.getApplicant().getUserDetail();
         return ShelterApplicationResponse.builder()
                                          .applicationId(application.getId())
+                                         .applicationStatusLabel(application.getStatus().getLabel())
                                          .userName(userDetail.getUsername())
                                          .userPhoneNumber(userDetail.getPhoneNumber())
                                          .userEmail(application.getApplicant().getEmail())
