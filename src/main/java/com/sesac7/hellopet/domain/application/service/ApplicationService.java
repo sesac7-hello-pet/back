@@ -2,6 +2,7 @@ package com.sesac7.hellopet.domain.application.service;
 
 import com.sesac7.hellopet.common.utils.CustomUserDetails;
 import com.sesac7.hellopet.domain.announcement.entity.Announcement;
+import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.service.AnnouncementService;
 import com.sesac7.hellopet.domain.application.dto.request.ApplicationCreateRequest;
 import com.sesac7.hellopet.domain.application.dto.request.ApplicationPageRequest;
@@ -16,6 +17,7 @@ import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.ApplicationStatus;
 import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
 import com.sesac7.hellopet.domain.application.validation.AlreadyProcessedApplicationException;
+import com.sesac7.hellopet.domain.application.validation.AnnouncementAlreadyCompletedException;
 import com.sesac7.hellopet.domain.application.validation.AnnouncementApprovalPermissionException;
 import com.sesac7.hellopet.domain.application.validation.ApplicationAlreadyApprovedException;
 import com.sesac7.hellopet.domain.application.validation.DuplicateApplicationException;
@@ -103,6 +105,10 @@ public class ApplicationService {
 
         User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
         Announcement announcement = announcementService.findById(request.getAnnouncementId());
+
+        if (announcement.getStatus() == AnnouncementStatus.COMPLETED) {
+            throw new AnnouncementAlreadyCompletedException(announcement.getId());
+        }
 
         Optional<Application> existingApplication = applicationRepository.findByApplicantIdAndAnnouncementId(
                 user.getId(),
