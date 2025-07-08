@@ -68,20 +68,15 @@ public class ApplicationService {
     @Transactional(readOnly = true)
     public ShelterApplicationsPageResponse getShelterApplications(Long id, ApplicationPageRequest request) {
         Announcement announcement = announcementService.findById(id);
-
-        List<Application> applications = applicationRepository.findApplicationsWithUserDetailByAnnouncementId(id);
-
         Pageable pageable = request.toPageable();
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), applications.size());
 
-        List<ShelterApplicationResponse> content = applications
-                .subList(start, end)
-                .stream()
-                .map(application -> ShelterApplicationResponse.from(application))
-                .toList();
+        Page<Application> page = applicationRepository.findByAnnouncementId(id, pageable);
 
-        return ShelterApplicationsPageResponse.of(pageable, content, applications.size(), announcement);
+        List<ShelterApplicationResponse> content = page.stream()
+                                                       .map(app -> ShelterApplicationResponse.from(app))
+                                                       .toList();
+
+        return ShelterApplicationsPageResponse.of(pageable, content, page.getTotalElements(), announcement);
     }
 
     @Transactional(readOnly = true)

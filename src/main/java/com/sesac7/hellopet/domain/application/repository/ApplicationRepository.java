@@ -17,14 +17,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     @EntityGraph(attributePaths = {"announcement"})
     Page<Application> findByApplicantId(Long applicantId, Pageable pageable);
 
-    @Query("""
-                SELECT app FROM Application app
-                JOIN FETCH app.applicant user
-                JOIN FETCH user.userDetail
-                WHERE app.announcement.id = :announcementId
-                ORDER BY app.submittedAt DESC
-            """)
-    List<Application> findApplicationsWithUserDetailByAnnouncementId(@Param("announcementId") Long announcementId);
+    @EntityGraph(attributePaths = {"applicant", "applicant.userDetail"})
+    Page<Application> findByAnnouncementId(Long announcementId, Pageable pageable);
 
     @Query("""
                 SELECT app FROM Application app
