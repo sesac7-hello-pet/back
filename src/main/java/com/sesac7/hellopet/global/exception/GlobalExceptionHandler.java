@@ -2,6 +2,7 @@ package com.sesac7.hellopet.global.exception;
 
 import com.sesac7.hellopet.domain.application.validation.AlreadyProcessedApplicationException;
 import com.sesac7.hellopet.domain.application.validation.AnnouncementApprovalPermissionException;
+import com.sesac7.hellopet.domain.application.validation.ApplicationAlreadyApprovedException;
 import com.sesac7.hellopet.domain.application.validation.DuplicateApplicationException;
 import com.sesac7.hellopet.global.exception.custom.UnauthorizedException;
 import com.sesac7.hellopet.global.exception.custom.WithdrawUserException;
@@ -96,6 +97,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> responseAnnouncementApprovalPermissionExceptionHandler(
             AnnouncementApprovalPermissionException e) {
         return generateExceptionResponse(e, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(ApplicationAlreadyApprovedException.class)
+    public ResponseEntity<ExceptionResponse> handleApprovedException(ApplicationAlreadyApprovedException e) {
+        return generateExceptionResponse(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
