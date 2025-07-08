@@ -1,6 +1,7 @@
 package com.sesac7.hellopet.global.exception;
 
 import com.sesac7.hellopet.domain.application.validation.AlreadyProcessedApplicationException;
+import com.sesac7.hellopet.domain.application.validation.AnnouncementAlreadyCompletedException;
 import com.sesac7.hellopet.domain.application.validation.AnnouncementApprovalPermissionException;
 import com.sesac7.hellopet.domain.application.validation.ApplicationAlreadyApprovedException;
 import com.sesac7.hellopet.domain.application.validation.DuplicateApplicationException;
@@ -101,6 +102,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApplicationAlreadyApprovedException.class)
     public ResponseEntity<ExceptionResponse> handleApprovedException(ApplicationAlreadyApprovedException e) {
+        return generateExceptionResponse(e, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AnnouncementAlreadyCompletedException.class)
+    public ResponseEntity<ExceptionResponse> handleCompletedAnnouncement(AnnouncementAlreadyCompletedException e) {
         return generateExceptionResponse(e, HttpStatus.BAD_REQUEST);
     }
 
