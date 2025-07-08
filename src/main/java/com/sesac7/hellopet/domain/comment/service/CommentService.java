@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,14 +44,6 @@ public class CommentService {
 
         board.setCommentsCount(board.getCommentsCount() + 1);
         return CommentResponse.from(saved);
-
-    }
-
-    @Transactional(readOnly = true)
-    public CommentPageResponse getComments(Long boardId, int page, int size) {
-        Page<Comment> comments = commentRepository.findByBoardId(boardId, PageRequest.of(page, size));
-        Page<CommentResponse> pageResponse = comments.map(CommentResponse::from);
-        return CommentPageResponse.from(pageResponse, page, size);
 
     }
 
@@ -83,7 +76,8 @@ public class CommentService {
     }
 
     public CommentPageResponse getMyComments(String email, int page, int size) {
-        Page<Comment> commentPage = commentRepository.findByUserEmail(email, PageRequest.of(page, size));
+        Page<Comment> commentPage = commentRepository.findByUserEmail(email,
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")));
         Page<CommentResponse> pageResponse = commentPage.map(CommentResponse::from);
         return CommentPageResponse.from(pageResponse, page, size);
 
