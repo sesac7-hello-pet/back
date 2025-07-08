@@ -80,11 +80,13 @@ public class AnnouncementController {
     }
 
     /**
-     * 입양 신청서 상태를 승인 및 거절로 처리하고 공고를 완료 처리
+     * 보호소가 접수된 신청서 중 하나를 승인하고,
+     * 나머지 신청서는 거절 처리한 후, 공고 상태를 완료로 변경합니다.
      *
-     * @param announcementId 공고 ID
-     * @param applicationId  승인할 신청서 ID
-     * @return 상태 변경 결과 응답
+     * @param announcementId 승인 및 거절 처리할 공고 ID
+     * @param applicationId  승인할 입양 신청서 ID
+     * @param userDetails    인증된 보호소 사용자 정보
+     * @return 처리 결과를 담은 응답 객체
      */
     @PutMapping("/{announcementId}/applications/{applicationId}")
     public ResponseEntity<ApplicationApprovalResponse> updateApplicationStatus(
