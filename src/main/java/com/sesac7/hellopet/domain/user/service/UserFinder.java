@@ -10,4 +10,6 @@ public interface UserFinder {
      * @return User
      */
     User findLoggedInUserByUsername(String email);
+
+    void deleteUsername(String email);
 }

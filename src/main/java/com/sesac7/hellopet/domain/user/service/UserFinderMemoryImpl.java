@@ -39,6 +39,13 @@ public class UserFinderMemoryImpl implements UserFinder {
         return user;
     }
 
+    public void deleteUsername(String email) {
+        evictExpired();
+        if (userMap.get(email) != null) {
+            userMap.remove(email);
+        }
+    }
+
     private void evictExpired() {
 
         while (!userTTL.isEmpty()) {

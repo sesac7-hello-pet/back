@@ -170,6 +170,11 @@ public class UserService {
 
         request.updateUser(user, userDetail);
 
+        userFinder.deleteUsername(user.getEmail());
+
+        userRepository.save(user);
+        userDetailRepository.save(userDetail);
+
         return UserUpdateResponse.from(userDetail);
     }
 
@@ -182,6 +187,7 @@ public class UserService {
         foundUser.setActivation(false);
         userRepository.save(foundUser);
 
+        userFinder.deleteUsername(userDetails.getUsername());
         SecurityContextHolder.clearContext();
 
         ResponseCookie deleteAccess = jwtUtil.deleteAccessCookie();
