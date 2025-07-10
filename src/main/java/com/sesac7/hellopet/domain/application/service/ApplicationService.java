@@ -169,8 +169,4 @@ public class ApplicationService {
         approvedApp.approve();
         applicationRepository.bulkRejectApplications(announcementId, applicationId);
     }
-
-    public boolean existsByAnnouncementIdAndApplicantId(Long announcementId, Long userId) {
-        return applicationRepository.existsByAnnouncementIdAndApplicantId(announcementId, userId);
-    }
 }

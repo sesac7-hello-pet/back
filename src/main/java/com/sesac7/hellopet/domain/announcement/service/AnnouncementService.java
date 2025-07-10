@@ -13,7 +13,7 @@ import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
-import com.sesac7.hellopet.domain.application.service.ApplicationService;
+import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import com.sesac7.hellopet.global.annotation.IsAnnouncementOwner;
@@ -33,7 +33,7 @@ public class AnnouncementService {
     private final PetRepository petRepository;
     private final AnnouncementRepository announcementRepository;
     private final UserFinder userFinder;
-    private final ApplicationService applicationService;
+    private final ApplicationRepository applicationRepository;
 
     /***
      * 게시글 등록
@@ -112,7 +112,7 @@ public class AnnouncementService {
         boolean alreadyApplied = false;
         if (userDetails != null) {
             User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
-            alreadyApplied = applicationService.existsByAnnouncementIdAndApplicantId(
+            alreadyApplied = applicationRepository.existsByAnnouncementIdAndApplicantId(
                     announcement.getId(), user.getId());
         }
 
