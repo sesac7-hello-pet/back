@@ -13,6 +13,7 @@ import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
+import com.sesac7.hellopet.domain.application.service.ApplicationService;
 import com.sesac7.hellopet.domain.user.entity.User;
 import com.sesac7.hellopet.domain.user.service.UserFinder;
 import com.sesac7.hellopet.global.annotation.IsAnnouncementOwner;
@@ -32,6 +33,7 @@ public class AnnouncementService {
     private final PetRepository petRepository;
     private final AnnouncementRepository announcementRepository;
     private final UserFinder userFinder;
+    private final ApplicationService applicationService;
 
     /***
      * 게시글 등록
@@ -89,42 +91,46 @@ public class AnnouncementService {
                                              "해당 입양 공고를 찾을 수 없습니다. id=" + announcementId));
     }
 
-    /***
-     * 게시글 상세 조회
-     */
     /**
      * 공고 ID로 상세 입양 공고 정보를 조회하는 메서드
      *
-     * @param id 조회할 입양 공고의 고유 ID
-     * @return AnnouncementDetailResponse DTO - 상세 입양 공고 정보
-     * @throws NoSuchElementException 해당 ID의 입양 공고가 없으면 예외 발생
+     * @param id          조회할 입양 공고의 고유 ID
+     * @param userDetails 로그인 사용자 정보 (null 가능)
+     * @return 상세 입양 공고 정보 DTO
+     * @throws NoSuchElementException 해당 ID의 공고가 없을 경우 예외 발생
      */
     @Transactional(readOnly = true)
-    public AnnouncementDetailResponse getAnnouncementDetail(Long id) {
-        // announcementRepository를 통해 DB에서 해당 ID의 Announcement 엔터티를 조회한다.
-        // 조회 결과가 없으면 NoSuchElementException 예외를 던진다.
+    public AnnouncementDetailResponse getAnnouncementDetail(Long id, CustomUserDetails userDetails) {
+        // 공고 ID로 Announcement 엔티티 조회
         Announcement announcement = announcementRepository.findById(id)
                                                           .orElseThrow(
                                                                   () -> new NoSuchElementException("입양 공고가 없습니다."));
 
-        // 조회된 Announcement 엔터티에 연결된 Pet 엔터티를 가져온다.
         Pet pet = announcement.getPet();
 
-        // AnnouncementDetailResponse DTO 빌더를 사용하여 상세 정보 객체를 생성한다.
+        // 로그인 사용자가 해당 공고에 이미 신청했는지 여부 확인
+        boolean alreadyApplied = false;
+        if (userDetails != null) {
+            User user = userFinder.findLoggedInUserByUsername(userDetails.getUsername());
+            alreadyApplied = applicationService.existsByAnnouncementIdAndApplicantId(
+                    announcement.getId(), user.getId());
+        }
+
+        // 상세 응답 DTO 생성 및 반환
         return AnnouncementDetailResponse.builder()
-                                         .id(String.valueOf(announcement.getId())) // 공고 ID를 문자열로 변환하여 저장
-                                         .breed(pet.getBreed())                     // 펫의 품종 정보 설정
-                                         .gender(pet.getGender())                   // 펫의 성별 정보 설정
-                                         .health(pet.getHealth())                   // 펫의 건강 상태 정보 설정
-                                         .personality(pet.getPersonality())         // 펫의 성격 정보 설정
+                                         .id(String.valueOf(announcement.getId()))
+                                         .breed(pet.getBreed())
+                                         .gender(pet.getGender())
+                                         .health(pet.getHealth())
+                                         .personality(pet.getPersonality())
                                          .shelterName(announcement.getShelter().getUserDetail().getNickname())
                                          .createdAt(announcement.getCreatedAt())
                                          .announcementPeriod(announcement.getAnnouncementPeriod())
                                          .imageUrl(pet.getImageUrl())
                                          .announcementStatus(announcement.getStatus())
                                          .animalType(pet.getAnimalType())
-                // 펫의 이미지 URL 설정
-                                         .build();                                  // DTO 객체 생성 및 반환
+                                         .alreadyApplied(alreadyApplied)
+                                         .build();
     }
 
     /***

@@ -104,8 +104,9 @@ public class AnnouncementController {
      * 입양 리스트 상세 조회
      */
     @GetMapping("/{id}")
-    public ResponseEntity<AnnouncementDetailResponse> getAnnouncementDetail(@PathVariable Long id) {
-        AnnouncementDetailResponse detail = announcementService.getAnnouncementDetail(id);
+    public ResponseEntity<AnnouncementDetailResponse> getAnnouncementDetail(@PathVariable Long id,
+                                                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        AnnouncementDetailResponse detail = announcementService.getAnnouncementDetail(id, userDetails);
         return ResponseEntity.ok(detail);
     }
 
