@@ -37,4 +37,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
                                                              ApplicationStatus status);
 
     Optional<Application> findByApplicantIdAndAnnouncementId(Long userId, Long announcementId);
+
+    boolean existsByAnnouncementIdAndApplicantId(Long announcementId, Long userId);
 }
