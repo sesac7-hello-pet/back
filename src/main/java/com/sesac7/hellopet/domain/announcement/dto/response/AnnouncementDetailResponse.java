@@ -21,4 +21,5 @@ public class AnnouncementDetailResponse {
     private String imageUrl; // 강아지 이미지
     private AnnouncementStatus announcementStatus; // 입양 상태
     private String animalType;
+    private boolean alreadyApplied; // 입양자 신청 여부
 }
