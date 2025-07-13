@@ -124,6 +124,7 @@ public class AnnouncementService {
                                          .health(pet.getHealth())
                                          .personality(pet.getPersonality())
                                          .shelterName(announcement.getShelter().getUserDetail().getNickname())
+                                         .shelterId(announcement.getShelter().getId())
                                          .createdAt(announcement.getCreatedAt())
                                          .announcementPeriod(announcement.getAnnouncementPeriod())
                                          .imageUrl(pet.getImageUrl())

@@ -16,6 +16,7 @@ public class AnnouncementDetailResponse {
     private String personality;
     private int age;
     private String shelterName; // 보호소
+    private Long shelterId;
     private LocalDateTime createdAt;
     private LocalDateTime announcementPeriod;
     private String imageUrl; // 강아지 이미지
