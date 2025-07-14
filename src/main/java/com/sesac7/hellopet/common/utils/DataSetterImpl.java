@@ -6,7 +6,6 @@ import com.sesac7.hellopet.domain.announcement.entity.AnnouncementStatus;
 import com.sesac7.hellopet.domain.announcement.entity.Pet;
 import com.sesac7.hellopet.domain.announcement.repository.AnnouncementRepository;
 import com.sesac7.hellopet.domain.announcement.repository.PetRepository;
-import com.sesac7.hellopet.domain.application.dto.request.*;
 import com.sesac7.hellopet.domain.application.entity.Application;
 import com.sesac7.hellopet.domain.application.entity.ApplicationStatus;
 import com.sesac7.hellopet.domain.application.entity.info.agreement.AgreementInfo;
@@ -19,9 +18,7 @@ import com.sesac7.hellopet.domain.application.entity.info.plan.FuturePlanInfo;
 import com.sesac7.hellopet.domain.application.repository.ApplicationRepository;
 import com.sesac7.hellopet.domain.board.entity.Board;
 import com.sesac7.hellopet.domain.board.entity.BoardCategory;
-import com.sesac7.hellopet.domain.board.entity.BoardComment;
 import com.sesac7.hellopet.domain.board.entity.PetType;
-import com.sesac7.hellopet.domain.board.repository.BoardCommentRepository;
 import com.sesac7.hellopet.domain.board.repository.BoardRepository;
 import com.sesac7.hellopet.domain.comment.entity.Comment;
 import com.sesac7.hellopet.domain.comment.repository.CommentRepository;
@@ -37,6 +34,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+/**
+ * 실제 데이터를 만드는 메서드들이 있습니다.
+ * user, application, announcement, board, comment 를 만들기 위해 만들었습니다.
+ */
 @Component
 @Transactional
 @RequiredArgsConstructor
@@ -214,18 +215,18 @@ public class DataSetterImpl implements DataSetter {
 
             // 10) 빌더로 Application 생성 & 저장
             Application application = Application.builder()
-                    .user(applicant)
-                    .announcement(announcement)
-                    .reason(reason)
-                    .housingInfo(housingInfo)
-                    .familyInfo(familyInfo)
-                    .careInfo(careInfo)
-                    .financialInfo(financialInfo)
-                    .petExperienceInfo(petExperienceInfo)
-                    .futurePlanInfo(futurePlanInfo)
-                    .agreementInfo(agreementInfo)
-                    .status(ApplicationStatus.PENDING)
-                    .build();
+                                                 .user(applicant)
+                                                 .announcement(announcement)
+                                                 .reason(reason)
+                                                 .housingInfo(housingInfo)
+                                                 .familyInfo(familyInfo)
+                                                 .careInfo(careInfo)
+                                                 .financialInfo(financialInfo)
+                                                 .petExperienceInfo(petExperienceInfo)
+                                                 .futurePlanInfo(futurePlanInfo)
+                                                 .agreementInfo(agreementInfo)
+                                                 .status(ApplicationStatus.PENDING)
+                                                 .build();
 
             applicationRepository.save(application);
         }

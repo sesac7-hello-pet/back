@@ -9,6 +9,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+/**
+ * UserDetails에서 필드를 더 활용하려고 만든 CustomUserDetails입니다.
+ * 보통 spring에서 미리 생성되어있는 객체에 다른 요소를 추가하고 싶다면
+ * 이렇게 구현하여 사용합니다.
+ * 근데 삭제할거라서 몰라도 됩니다.
+ */
 @Getter
 public class CustomUserDetails implements UserDetails {
 

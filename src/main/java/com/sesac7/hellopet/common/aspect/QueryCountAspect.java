@@ -16,6 +16,13 @@ public class QueryCountAspect {
 
     private final SessionFactory sessionFactory;
 
+    /**
+     * SQL의 갯수를 로깅하는 메서드입니다.
+     *
+     * @param jp
+     * @return
+     * @throws Throwable
+     */
     @Around("execution(* com.sesac7.hellopet.domain..service..*(..))")
     public Object logSqlCount(ProceedingJoinPoint jp) throws Throwable {
         Long before = sessionFactory.getStatistics().getPrepareStatementCount();

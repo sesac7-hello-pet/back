@@ -13,6 +13,10 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 테스트 데이터 store 입니다.
+ * 아무 기능없이 list의 형태로 데이터가 저장되어 있습니다.
+ */
 @Getter
 public class DataStore {
     List<String> names = new ArrayList<>(List.of(
@@ -72,7 +76,7 @@ public class DataStore {
 
     ));
 
-    List<String > petTypes = new ArrayList<>(List.of("강아지", "고양이", "기타"));
+    List<String> petTypes = new ArrayList<>(List.of("강아지", "고양이", "기타"));
     List<String> breeds = new ArrayList<>(List.of(
             // 🐶 주요 견종 25
             "골든 리트리버",
@@ -693,7 +697,7 @@ public class DataStore {
 
     // 8) AgreementInfo
     List<Boolean> agreedToAccuracyOptions = List.of(true, false);
-    List<Boolean> agreedToCareOptions     = List.of(true, false);
-    List<Boolean> agreedToPrivacyOptions  = List.of(true, false);
+    List<Boolean> agreedToCareOptions = List.of(true, false);
+    List<Boolean> agreedToPrivacyOptions = List.of(true, false);
 
 }

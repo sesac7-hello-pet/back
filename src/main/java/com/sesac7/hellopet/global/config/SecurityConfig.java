@@ -44,6 +44,14 @@ public class SecurityConfig {
     private final String[] announcementMatcher = {"/announcements", "/announcements/**",
             "/announcements/*/applications/**"};
 
+    /**
+     * custom filter체인을 사용하기 위한 메서드입니다.
+     * 여기서 다양한 필터를 설정 할 수 있습니다.
+     *
+     * @param http
+     * @return
+     * @throws Exception
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -87,6 +95,15 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * cors 설정을 위한 메서드입니다.
+     * 스프링에서는 아무데서나 데이터를 받을 수 없게
+     * 허용된 path에서만 받을 수 있는 cors 옵션이란게 있는데
+     * 여기에 프로젝트의 프론트 url을 입력하여
+     * 프론트에서 오는 요청을 허용하는 설정입니다.
+     *
+     * @return
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -100,11 +117,26 @@ public class SecurityConfig {
         return source;
     }
 
+    /**
+     * Authentication 객체를 사용할 때
+     * userDetails의 password는 반드시 암호화 되어있어야 하기 때문에
+     * 암호화를 위한 password 인코더를 설정해주는 매서드입니다.
+     *
+     * @return
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Authentication 객체를 활용하거나 Daoprovider를 사용하는
+     * AuthenticationManager를 선언해주는 메서드입니다.
+     *
+     * @param cfg
+     * @return
+     * @throws Exception
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration cfg) throws Exception {
         return cfg.getAuthenticationManager();
